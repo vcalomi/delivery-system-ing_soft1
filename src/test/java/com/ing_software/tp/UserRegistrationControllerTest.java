@@ -1,0 +1,152 @@
+package com.ing_software.tp;
+
+import com.ing_software.tp.model.User;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class UserRegistrationControllerTest {
+
+    @Autowired
+    TestRestTemplate restTemplate;
+
+    @Test
+    void canRegisterUser(){
+        User user = new User(null, "John", "Doe", "email@email.com", 32, "address");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
+
+    @Test
+    void cantRegisterWithMissingName(){
+        User user = new User();
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAddress("address");
+        user.setAge(32);
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void cantRegisterWithMissingLastname(){
+        User user = new User();
+        user.setName("John");
+        user.setEmail("email@gmail.com");
+        user.setAddress("address");
+        user.setAge(32);
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void cantRegisterWithMissingEmail(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setAddress("address");
+        user.setAge(32);
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void cantRegisterWithMissingAge(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAddress("address");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void cantRegisterWithMissingAddress(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAge(32);
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void cantRegisterWithEmptyName(){
+        User user = new User();
+        user.setName("");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAge(32);
+        user.setAddress("address");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void cantRegisterWithEmptyLastname(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("");
+        user.setEmail("email@gmail.com");
+        user.setAge(32);
+        user.setAddress("address");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void cantRegisterWithEmptyEmail(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("");
+        user.setAge(32);
+        user.setAddress("address");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void cantRegisterWithEmptyAddress(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAge(32);
+        user.setAddress("");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void cantRegisterWithAgeLessThan18(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAge(12);
+        user.setAddress("address");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void cantRegisterWithAgeMoreThan100(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAge(120);
+        user.setAddress("address");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+}
