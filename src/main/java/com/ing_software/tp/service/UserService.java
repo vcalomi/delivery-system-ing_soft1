@@ -1,5 +1,6 @@
 package com.ing_software.tp.service;
 
+import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.UserRepository;
 import org.apache.coyote.BadRequestException;
@@ -14,11 +15,9 @@ public class UserService implements IUserService {
         this.userRepository = userRepository;
     }
 
-    public void registerUser(User user) throws BadRequestException {
-        if (user == null || user.getName() == null || user.getLastname() == null || user.getEmail() == null
-        || user.getAddress() == null || user.getAge() <= 0) {
-            throw new BadRequestException("Missing fields");
-        }
-        userRepository.save(user);
+    public User registerUser(UserRegisterRequest user) {
+        User newUser = new User(null, user.getName(), user.getLastname(), user.getEmail(), user.getAge(),
+                user.getAddress());
+        return userRepository.save(newUser);
     }
 }

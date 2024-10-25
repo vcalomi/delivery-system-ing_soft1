@@ -1,9 +1,10 @@
 package com.ing_software.tp.service;
 
+import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.model.User;
 import org.apache.coyote.BadRequestException;
 
 public interface IUserService {
 
-    void registerUser(User user) throws BadRequestException;
+    User registerUser(UserRegisterRequest user);
 }
