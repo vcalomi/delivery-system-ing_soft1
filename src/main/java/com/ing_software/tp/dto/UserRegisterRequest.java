@@ -21,4 +21,8 @@ public class UserRegisterRequest {
     private int age;
     @NotBlank
     private String address;
+    @NotBlank
+    private String username;
+    @NotBlank
+    private String password;
 }

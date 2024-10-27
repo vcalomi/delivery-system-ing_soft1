@@ -20,7 +20,7 @@ public class UserRegistrationControllerTest {
 
     @Test
     void canRegisterUser(){
-        User user = new User(null, "John", "Doe", "email@email.com", 32, "address");
+        User user = new User(null, "John", "Doe", "email@email.com", 32, "address", "john", "password");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
@@ -32,6 +32,8 @@ public class UserRegistrationControllerTest {
         user.setEmail("email@gmail.com");
         user.setAddress("address");
         user.setAge(32);
+        user.setUsername("johndoe");
+        user.setPassword("password");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -43,6 +45,8 @@ public class UserRegistrationControllerTest {
         user.setEmail("email@gmail.com");
         user.setAddress("address");
         user.setAge(32);
+        user.setUsername("johndoe");
+        user.setPassword("password");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -54,6 +58,8 @@ public class UserRegistrationControllerTest {
         user.setLastname("Doe");
         user.setAddress("address");
         user.setAge(32);
+        user.setUsername("johndoe");
+        user.setPassword("password");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -65,6 +71,8 @@ public class UserRegistrationControllerTest {
         user.setLastname("Doe");
         user.setEmail("email@gmail.com");
         user.setAddress("address");
+        user.setUsername("johndoe");
+        user.setPassword("password");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -76,6 +84,30 @@ public class UserRegistrationControllerTest {
         user.setLastname("Doe");
         user.setEmail("email@gmail.com");
         user.setAge(32);
+        user.setUsername("johndoe");
+        user.setPassword("password");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    @Test
+    void cantRegisterWithMissingUsername(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAge(32);
+        user.setPassword("password");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    @Test
+    void cantRegisterWithMissingPassword(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAge(32);
+        user.setUsername("johndoe");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -88,6 +120,8 @@ public class UserRegistrationControllerTest {
         user.setEmail("email@gmail.com");
         user.setAge(32);
         user.setAddress("address");
+        user.setUsername("johndoe");
+        user.setPassword("password");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -100,6 +134,8 @@ public class UserRegistrationControllerTest {
         user.setEmail("email@gmail.com");
         user.setAge(32);
         user.setAddress("address");
+        user.setUsername("johndoe");
+        user.setPassword("password");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -112,6 +148,8 @@ public class UserRegistrationControllerTest {
         user.setEmail("");
         user.setAge(32);
         user.setAddress("address");
+        user.setUsername("johndoe");
+        user.setPassword("password");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -124,6 +162,8 @@ public class UserRegistrationControllerTest {
         user.setEmail("email@gmail.com");
         user.setAge(32);
         user.setAddress("");
+        user.setUsername("johndoe");
+        user.setPassword("password");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -136,6 +176,8 @@ public class UserRegistrationControllerTest {
         user.setEmail("email@gmail.com");
         user.setAge(12);
         user.setAddress("address");
+        user.setUsername("johndoe");
+        user.setPassword("password");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -148,7 +190,36 @@ public class UserRegistrationControllerTest {
         user.setEmail("email@gmail.com");
         user.setAge(120);
         user.setAddress("address");
+        user.setUsername("johndoe");
+        user.setPassword("password");
         ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
+    @Test
+    void cantRegisterWithEmptyUsername(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAge(32);
+        user.setAddress("address");
+        user.setUsername("");
+        user.setPassword("password");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    @Test
+    void cantRegisterWithEmptyPassword(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAge(32);
+        user.setAddress("address");
+        user.setUsername("johndoe");
+        user.setPassword("");
+        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
 }

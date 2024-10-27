@@ -20,4 +20,6 @@ public class User {
     private String email;
     private int age;
     private String address;
+    private String username;
+    private String password;
 }
