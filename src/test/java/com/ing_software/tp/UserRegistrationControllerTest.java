@@ -2,6 +2,8 @@ package com.ing_software.tp;
 
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.service.EmailSenderServiceImpl;
+import com.ing_software.tp.service.JwtService;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class UserRegistrationControllerTest {
 
     @SpyBean
     EmailSenderServiceImpl emailSenderServiceImpl;
+
+    @Autowired
+    JwtService jwtService;
 
     @BeforeEach
     void setUp(){
@@ -244,6 +249,28 @@ public class UserRegistrationControllerTest {
         user.setPassword("");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void registeringReturnsACorrectJWT() {
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password");
+        ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URL, user,String.class);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        Assertions.assertThat(jwtService.validateToken(response.getBody(), user)).isTrue();
+
+    }
+
+    @Test
+    void usernameCanBeExtractedFromJWT() {
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password");
+        ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URL, user,String.class);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        Assertions.assertThat(jwtService.validateToken(response.getBody(), user)).isTrue();
+        Assertions.assertThat(jwtService.extractUsername(response.getBody())).isEqualTo(user.getUsername());
     }
 
 }
