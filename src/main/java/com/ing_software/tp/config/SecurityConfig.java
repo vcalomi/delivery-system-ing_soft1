@@ -38,7 +38,7 @@ public class SecurityConfig {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
         httpSecurity.authorizeHttpRequests(
                 request -> request
-                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/users/**").permitAll()
                         .requestMatchers("/prueba").authenticated()
         )
                 .sessionManagement(session -> session
