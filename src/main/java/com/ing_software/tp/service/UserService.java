@@ -3,15 +3,12 @@ package com.ing_software.tp.service;
 import com.ing_software.tp.dto.LoginResponse;
 import com.ing_software.tp.dto.UserLoginRequest;
 import com.ing_software.tp.dto.UserRegisterRequest;
-import com.ing_software.tp.model.UserCredentials;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 public class UserService implements IUserService {
