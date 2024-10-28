@@ -8,6 +8,10 @@
     POSTGRES_DOCKER_URL=jdbc:postgresql://database:{port}/{database}
     POSTGRES_LOCAL_URL=jdbc:postgresql://localhost:{port}/{database}
     POSTGRES_DB={database}
+    JWT_SECRET={jwt_secret}
+    EMAIL_PORT={port}
+    EMAIL_USERNAME={email}
+    EMAIL_PASSWORD={app_password}
     ```
     Note:
 
