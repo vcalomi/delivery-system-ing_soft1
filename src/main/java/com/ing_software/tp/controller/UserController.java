@@ -3,7 +3,7 @@ package com.ing_software.tp.controller;
 import com.ing_software.tp.dto.LoginResponse;
 import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.dto.UserLoginRequest;
-import com.ing_software.tp.service.IUserService;
+import com.ing_software.tp.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class UserController {
 
-    private final IUserService userService;
+    private final UserService userService;
 
-    public UserController(IUserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
