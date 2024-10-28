@@ -3,7 +3,6 @@ package com.ing_software.tp;
 import com.ing_software.tp.dto.LoginResponse;
 import com.ing_software.tp.dto.UserLoginRequest;
 import com.ing_software.tp.model.User;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

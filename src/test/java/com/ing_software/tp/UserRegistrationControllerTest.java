@@ -41,6 +41,15 @@ public class UserRegistrationControllerTest {
     }
 
     @Test
+    void aSuccessfulRegistrationReturnsAToken(){
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password");
+        ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URL, user, String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(response.getBody()).isNotBlank();
+        assertThat(response.getBody()).isInstanceOf(String.class);
+    }
+
+    @Test
     void cantRegisterWithMissingName(){
         User user = new User();
         user.setLastname("Doe");
