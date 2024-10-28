@@ -25,13 +25,18 @@ public class ApplicationExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UsernameNotFoundException.class)
-    public String incorretLoginCredentialsException(UsernameNotFoundException exception){
-        return exception.getMessage();
+    public Map<String, String> incorrectLoginCredentialsException(UsernameNotFoundException exception) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", exception.getMessage());
+        return error;
     }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public String noBodyLoginRequestException(HttpMessageNotReadableException exception) {
-        return "The request requires a body with login credentials";
+    public Map<String, String> noBodyLoginRequestException(HttpMessageNotReadableException exception) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "The request requires a body with login credentials");
+        return error;
     }
 }
