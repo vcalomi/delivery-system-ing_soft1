@@ -15,13 +15,15 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserRegistrationControllerTest {
 
+    private static final String REGISTER_URL = "/users/register";
+
     @Autowired
     TestRestTemplate restTemplate;
 
     @Test
     void canRegisterUser(){
         User user = new User(null, "John", "Doe", "email@email.com", 32, "address", "john", "password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
@@ -34,7 +36,7 @@ public class UserRegistrationControllerTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -47,7 +49,7 @@ public class UserRegistrationControllerTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -60,7 +62,7 @@ public class UserRegistrationControllerTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -73,7 +75,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -86,7 +88,7 @@ public class UserRegistrationControllerTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
     @Test
@@ -97,7 +99,7 @@ public class UserRegistrationControllerTest {
         user.setEmail("email@gmail.com");
         user.setAge(32);
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
     @Test
@@ -108,7 +110,7 @@ public class UserRegistrationControllerTest {
         user.setEmail("email@gmail.com");
         user.setAge(32);
         user.setUsername("johndoe");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -122,7 +124,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -136,7 +138,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -150,7 +152,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -164,7 +166,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -178,7 +180,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -192,7 +194,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
     @Test
@@ -205,7 +207,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
     @Test
@@ -218,7 +220,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("");
-        ResponseEntity<?> response = restTemplate.postForEntity("/register", user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
