@@ -1,15 +1,20 @@
 package com.ing_software.tp;
 
 import com.ing_software.tp.model.User;
+import com.ing_software.tp.service.EmailSenderServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 
 @TestPropertySource("classpath:application-test.properties")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -20,9 +25,17 @@ public class UserRegistrationControllerTest {
     @Autowired
     TestRestTemplate restTemplate;
 
+    @SpyBean
+    EmailSenderServiceImpl emailSenderServiceImpl;
+
+    @BeforeEach
+    void setUp(){
+        doNothing().when(emailSenderServiceImpl).sendConfirmationEmail(anyString(), anyString(), anyString());
+    }
+
     @Test
     void canRegisterUser(){
-        User user = new User(null, "John", "Doe", "email@email.com", 32, "address", "john", "password");
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
