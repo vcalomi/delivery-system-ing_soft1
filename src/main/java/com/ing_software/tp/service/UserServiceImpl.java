@@ -16,18 +16,22 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final EmailSenderService emailSenderService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, EmailSenderService emailSenderService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.emailSenderService = emailSenderService;
     }
 
     public String registerUser(UserRegisterRequest user) {
         User newUser = new User(null, user.getName(), user.getLastname(), user.getEmail(), user.getAge(),
                 user.getAddress(), user.getUsername(), passwordEncoder.encode(user.getPassword()));
         UserDetails userDetails = userRepository.save(newUser);
-        return jwtService.generateToken(userDetails.getUsername());
+        String token = jwtService.generateToken(userDetails.getUsername());
+        emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email","Registro con exito");
+        return token;
     }
 
     public LoginResponse loginUser(UserLoginRequest userCredentials){
