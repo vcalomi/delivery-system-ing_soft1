@@ -42,7 +42,7 @@ public class SecurityConfig {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
         httpSecurity.authorizeHttpRequests(
                 request -> request
-                        .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/prueba").authenticated()
         )
                 .sessionManagement(session -> session
