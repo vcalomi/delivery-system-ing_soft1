@@ -30,14 +30,48 @@ public class UserLoginControllerTest {
 
     @Test
     void loginWithCorrectCredentialsReturnsCorrectLoginResponse(){
-        User user = new User(null, "John", "Doe", "email@email.com", 20, "address", "John", "1234");
+        User user = new User(null, "John", "Doe", "email@email.com", 20, "address", "John1", "1234");
         restTemplate.postForEntity("/users/register", user, Void.class);
-        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(LOGIN_URL, new UserLoginRequest("John", "1234"),
-                LoginResponse.class);
+        UserLoginRequest userLoginRequest = new UserLoginRequest("John1", "1234");
+        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(LOGIN_URL, userLoginRequest, LoginResponse.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getName()).isEqualTo(user.getName());
         assertThat(response.getBody().getLastname()).isEqualTo(user.getLastname());
         assertThat(response.getBody().getToken()).isNotBlank();
+    }
+    @Test
+    void cantLoginWithIncorrectUsername(){
+        User user = new User(null, "John", "Doe", "email@email.com", 20, "address", "John2", "1234");
+        restTemplate.postForEntity("/users/register", user, Void.class);
+        UserLoginRequest userLoginRequest = new UserLoginRequest("incorrectUsername", "1234");
+        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(LOGIN_URL, userLoginRequest, LoginResponse.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    @Test
+    void cantLoginWithIncorrectPassword(){
+        User user = new User(null, "John", "Doe", "email@email.com", 20, "address", "John3", "1234");
+        restTemplate.postForEntity("/users/register", user, Void.class);
+        UserLoginRequest userLoginRequest = new UserLoginRequest("John3", "incorrectPassword");
+        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(LOGIN_URL, userLoginRequest, LoginResponse.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    @Test
+    void cantLoginWithMissingUsername(){
+        User user = new User(null, "John", "Doe", "email@email.com", 20, "address", "John4", "1234");
+        restTemplate.postForEntity("/users/register", user, Void.class);
+        UserLoginRequest userLoginRequest = new UserLoginRequest();
+        userLoginRequest.setPassword("1234");
+        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(LOGIN_URL, userLoginRequest, LoginResponse.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    @Test
+    void cantLoginWithMissingPassword(){
+        User user = new User(null, "John", "Doe", "email@email.com", 20, "address", "John5", "1234");
+        restTemplate.postForEntity("/users/register", user, Void.class);
+        UserLoginRequest userLoginRequest = new UserLoginRequest();
+        userLoginRequest.setUsername("John5");
+        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(LOGIN_URL, userLoginRequest, LoginResponse.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }
