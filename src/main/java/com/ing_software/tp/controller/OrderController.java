@@ -24,5 +24,10 @@ public class OrderController {
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
+    @PatchMapping("/confirmOrder/{order_id}")
+    public ResponseEntity<String> confirmOrder(@PathVariable Long order_id){
+        orderService.confirmOrder(order_id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

@@ -9,4 +9,6 @@ import java.util.Map;
 public interface OrderService {
     Order createOrder(OrderRequest orderRequest, String authorizationHeader);
     Map<ProductRequest, Boolean> validateOrderRequestStock(OrderRequest orderRequest);
+
+    void confirmOrder(Long orderId);
 }

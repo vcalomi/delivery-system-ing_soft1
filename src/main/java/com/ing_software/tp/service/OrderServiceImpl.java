@@ -66,4 +66,14 @@ public class OrderServiceImpl implements OrderService{
         }
         return result;
     }
+
+    @Override
+    public void confirmOrder(Long orderId) {
+        Optional<Order> order = orderRepository.findById(orderId);
+        if (order.isEmpty()){
+            throw new RuntimeException("No order with provided id");
+        }
+        order.get().setConfirmed(true);
+        orderRepository.save(order.get());
+    }
 }

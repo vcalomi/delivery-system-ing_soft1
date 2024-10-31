@@ -21,4 +21,5 @@ public class Order {
     private User owner;
     @OneToMany
     private List<Product> products;
+    private boolean isConfirmed = false;
 }
