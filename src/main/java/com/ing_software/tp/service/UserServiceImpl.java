@@ -49,4 +49,8 @@ public class UserServiceImpl implements UserService {
         throw new UsernameNotFoundException("Invalid username or password");
 
     }
+
+    public User findByUsername(String username) {
+        return (User) userRepository.findByUsername(username);
+    }
 }

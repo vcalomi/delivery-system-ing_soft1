@@ -17,6 +17,8 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
+    @OneToOne
+    private User owner;
     @OneToMany
     private List<Product> products;
 }
