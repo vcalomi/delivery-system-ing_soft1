@@ -17,12 +17,14 @@ public class OrderServiceImpl implements OrderService{
     private final OrderRepository orderRepository;
     private final JwtService jwtService;
     private final  UserService userService;
+    private final EmailSenderService emailSenderService;
 
-    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService) {
+    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService, EmailSenderService emailSenderService) {
         this.productService = productService;
         this.orderRepository = orderRepository;
         this.jwtService = jwtService;
         this.userService = userService;
+        this.emailSenderService = emailSenderService;
     }
 
     public Order createOrder(OrderRequest orderRequest, String authorizationHeader) {
@@ -73,7 +75,9 @@ public class OrderServiceImpl implements OrderService{
         if (order.isEmpty()){
             throw new RuntimeException("No order with provided id");
         }
+        User user = order.get().getOwner();
         order.get().setConfirmed(true);
         orderRepository.save(order.get());
+        emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email","Orden confirmada!");
     }
 }
