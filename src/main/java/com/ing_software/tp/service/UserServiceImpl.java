@@ -5,6 +5,7 @@ import com.ing_software.tp.dto.UserLoginRequest;
 import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +26,7 @@ public class UserServiceImpl implements UserService {
         this.emailSenderService = emailSenderService;
     }
 
-    public String registerUser(UserRegisterRequest user) {
+    public String registerUser(@Valid UserRegisterRequest user) {
         User newUser = new User(null, user.getName(), user.getLastname(), user.getEmail(), user.getAge(),
                 user.getAddress(), user.getUsername(), passwordEncoder.encode(user.getPassword()));
         UserDetails userDetails = userRepository.save(newUser);
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService {
         return token;
     }
 
-    public LoginResponse loginUser(UserLoginRequest userCredentials){
+    public LoginResponse loginUser(@Valid UserLoginRequest userCredentials){
 
         UserDetails userDetails = userRepository.findByUsername(userCredentials.getUsername());
         if (userDetails == null){

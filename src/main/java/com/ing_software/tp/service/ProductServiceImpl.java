@@ -4,6 +4,7 @@ import com.ing_software.tp.dto.NewProductRequest;
 import com.ing_software.tp.dto.ProductRequest;
 import com.ing_software.tp.model.Product;
 import com.ing_software.tp.repository.ProductRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -31,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(product_id);
     }
 
-    public Product createProduct(NewProductRequest productRequest) {
+    public Product createProduct(@Valid NewProductRequest productRequest) {
         Product product = new Product();
         product.setProduct_name(productRequest.getProduct_name());
         product.setStock(productRequest.getStock());

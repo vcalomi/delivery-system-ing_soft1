@@ -6,6 +6,7 @@ import com.ing_software.tp.model.Order;
 import com.ing_software.tp.model.Product;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.OrderRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,7 +28,7 @@ public class OrderServiceImpl implements OrderService{
         this.emailSenderService = emailSenderService;
     }
 
-    public Order createOrder(OrderRequest orderRequest, String authorizationHeader) {
+    public Order createOrder(@Valid OrderRequest orderRequest, String authorizationHeader) {
 
         String username = null;
         if (authorizationHeader.startsWith("Bearer ")) {
@@ -69,7 +70,6 @@ public class OrderServiceImpl implements OrderService{
         return result;
     }
 
-    @Override
     public void confirmOrder(Long orderId) {
         Optional<Order> order = orderRepository.findById(orderId);
         if (order.isEmpty()){
