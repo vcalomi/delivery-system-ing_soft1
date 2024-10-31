@@ -1,5 +1,6 @@
 package com.ing_software.tp.advice;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,6 +38,14 @@ public class ApplicationExceptionHandler {
     public Map<String, String> noBodyLoginRequestException(HttpMessageNotReadableException exception) {
         Map<String, String> error = new HashMap<>();
         error.put("error", "The request requires a body with login credentials");
+        return error;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(RuntimeException.class)
+    public Map<String, String> invalidOrderException(RuntimeException exception) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", exception.getMessage());
         return error;
     }
 }
