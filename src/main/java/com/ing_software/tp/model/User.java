@@ -22,9 +22,11 @@ public class User implements UserDetails {
     private Long Id;
     private String name;
     private String lastname;
+    @Column(unique = true)
     private String email;
     private int age;
     private String address;
+    @Column(unique = true)
     private String username;
     private String password;
 
