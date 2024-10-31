@@ -44,6 +44,7 @@ public class SecurityConfig {
                 request -> request
                         .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/orders/**").authenticated()
+                        .requestMatchers("/api/products/**").authenticated()
         )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

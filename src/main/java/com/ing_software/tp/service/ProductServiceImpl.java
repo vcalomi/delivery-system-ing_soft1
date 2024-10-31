@@ -1,5 +1,6 @@
 package com.ing_software.tp.service;
 
+import com.ing_software.tp.dto.NewProductRequest;
 import com.ing_software.tp.dto.ProductRequest;
 import com.ing_software.tp.model.Product;
 import com.ing_software.tp.repository.ProductRepository;
@@ -28,5 +29,12 @@ public class ProductServiceImpl implements ProductService {
 
     public Optional<Product> findProductById(Long product_id) {
         return productRepository.findById(product_id);
+    }
+
+    public Product createProduct(NewProductRequest productRequest) {
+        Product product = new Product();
+        product.setProduct_name(productRequest.getProduct_name());
+        product.setStock(productRequest.getStock());
+        return productRepository.save(product);
     }
 }
