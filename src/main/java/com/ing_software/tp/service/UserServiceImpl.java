@@ -26,11 +26,15 @@ public class UserServiceImpl implements UserService {
         this.emailSenderService = emailSenderService;
     }
 
-    public String registerUser(@Valid UserRegisterRequest user) {
+    private String createUser(@Valid UserRegisterRequest user) {
         User newUser = new User(null, user.getName(), user.getLastname(), user.getEmail(), user.getAge(),
                 user.getAddress(), user.getUsername(), passwordEncoder.encode(user.getPassword()));
         UserDetails userDetails = userRepository.save(newUser);
-        String token = jwtService.generateToken(userDetails.getUsername());
+        return jwtService.generateToken(userDetails.getUsername());
+    }
+
+    public String registerUser(@Valid UserRegisterRequest user) {
+        String token = this.createUser(user);
         emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email","Registro con exito");
         return token;
     }
