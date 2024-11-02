@@ -1,4 +1,4 @@
-package com.ing_software.tp;
+package com.ing_software.tp.controllerTests;
 
 import com.ing_software.tp.dto.LoginResponse;
 import com.ing_software.tp.dto.UserLoginRequest;
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestPropertySource("classpath:application-test.properties")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserLoginControllerTest {
+public class UserLoginEndpointTest {
 
     private static final String LOGIN_URI = "/api/users/login";
     private static final String REGISTER_URI = "/api/users/register";
