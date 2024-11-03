@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
         return token;
     }
 
-    public LoginResponse loginUser(@Valid UserLoginRequest userCredentials){
+    public String loginUser(@Valid UserLoginRequest userCredentials){
 
         UserDetails userDetails = userRepository.findByUsername(userCredentials.getUsername());
         if (userDetails == null){
@@ -48,8 +48,7 @@ public class UserServiceImpl implements UserService {
 
         if (passwordEncoder.matches(userCredentials.getPassword(), userDetails.getPassword())){
             String token = jwtService.generateToken(userDetails.getUsername());
-            User user = (User)userDetails;
-            return new LoginResponse(token,user.getName(), user.getLastname());
+            return token;
         }
         throw new UsernameNotFoundException("Invalid username or password");
 

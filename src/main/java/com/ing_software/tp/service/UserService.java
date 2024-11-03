@@ -9,6 +9,6 @@ import jakarta.validation.Valid;
 public interface UserService {
 
     String registerUser(UserRegisterRequest user);
-    LoginResponse loginUser(UserLoginRequest user);
+    String loginUser(UserLoginRequest user);
     User findByUsername(String username);
 }

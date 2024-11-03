@@ -27,10 +27,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Valid UserLoginRequest userCredentials) {
+    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest userCredentials) {
 
-        LoginResponse response = userService.loginUser(userCredentials);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        String token = userService.loginUser(userCredentials);
+        return new ResponseEntity<>(token, HttpStatus.OK);
 
     }
 }
