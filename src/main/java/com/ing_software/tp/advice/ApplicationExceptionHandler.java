@@ -1,6 +1,9 @@
 package com.ing_software.tp.advice;
 
+import org.apache.coyote.BadRequestException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -38,5 +41,19 @@ public class ApplicationExceptionHandler {
         Map<String, String> error = new HashMap<>();
         error.put("error", "The request requires a body with login credentials");
         return error;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(RuntimeException.class)
+    public Map<String, String> invalidOrderException(RuntimeException exception) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", exception.getMessage());
+        return error;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
+        String message = "El email o el nombre de usuario ya están en uso. Por favor, intenta con otros.";
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 }

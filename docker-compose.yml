@@ -29,6 +29,6 @@ services:
       EMAIL_USERNAME: ${EMAIL_USERNAME}
       EMAIL_PASSWORD: ${EMAIL_PASSWORD}
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       - database

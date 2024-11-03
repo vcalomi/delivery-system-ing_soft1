@@ -1,54 +1,58 @@
-package com.ing_software.tp;
+package com.ing_software.tp.controllerTests;
 
+import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.model.User;
-import com.ing_software.tp.service.EmailSenderServiceImpl;
+import com.ing_software.tp.repository.UserRepository;
+import com.ing_software.tp.service.EmailSenderService;
 import com.ing_software.tp.service.JwtService;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 
 @TestPropertySource("classpath:application-test.properties")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserRegistrationControllerTest {
+public class UserRegistrationEndpointTest {
 
-    private static final String REGISTER_URL = "/users/register";
+    private static final String REGISTER_URI = "/api/users/register";
 
     @Autowired
     TestRestTemplate restTemplate;
 
-    @SpyBean
-    EmailSenderServiceImpl emailSenderServiceImpl;
-
     @Autowired
     JwtService jwtService;
 
-    @BeforeEach
-    void setUp(){
-        doNothing().when(emailSenderServiceImpl).sendConfirmationEmail(anyString(), anyString(), anyString());
+    @MockBean
+    EmailSenderService emailSenderService;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @AfterEach
+    void deleteUsers(){
+        userRepository.deleteAll();
     }
 
     @Test
     void canRegisterUser(){
-        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        UserRegisterRequest user = new UserRegisterRequest("John", "Doe", "vcalomi@gmail.com", 32, "address", "john",
+                "password");
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test
     void aSuccessfulRegistrationReturnsAToken(){
-        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password");
-        ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URL, user, String.class);
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password", "USER");
+        ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URI, user, String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotBlank();
         assertThat(response.getBody()).isInstanceOf(String.class);
@@ -63,7 +67,7 @@ public class UserRegistrationControllerTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -76,7 +80,7 @@ public class UserRegistrationControllerTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -89,7 +93,7 @@ public class UserRegistrationControllerTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -102,7 +106,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -115,7 +119,7 @@ public class UserRegistrationControllerTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
     @Test
@@ -126,7 +130,7 @@ public class UserRegistrationControllerTest {
         user.setEmail("email@gmail.com");
         user.setAge(32);
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
     @Test
@@ -137,7 +141,7 @@ public class UserRegistrationControllerTest {
         user.setEmail("email@gmail.com");
         user.setAge(32);
         user.setUsername("johndoe");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -151,7 +155,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -165,7 +169,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -179,7 +183,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -193,7 +197,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -207,7 +211,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
@@ -221,7 +225,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
     @Test
@@ -234,7 +238,7 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("");
         user.setPassword("password");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
     @Test
@@ -247,14 +251,15 @@ public class UserRegistrationControllerTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("");
-        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URL, user,Void.class);
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
     void registeringReturnsACorrectJWT() {
-        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password");
-        ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URL, user,String.class);
+        String uniqueUsername = String.format("john%d", System.currentTimeMillis());
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", uniqueUsername, "password", "USER");
+        ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URI, user,String.class);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -264,8 +269,8 @@ public class UserRegistrationControllerTest {
 
     @Test
     void usernameCanBeExtractedFromJWT() {
-        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password");
-        ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URL, user,String.class);
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password", "USER");
+        ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URI, user,String.class);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 

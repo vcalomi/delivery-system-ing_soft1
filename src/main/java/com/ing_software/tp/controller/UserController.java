@@ -1,6 +1,5 @@
 package com.ing_software.tp.controller;
 
-import com.ing_software.tp.dto.LoginResponse;
 import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.dto.UserLoginRequest;
 import com.ing_software.tp.service.UserService;
@@ -27,10 +26,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Valid UserLoginRequest userCredentials) {
+    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest userCredentials) {
 
-        LoginResponse response = userService.loginUser(userCredentials);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        String token = userService.loginUser(userCredentials);
+        return new ResponseEntity<>(token, HttpStatus.OK);
 
     }
 }
