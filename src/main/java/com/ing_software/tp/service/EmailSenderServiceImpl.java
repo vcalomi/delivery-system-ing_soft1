@@ -10,7 +10,7 @@ public class EmailSenderServiceImpl implements EmailSenderService {
     @Value("${spring.mail.username}")
     private String senderEmail;
 
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
     public EmailSenderServiceImpl(JavaMailSender mailSender) {
          this.mailSender = mailSender;
      }
@@ -20,6 +20,6 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         message.setTo(to);
         message.setSubject(subject);
         message.setText(body);
-        mailSender.send(message);
+        //mailSender.send(message);
     }
 }
