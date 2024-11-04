@@ -51,7 +51,7 @@ public class UserRegistrationEndpointTest {
 
     @Test
     void aSuccessfulRegistrationReturnsAToken(){
-        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password");
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password", "ADMIN");
         ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URI, user, String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotBlank();
@@ -258,7 +258,7 @@ public class UserRegistrationEndpointTest {
     @Test
     void registeringReturnsACorrectJWT() {
         String uniqueUsername = String.format("john%d", System.currentTimeMillis());
-        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", uniqueUsername, "password");
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", uniqueUsername, "password", "USER");
         ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URI, user,String.class);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -269,7 +269,7 @@ public class UserRegistrationEndpointTest {
 
     @Test
     void usernameCanBeExtractedFromJWT() {
-        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password");
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password", "USER");
         ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URI, user,String.class);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
