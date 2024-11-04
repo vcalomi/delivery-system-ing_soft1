@@ -51,7 +51,9 @@ public class UserRegistrationEndpointTest {
 
     @Test
     void aSuccessfulRegistrationReturnsAToken(){
-        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password", "ADMIN");
+
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password", "USER");
+
         ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URI, user, String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotBlank();

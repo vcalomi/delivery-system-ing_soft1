@@ -1,5 +1,14 @@
 <template>
     <div class="container mt-4">
+      <!-- NAME -->
+      <div class="input-group mb-3">        
+        <input type="text" v-model="name" class="form-control" placeholder="Nombre" aria-label="Nombre" aria-describedby="basic-addon1">
+      </div>
+  
+      <!-- Last Name -->
+      <div class="input-group mb-3">
+        <input type="text" v-model="lastname" class="form-control" placeholder="Apellido" aria-label="Apellido" aria-describedby="basic-addon1">
+      </div>
       <!-- Usuario -->
       <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">@</span>
@@ -56,14 +65,20 @@
         <input type="text" v-model="floorApartment" class="form-control" placeholder="Piso y Depto" aria-label="piso">
         <input type="text" v-model="postalCode" class="form-control" placeholder="Código Postal" aria-label="codigo postal">
       </div>
-      <button @click="getRegister" type="button" class="btn btn-primary">Registrar usuario</button>
+      <button @click="Register" type="button" class="btn btn-primary" :disabled="active">Registrar usuario</button>
+      <div v-if="active" class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     </div>
   </template>
   
   <script>
+  import axios from 'axios'
   export default {
     data() {
       return {
+        name: "",
+        lastname: "",
         user: "",
         email: "",
         password: "",
@@ -73,39 +88,16 @@
         street: "",
         streetNumber: "",
         floorApartment: "",
-        postalCode: ""
+        postalCode: "",
+        active: false
       }
     },
     name: 'Registrer-User',
     props: {
     },
     methods: {
-      async getRegister() {
-
-        try {
-          const response = await fetch("http://localhost:8081/users/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              username: "jon",
-              password: "1234",
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error("Error en el registro.");
-          }
-
-          const data = await response.json();
-          alert(`Registrado exitosamente como ${data.user}`);
-        } catch (error) {
-          alert("Error al registrarse: " + error.message);
-        }
-
-
-        const errors = [];
+      checkRegister() {
+       const errors = [];
 
         // Validar Usuario
         if (!this.user || this.user.length < 3) {
@@ -155,11 +147,7 @@
           errors.push("Por favor, ingresa un código postal válido (mínimo 4 dígitos).");
         }
         // Mostrar errores o mensaje de éxito
-        if (errors.length > 0) {
-          alert("Errores en el formulario:\n" + errors.join("\n"));
-        } else {
-          alert(`Registrado ${this.user}`);
-        }
+        return errors;
       },
     formatBirthDate() {
       let cleaned = this.birthDate.replace(/\D/g, "");
@@ -172,8 +160,28 @@
         cleaned = cleaned.slice(0, 5) + '/' + cleaned.slice(5, 9);
       }
       this.birthDate = cleaned;
-    }
-    }
+    },
+    async Register(){
+      let status = this.checkRegister();
+      if(status.length === 0){
+        this.active = true
+          await axios.post('http://localhost:8081/api/users/register', { 
+            "id":null, "name": this.name,"lastname": this.lastname,"email": this.email,
+          "age": 20,"address": this.street+" "+this.streetNumber+" "+this.postalCode+" "+this.floorApartment,
+          "username": this.user,"password": this.password 
+        })
+          .then(response => {
+            this.active = false
+            console.log(response.data);
+          }).catch( error => {
+            console.error('Error: ', error);
+          })
+      }else {
+        alert(status) //ARREGLAR ESTE CODIGO
+      }
+      
+    },
+  }
 }
   </script>
   
