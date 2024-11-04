@@ -30,6 +30,6 @@ public class ProductController {
     @GetMapping("/")
     public ResponseEntity<List<Product>> getAllProducts(){
         List<Product> products = productService.getProducts();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
     }
 }
