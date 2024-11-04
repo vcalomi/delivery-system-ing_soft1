@@ -14,5 +14,5 @@ public interface ProductService {
 
     Product createProduct(NewProductRequest productRequest);
 
-    List<Product> getProducts();
+    List<Product> getProducts() throws Exception;
 }

@@ -5,9 +5,7 @@ import com.ing_software.tp.dto.ProductRequest;
 import com.ing_software.tp.model.Product;
 import com.ing_software.tp.repository.ProductRepository;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +40,11 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product);
     }
 
-    public List<Product> getProducts() {
-        return (List<Product>) productRepository.findAll();
+    public List<Product> getProducts() throws Exception {
+        List<Product> products = (List<Product>) productRepository.findAll();
+        if (products.isEmpty()) {
+            throw new Exception("No products found");
+        }
+        return products;
     }
 }

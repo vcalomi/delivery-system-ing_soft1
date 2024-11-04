@@ -56,4 +56,12 @@ public class ApplicationExceptionHandler {
         String message = "El email o el nombre de usuario ya están en uso. Por favor, intenta con otros.";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(Exception.class)
+    public Map<String, String> noProductsFoundException(Exception exception){
+        Map<String, String> error = new HashMap<>();
+        error.put("error", exception.getMessage());
+        return error;
+    }
 }
