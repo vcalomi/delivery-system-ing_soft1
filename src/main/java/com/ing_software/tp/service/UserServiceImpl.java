@@ -5,7 +5,7 @@ import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
         UserDetails userDetails = userRepository.findByUsername(userCredentials.getUsername());
         if (userDetails == null){
-            throw new UsernameNotFoundException("Invalid username or password");
+            throw new UsernameNotFoundException("Invalid username.");
         }
 
         if (passwordEncoder.matches(userCredentials.getPassword(), userDetails.getPassword())){
@@ -51,8 +51,7 @@ public class UserServiceImpl implements UserService {
             User user = (User)userDetails;
             return new LoginResponse(token,user.getName(), user.getLastname());
         }
-        throw new UsernameNotFoundException("Invalid username or password");
-
+        throw new UsernameNotFoundException("Invalid password");
     }
 
     public User findByUsername(String username) {
@@ -62,7 +61,7 @@ public class UserServiceImpl implements UserService {
     public void generateNewPassword(@Valid UserForgetPasswordRequest userCredentials) {
         UserDetails userDetails = userRepository.findByUsername(userCredentials.getUsername());
         if (userDetails == null){
-            throw new UsernameNotFoundException("Invalid username or password");
+            throw new UsernameNotFoundException("Invalid username.");
         }
         String randomPassword = passwordGeneratorService.generateRandomPassword();
         User user = (User) userDetails;
@@ -74,7 +73,7 @@ public class UserServiceImpl implements UserService {
     public void changePassword(@Valid UserChangePasswordRequest userCredentials) {
         UserDetails userDetails = userRepository.findByUsername(userCredentials.getUsername());
         if (userDetails == null){
-            throw new UsernameNotFoundException("Invalid username or password");
+            throw new UsernameNotFoundException("Invalid username.");
         }
         if (passwordEncoder.matches(userCredentials.getOldPassword(), userDetails.getPassword()) &&
                 userCredentials.getNewPassword().equals(userCredentials.getRepeatedNewPassword()) ){
@@ -82,8 +81,11 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(userCredentials.getNewPassword()));
             userRepository.save(user);
         }
+        else if(!userCredentials.getNewPassword().equals(userCredentials.getRepeatedNewPassword())){
+            throw new UsernameNotFoundException("New password and Repeated New Password do not match.");
+        }
         else{
-            throw new UsernameNotFoundException("Invalid username or password");
+            throw new UsernameNotFoundException("Invalid password.");
         }
     }
 }
