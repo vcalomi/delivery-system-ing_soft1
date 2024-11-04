@@ -1,6 +1,7 @@
 package com.ing_software.tp.service;
 
 import com.ing_software.tp.dto.LoginResponse;
+import com.ing_software.tp.dto.UserChangePasswordRequest;
 import com.ing_software.tp.dto.UserLoginRequest;
 import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.model.User;
@@ -66,5 +67,21 @@ public class UserServiceImpl implements UserService {
         emailSenderService.sendConfirmationEmail(user.getEmail(),"New Password","Tu nueva contraseña es: " + randomPassword);
         user.setPassword(passwordEncoder.encode(randomPassword));
         userRepository.save(user);
+    }
+
+    public void changePassword(@Valid UserChangePasswordRequest userCredentials) {
+        UserDetails userDetails = userRepository.findByUsername(userCredentials.getUsername());
+        if (userDetails == null){
+            throw new UsernameNotFoundException("Invalid username or password");
+        }
+        if (passwordEncoder.matches(userCredentials.getOldPassword(), userDetails.getPassword()) &&
+                userCredentials.getNewPassword().equals(userCredentials.getRepeatedNewPassword()) ){
+            User user = (User) userDetails;
+            user.setPassword(passwordEncoder.encode(userCredentials.getNewPassword()));
+            userRepository.save(user);
+        }
+        else{
+            throw new UsernameNotFoundException("Invalid username or password");
+        }
     }
 }
