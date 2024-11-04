@@ -11,7 +11,4 @@ import lombok.NoArgsConstructor;
 public class UserForgetPasswordRequest {
     @NotBlank
     String username;
-    @Email
-    @NotBlank
-    String email;
 }

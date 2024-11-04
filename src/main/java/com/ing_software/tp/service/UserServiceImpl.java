@@ -1,9 +1,6 @@
 package com.ing_software.tp.service;
 
-import com.ing_software.tp.dto.LoginResponse;
-import com.ing_software.tp.dto.UserChangePasswordRequest;
-import com.ing_software.tp.dto.UserLoginRequest;
-import com.ing_software.tp.dto.UserRegisterRequest;
+import com.ing_software.tp.dto.*;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -62,8 +59,13 @@ public class UserServiceImpl implements UserService {
         return (User) userRepository.findByUsername(username);
     }
 
-    public void generateNewPassword(@Valid User user) {
+    public void generateNewPassword(@Valid UserForgetPasswordRequest userCredentials) {
+        UserDetails userDetails = userRepository.findByUsername(userCredentials.getUsername());
+        if (userDetails == null){
+            throw new UsernameNotFoundException("Invalid username or password");
+        }
         String randomPassword = passwordGeneratorService.generateRandomPassword();
+        User user = (User) userDetails;
         emailSenderService.sendConfirmationEmail(user.getEmail(),"New Password","Tu nueva contraseña es: " + randomPassword);
         user.setPassword(passwordEncoder.encode(randomPassword));
         userRepository.save(user);

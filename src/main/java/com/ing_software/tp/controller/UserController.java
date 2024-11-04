@@ -32,8 +32,7 @@ public class UserController {
     }
     @PatchMapping("/forgetPassword")
     public ResponseEntity<String> forgetPassword(@RequestBody @Valid UserForgetPasswordRequest userCredentials) {
-        User user = userService.findByUsername(userCredentials.getUsername());
-        userService.generateNewPassword(user);
+        userService.generateNewPassword(userCredentials);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PatchMapping("/changePassword")
