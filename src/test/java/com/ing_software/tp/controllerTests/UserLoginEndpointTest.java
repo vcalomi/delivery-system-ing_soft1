@@ -37,7 +37,8 @@ public class UserLoginEndpointTest {
     @BeforeAll
     static void registerUser(@Autowired TestRestTemplate restTemplate){
 
-        registeredUser = new User(null, "John", "Doe", "email@email.com", 20, "address", "John1", "1234", "USER");
+    	registeredUser = new User(null, "John", "Doe", "email@email.com", 20, "address", "John1", "1234", "USER");
+    }
 
 
     @Test
