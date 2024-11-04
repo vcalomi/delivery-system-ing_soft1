@@ -18,12 +18,14 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final EmailSenderService emailSenderService;
+    private final PasswordGeneratorService passwordGeneratorService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, EmailSenderService emailSenderService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, EmailSenderService emailSenderService, PasswordGeneratorService passwordGeneratorService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.emailSenderService = emailSenderService;
+        this.passwordGeneratorService = passwordGeneratorService;
     }
 
     private String createUser(@Valid UserRegisterRequest user) {
@@ -57,5 +59,12 @@ public class UserServiceImpl implements UserService {
 
     public User findByUsername(String username) {
         return (User) userRepository.findByUsername(username);
+    }
+
+    public void generateNewPassword(@Valid User user) {
+        String randomPassword = passwordGeneratorService.generateRandomPassword();
+        emailSenderService.sendConfirmationEmail(user.getEmail(),"New Password","Tu nueva contraseña es: " + randomPassword);
+        user.setPassword(passwordEncoder.encode(randomPassword));
+        userRepository.save(user);
     }
 }

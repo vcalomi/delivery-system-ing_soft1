@@ -11,4 +11,5 @@ public interface UserService {
     String registerUser(UserRegisterRequest user);
     LoginResponse loginUser(UserLoginRequest user);
     User findByUsername(String username);
+    void generateNewPassword(User user);
 }
