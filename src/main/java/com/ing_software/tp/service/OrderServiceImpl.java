@@ -78,6 +78,6 @@ public class OrderServiceImpl implements OrderService{
         User user = order.get().getOwner();
         order.get().setConfirmed(true);
         orderRepository.save(order.get());
-        emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email","Orden confirmada!");
+        emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email", emailSenderService.buildOrderConfirmationEmail(order.get()));
     }
 }
