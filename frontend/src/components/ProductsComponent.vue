@@ -1,20 +1,64 @@
 <template>
-    <ul  v-for="p in productos" :key="p.id">
+    <!-- <ul  v-for="p in productos" :key="p.id">
         <li v-if="p">product name: {{p.product_name}}, stock: {{ p.stock }}</li>
 
     </ul>
     
-    <button @click="getProducts">button</button>
-</template>
-<script>
-import axios from 'axios';
+    <button @click="getProducts">button</button> -->
 
+    <div>
+    <h2>Product list</h2>
+    <ul>
+      <li v-for="product in products" :key="product.id">
+        <h3>{{ product.product_name }}</h3>
+        <p>Stock: {{ product.stock }}</p>
+        
+        <!-- Input para la cantidad -->
+        <input 
+          type="number" 
+          v-model.number="product.stock" 
+          min="1" 
+          max="product.stock" 
+          :disabled="product.stock <= 0" 
+          placeholder="Cantidad" 
+        />
+        
+        <!-- Botón para agregar al pedido -->
+        <button 
+          :disabled="product.stock <= 0 || product.stock <= 0" 
+          @click="addProduct(product)"
+        >
+          {{ product.stock > 0 ? 'Agregar al pedido' : 'No disponible' }}
+        </button>
+
+        <!-- Botón para mostrar detalles del product -->
+        <button @click="product.showDetails = !product.showDetails">
+          {{ product.showDetails ? 'Ocultar Detalles' : 'Mostrar Detalles' }}
+        </button>
+
+        <!-- Detalles del product -->
+        <div v-if="product.showDetails" class="product-details">
+          <h4>Details:</h4>
+          <ul>
+            <li v-for="(detail, index) in product.details" :key="index">
+              {{ detail }} <!-- Assuming details are strings; adjust as necessary -->
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script>
+
+import axios from 'axios';
 
 export default{
     name: 'ProductsComponent',
     data(){
         return{
-            productos: []
+            products: []
         }
 
     },
@@ -40,6 +84,9 @@ export default{
     methods:{
         getProducts(){
             console.log(this.productos)
+        },
+        addProduct(product){
+            console.log("add product: ", product)
         }
     }
 }
