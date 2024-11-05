@@ -20,28 +20,26 @@
           min="1" 
           max="product.stock" 
           :disabled="product.stock <= 0" 
-          placeholder="Cantidad" 
-        />
-        
+          placeholder="Cantidad" />
+
         <!-- Botón para agregar al pedido -->
         <button 
           :disabled="product.stock <= 0 || product.stock <= 0" 
-          @click="addProduct(product)"
-        >
+          @click="addProduct(product)">
           {{ product.stock > 0 ? 'Agregar al pedido' : 'No disponible' }}
         </button>
 
-        <!-- Botón para mostrar detalles del product -->
+        <!-- Botón para mostrar detalles del producto -->
         <button @click="product.showDetails = !product.showDetails">
           {{ product.showDetails ? 'Ocultar Detalles' : 'Mostrar Detalles' }}
         </button>
 
-        <!-- Detalles del product -->
+        <!-- Detalles del producto -->
         <div v-if="product.showDetails" class="product-details">
           <h4>Details:</h4>
           <ul>
             <li v-for="(detail, index) in product.details" :key="index">
-              {{ detail }} <!-- Assuming details are strings; adjust as necessary -->
+              {{ detail }} 
             </li>
           </ul>
         </div>
