@@ -1,12 +1,12 @@
 package com.ing_software.tp.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Data
@@ -18,4 +18,6 @@ public class Product {
     private Long Id;
     private String product_name;
     private int stock;
+    @ElementCollection
+    private Map<String, String> attributes;
 }

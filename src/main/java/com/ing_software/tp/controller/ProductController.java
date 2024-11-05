@@ -1,5 +1,6 @@
 package com.ing_software.tp.controller;
 
+import com.ing_software.tp.dto.EditProductRequest;
 import com.ing_software.tp.dto.NewProductRequest;
 import com.ing_software.tp.dto.ProductRequest;
 import com.ing_software.tp.model.Product;
@@ -25,6 +26,12 @@ public class ProductController {
     public ResponseEntity<Product> createProduct(@RequestBody @Valid NewProductRequest productRequest){
         Product product = productService.createProduct(productRequest);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/edit")
+    public ResponseEntity<Product> editProduct(@RequestBody @Valid EditProductRequest productRequest) throws Exception {
+        Product product = productService.editProductAttributes(productRequest);
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @GetMapping("/")
