@@ -1,6 +1,8 @@
 package com.ing_software.tp.controller;
 
+import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
+import com.ing_software.tp.model.Order;
 import com.ing_software.tp.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,10 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createOrder(@RequestBody @Valid OrderRequest orderRequest,
-                                              @RequestHeader("Authorization") String authorizationHeader){
-        orderService.createOrder(orderRequest, authorizationHeader);
-        return new ResponseEntity<>("", HttpStatus.CREATED);
+    public ResponseEntity<OrderCreateResponse> createOrder(@RequestBody @Valid OrderRequest orderRequest,
+                                                           @RequestHeader("Authorization") String authorizationHeader){
+        OrderCreateResponse order = orderService.createOrder(orderRequest, authorizationHeader);
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
     @PatchMapping("/confirmOrder/{order_id}")

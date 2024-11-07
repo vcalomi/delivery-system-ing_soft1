@@ -1,5 +1,6 @@
 package com.ing_software.tp.service;
 
+import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
 import com.ing_software.tp.dto.ProductRequest;
 import com.ing_software.tp.model.Order;
@@ -28,7 +29,7 @@ public class OrderServiceImpl implements OrderService{
         this.emailSenderService = emailSenderService;
     }
 
-    public Order createOrder(@Valid OrderRequest orderRequest, String authorizationHeader) {
+    public OrderCreateResponse createOrder(@Valid OrderRequest orderRequest, String authorizationHeader) {
 
         String username = null;
         if (authorizationHeader.startsWith("Bearer ")) {
@@ -55,7 +56,9 @@ public class OrderServiceImpl implements OrderService{
             }
             order.setProducts(products);
             order.setOwner(user);
-            return orderRepository.save(order);
+            orderRepository.save(order);
+
+            return new OrderCreateResponse(order.getId(), user.getUsername(), order.getProducts());
         }
         throw new RuntimeException("Invalid order");
     }
