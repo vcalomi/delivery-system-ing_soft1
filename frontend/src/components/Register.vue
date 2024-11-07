@@ -172,7 +172,7 @@
         })
           .then(response => {
             this.active = false
-            console.log(response.data);
+            console.log(response.data); //tengo que poder ir a /HOME 
           }).catch( error => {
             console.error('Error: ', error);
           })

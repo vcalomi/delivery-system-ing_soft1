@@ -1,18 +1,23 @@
 <template>
- <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-  <ProductsComponent  />
+  <!-- <HelloWorld msg="Welcome to Your Vue.js App"/>-->
+  <!--<ProductsComponent  /> -->
+  
+    <nav>
+      <RouterLink to="/"> Home </RouterLink> |
+      <RouterLink to="/login"> Login </RouterLink>
+    </nav>
+    <div class="hello msg">
+      <h1>{{ "Bienvenido al mejor sistema de compras del mundo" }}</h1>
+    </div>
+    <RouterView class="vh-75"></RouterView>
+  
+  
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-import ProductsComponent from './components/ProductsComponent.vue'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld,
-    ProductsComponent
-  }
 }
 </script>
 
