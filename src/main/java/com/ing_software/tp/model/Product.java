@@ -20,4 +20,16 @@ public class Product {
     private int stock;
     @ElementCollection
     private Map<String, String> attributes;
+
+    public boolean hasAttribute(String attributeType,String value){
+        return attributes.containsKey(attributeType) && attributes.get(attributeType).equals(value);
+    }
+
+    public String getAttribute(String attributeType) {
+
+        return attributes.get(attributeType);
+
+    }
 }
+
+

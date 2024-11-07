@@ -4,6 +4,8 @@ import com.ing_software.tp.dto.OrderRequest;
 import com.ing_software.tp.dto.ProductRequest;
 import com.ing_software.tp.model.Order;
 import com.ing_software.tp.model.Product;
+import com.ing_software.tp.model.User;
+import com.ing_software.tp.model.rules.MaxAttributeCount;
 import com.ing_software.tp.repository.ProductRepository;
 import com.ing_software.tp.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,13 +33,13 @@ public class OrderTest {
 
     @BeforeEach
     void addProducts(){
-        productRepository.save(new Product(1L, "product_1", 1));
-        productRepository.save(new Product(2L, "product_2", 3));
+        Map<String,String> attributes = new HashMap<>();
+        productRepository.save(new Product(1L, "product_1", 1,attributes));
+        productRepository.save(new Product(2L, "product_2", 3,attributes));
     }
 
     @Test
     void canCreateAnOrderFromRequest(){
-
         List<ProductRequest> productRequests = new ArrayList<>();
         productRequests.add(new ProductRequest(1L, "product_1", 1));
         ProductRequest product_2 = new ProductRequest(2L, "product_2", 2);
@@ -56,7 +60,4 @@ public class OrderTest {
         assertThat(orderService.validateOrderRequestStock(orderRequest).get(product_2)).isFalse();
 
     }
-
-
-
 }
