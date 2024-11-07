@@ -28,19 +28,19 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest userCredentials) {
+    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest userCredentials) throws Exception {
 
         String token = userService.loginUser(userCredentials);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @PatchMapping("/forgetPassword")
-    public ResponseEntity<String> forgetPassword(@RequestBody @Valid UserForgetPasswordRequest userCredentials) {
+    public ResponseEntity<String> forgetPassword(@RequestBody @Valid UserForgetPasswordRequest userCredentials) throws Exception {
         userService.generateNewPassword(userCredentials);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PatchMapping("/changePassword")
-    public ResponseEntity<String> changePassword(@RequestBody @Valid UserChangePasswordRequest userCredentials) {
+    public ResponseEntity<String> changePassword(@RequestBody @Valid UserChangePasswordRequest userCredentials) throws Exception {
         userService.changePassword(userCredentials);
         return new ResponseEntity<>(HttpStatus.OK);
     }
