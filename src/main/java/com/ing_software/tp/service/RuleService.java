@@ -19,7 +19,7 @@ public class RuleService {
             case "minAttributeCount": {
                 OrderRule minAttributeCountRule = new MinAttributeCount((String) rule.get("attribute"),
                         (String) rule.get("value"),
-                        (String) rule.get("maxValue"));
+                        (String) rule.get("minValue"));
                 return minAttributeCountRule;
             }
             case "maxAttributeCount": {
@@ -36,7 +36,7 @@ public class RuleService {
             case "minAttributeSum": {
                 OrderRule minAttributeSum = new MinAttributeSum((String) rule.get("attribute"), (String) rule.get(
                         "value"),
-                        (String) rule.get("maxValue"));
+                        (String) rule.get("minValue"));
                 return minAttributeSum;
             }
             case "restrictedAttributeCombination": {
