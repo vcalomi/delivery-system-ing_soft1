@@ -1,11 +1,13 @@
 package com.ing_software.tp;
 
 import com.ing_software.tp.model.Order;
+import com.ing_software.tp.model.OrderRule;
 import com.ing_software.tp.model.Product;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.model.rules.AndRule;
 import com.ing_software.tp.model.rules.MaxAttributeCount;
 import com.ing_software.tp.model.rules.OrRule;
+import com.ing_software.tp.model.rules.NotRule;
 import com.ing_software.tp.model.rules.RestrictedAttributeCombinationRule;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +19,50 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RulesTest {
+
+    @Test
+    void emptyOrderShouldSatisfyMaxAttributeCountRule() {
+        List<Product> products = new ArrayList<>();
+        Order order = new Order(1L, new User(), products, true);
+
+        MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
+        assertThat(rule.isSatisfiedBy(order)).isTrue();
+    }
+
+    @Test
+    void emptyOrderShouldSatisfyAndRule() {
+        List<Product> products = new ArrayList<>();
+        Order order = new Order(1L, new User(), products, true);
+
+        AndRule rules = new AndRule(
+                new MaxAttributeCount("color", "red", "1"),
+                new MaxAttributeCount("color", "blue", "1")
+        );
+        assertThat(rules.isSatisfiedBy(order)).isTrue();
+    }
+
+    @Test
+    void emptyOrderShouldSatisfyOrRule() {
+        List<Product> products = new ArrayList<>();
+        Order order = new Order(1L, new User(), products, true);
+
+        OrRule rules = new OrRule(
+                new MaxAttributeCount("color", "red", "1"),
+                new MaxAttributeCount("color", "blue", "1")
+        );
+        assertThat(rules.isSatisfiedBy(order)).isTrue();
+    }
+
+    @Test
+    void emptyOrderShouldSatisfyNotRule() {
+        List<Product> products = new ArrayList<>();
+        Order order = new Order(1L, new User(), products, true);
+
+        MaxAttributeCount rule = new MaxAttributeCount("color", "blue", "1");
+        NotRule notRule = new NotRule(rule);
+
+        assertThat(notRule.isSatisfiedBy(order)).isFalse();
+    }
 
     @Test
     void cantHaveOrderWithMoreThanOneRedProduct(){
@@ -31,7 +77,47 @@ public class RulesTest {
 
         MaxAttributeCount rule = new MaxAttributeCount("color","red","1");
         assertThat(rule.isSatisfiedBy(order)).isFalse();
+    }
 
+    @Test
+    void maxAttributeCountExactMatch() {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("color", "red");
+        Product product = new Product(1L, "product_name1", 1, attributes);
+        List<Product> products = new ArrayList<>();
+        products.add(product);
+        Order order = new Order(1L, new User(), products, true);
+
+        MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
+        assertThat(rule.isSatisfiedBy(order)).isTrue();
+    }
+
+    @Test
+    void maxAttributeCountExceedsLimit() {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("color", "red");
+        Product product1 = new Product(1L, "product_name1", 1, attributes);
+        Product product2 = new Product(2L, "product_name2", 1, attributes);
+        List<Product> products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
+        Order order = new Order(1L, new User(), products, true);
+
+        MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
+        assertThat(rule.isSatisfiedBy(order)).isFalse();
+    }
+
+    @Test
+    void maxAttributeCountWithNoMatchingAttribute() {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("color", "blue");
+        Product product = new Product(1L, "product_name1", 1, attributes);
+        List<Product> products = new ArrayList<>();
+        products.add(product);
+        Order order = new Order(1L, new User(), products, true);
+
+        MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
+        assertThat(rule.isSatisfiedBy(order)).isTrue();
     }
 
     @Test
@@ -47,11 +133,9 @@ public class RulesTest {
         products.add(product2);
         products.add(product2);
 
-
         Order order = new Order(1L,new User(),products,true);
         AndRule rules = new AndRule(new MaxAttributeCount("color","red","1"),new MaxAttributeCount("color","blue","1"));
         assertThat(rules.isSatisfiedBy(order)).isFalse();
-
     }
 
     @Test
@@ -67,16 +151,76 @@ public class RulesTest {
         products.add(product2);
         products.add(product2);
 
-
         Order order = new Order(1L,new User(),products,true);
         OrRule rules = new OrRule(new MaxAttributeCount("color","red","1"),new MaxAttributeCount("color","blue","1"));
         assertThat(rules.isSatisfiedBy(order)).isTrue();
+    }
 
+    @Test
+    void notRuleTest() {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("color", "blue");
+        Product product = new Product(1L, "product_name1", 1, attributes);
+        List<Product> products = new ArrayList<>();
+        products.add(product);
+
+        Order order = new Order(1L, new User(), products, true);
+        MaxAttributeCount originalRule = new MaxAttributeCount("color", "blue", "1");
+        NotRule notRule = new NotRule(originalRule);
+
+        assertThat(notRule.isSatisfiedBy(order)).isFalse();
+    }
+
+    @Test
+    void notRuleWithAndCombinationTest() {
+        Map<String, String> attributes1 = new HashMap<>();
+        Map<String, String> attributes2 = new HashMap<>();
+        attributes1.put("type", "liquid");
+        attributes2.put("type", "gaseous");
+
+        Product product1 = new Product(1L, "product1", 1, attributes1);
+        Product product2 = new Product(2L, "product2", 1, attributes2);
+
+        List<Product> products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
+
+        Order order = new Order(1L, new User(), products, true);
+
+        MaxAttributeCount noLiquidRule = new MaxAttributeCount("type", "liquid", "0");
+        MaxAttributeCount noGaseousRule = new MaxAttributeCount("type", "gaseous", "0");
+
+        AndRule complexRule = new AndRule(
+                new NotRule(noLiquidRule),
+                new NotRule(noGaseousRule)
+        );
+
+        assertThat(complexRule.isSatisfiedBy(order)).isTrue();
+    }
+    @Test
+    void notRuleWithOrCombinationTest() {
+        Map<String, String> attributes1 = new HashMap<>();
+        Map<String, String> attributes2 = new HashMap<>();
+        attributes1.put("color", "green");
+        attributes2.put("color", "blue");
+        Product product1 = new Product(1L, "product_name1", 1, attributes1);
+        Product product2 = new Product(1L, "product_name2", 1, attributes2);
+        List<Product> products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
+
+        Order order = new Order(1L, new User(), products, true);
+        NotRule notRule = new NotRule(
+                new OrRule(
+                        new MaxAttributeCount("color", "green", "1"),
+                        new MaxAttributeCount("color", "blue", "0")
+                )
+        );
+        assertThat(notRule.isSatisfiedBy(order)).isFalse();
     }
 
     @Test
     void restrictedCombinationRule(){
-
         Map<String,String> attributes = new HashMap<>();
         Map<String,String> attributes2 = new HashMap<>();
         attributes.put("color","green");
@@ -92,6 +236,35 @@ public class RulesTest {
         RestrictedAttributeCombinationRule rule = new RestrictedAttributeCombinationRule("color",restrictions);
 
         assertThat(rule.isSatisfiedBy(order)).isFalse();
-
     }
+    @Test
+    void restrictedCombinationRuleWithMultipleRestrictions() {
+        Map<String, String> attributesRed = new HashMap<>();
+        attributesRed.put("color", "red");
+        attributesRed.put("size", "1");
+
+        Map<String, String> attributesGreen = new HashMap<>();
+        attributesGreen.put("color", "green");
+        attributesGreen.put("size", "2");
+
+        Product productRed = new Product(1L, "product_red", 1, attributesRed);
+        Product productGreen = new Product(2L, "product_green", 1, attributesGreen);
+
+        List<Product> products = new ArrayList<>();
+        products.add(productRed);
+        products.add(productGreen);
+
+        List<String> restrictedColorCombination = List.of("red", "green");
+        List<String> restrictedSizeCombination = List.of("1", "2");
+
+        RestrictedAttributeCombinationRule restrictedColorRule = new RestrictedAttributeCombinationRule("color", restrictedColorCombination);
+        RestrictedAttributeCombinationRule restrictedSizeRule = new RestrictedAttributeCombinationRule("size", restrictedSizeCombination);
+
+        AndRule combinedRule = new AndRule(restrictedColorRule, restrictedSizeRule);
+
+        Order order = new Order(1L, new User(), products, true);
+
+        assertThat(combinedRule.isSatisfiedBy(order)).isFalse();
+    }
+
 }
