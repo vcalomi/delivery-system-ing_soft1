@@ -43,10 +43,12 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(
                 request -> request
                         .requestMatchers("/api/users/**").permitAll()
-                        .requestMatchers("/api/orders/**").authenticated()
+                        .requestMatchers("/api/orders/create").authenticated()
+                        .requestMatchers("/api/orders/confirmOrder/").authenticated()
                         .requestMatchers("/api/products/create").hasRole("ADMIN")
                         .requestMatchers("/api/products/").permitAll()
                         .requestMatchers("/api/products/edit").hasRole("ADMIN")
+                        .requestMatchers("/api/orders/createRule").permitAll()
         )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

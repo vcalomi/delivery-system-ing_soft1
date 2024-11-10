@@ -2,6 +2,6 @@ package com.ing_software.tp.model;
 
 public interface OrderRule {
 
-    public boolean isSatisfiedBy(Order order);
+    boolean isSatisfiedBy(Order order);
 
 }
