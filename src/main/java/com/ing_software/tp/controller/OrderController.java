@@ -39,7 +39,7 @@ public class OrderController {
 
     @PostMapping("/createRule")
     public ResponseEntity<Map<String, Object>> createRule(@RequestBody Map<String, Object> ruleRequest){
-        ruleService.createOrderRule(ruleRequest);
+        OrderRule rule = ruleService.createOrderRule(ruleRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
