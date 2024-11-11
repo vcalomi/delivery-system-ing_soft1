@@ -14,18 +14,18 @@ import lombok.NoArgsConstructor;
 public class MinAttributeCount extends OrderRule {
 
     private String attribute;
-    private String value;
+    private String attributeValue;
     private int minCount;
 
-    public MinAttributeCount(String attribute, String value, String minCount) {
+    public MinAttributeCount(String attribute, String attributeValue, String minCount) {
         this.attribute = attribute;
-        this.value = value;
+        this.attributeValue = attributeValue;
         this.minCount = Integer.parseInt(minCount);
     }
     public boolean isSatisfiedBy(Order order) {
         int count = 0;
         for (OrderProduct orderProduct: order.getProducts()) {
-            if (orderProduct.hasAttribute(attribute, value)) {
+            if (orderProduct.hasAttribute(attribute, attributeValue)) {
                 count += orderProduct.getQuantity();
             }
         }

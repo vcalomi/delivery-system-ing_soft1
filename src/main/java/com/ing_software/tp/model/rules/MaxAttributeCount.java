@@ -14,18 +14,18 @@ import lombok.NoArgsConstructor;
 public class MaxAttributeCount extends OrderRule {
 
     private String attribute;
-    private String value;
+    private String attributeValue;
     private int maxCount;
 
-    public MaxAttributeCount(String attribute, String value, String maxCount) {
+    public MaxAttributeCount(String attribute, String attributeValue, String maxCount) {
         this.attribute = attribute;
-        this.value = value;
+        this.attributeValue = attributeValue;
         this.maxCount = Integer.parseInt(maxCount);
     }
     public boolean isSatisfiedBy(Order order) {
         int count = 0;
         for (OrderProduct orderProduct: order.getProducts()) {
-            if (orderProduct.hasAttribute(attribute, value)) {
+            if (orderProduct.hasAttribute(attribute, attributeValue)) {
                 count += orderProduct.getQuantity();
             }
         }
