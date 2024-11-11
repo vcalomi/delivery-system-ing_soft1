@@ -1,5 +1,6 @@
 package com.ing_software.tp.service;
 
+import com.ing_software.tp.dto.OrderConfirmedResponse;
 import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
 import com.ing_software.tp.dto.ProductRequest;
@@ -82,5 +83,24 @@ public class OrderServiceImpl implements OrderService{
         order.get().setConfirmed(true);
         orderRepository.save(order.get());
         emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email", emailSenderService.buildOrderConfirmationEmail(order.get()));
+    }
+
+    public List<OrderConfirmedResponse> getConfirmedOrders() throws Exception {
+        List<Order> orders = (List<Order>) orderRepository.findAll();
+        List<OrderConfirmedResponse> confirmedOrders = new ArrayList<>();
+        if (orders.isEmpty()) {
+            throw new Exception("No orders found");
+        }
+        for (Order order: orders){
+            if(order.isConfirmed()){
+                OrderConfirmedResponse confirmedOrder = new OrderConfirmedResponse(order.getId(),
+                        order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
+                confirmedOrders.add(confirmedOrder);
+            }
+        }
+        if (confirmedOrders.isEmpty()){
+            throw new Exception("No confirmed orders found");
+        }
+        return confirmedOrders;
     }
 }

@@ -1,5 +1,6 @@
 package com.ing_software.tp.controller;
 
+import com.ing_software.tp.dto.OrderConfirmedResponse;
 import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
 import com.ing_software.tp.model.Order;
@@ -8,6 +9,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -30,6 +33,11 @@ public class OrderController {
     public ResponseEntity<String> confirmOrder(@PathVariable Long order_id){
         orderService.confirmOrder(order_id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @GetMapping("/confirmed")
+    public ResponseEntity<List<OrderConfirmedResponse>> getConfirmedOrders() throws Exception{
+        List<OrderConfirmedResponse> confirmedOrders = orderService.getConfirmedOrders();
+        return new ResponseEntity<>(confirmedOrders, HttpStatus.OK);
     }
 
 }
