@@ -2,7 +2,7 @@ package com.ing_software.tp;
 
 import com.ing_software.tp.model.Order;
 import com.ing_software.tp.model.OrderRule;
-import com.ing_software.tp.model.Product;
+import com.ing_software.tp.model.OrderProduct;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.model.rules.AndRule;
 import com.ing_software.tp.model.rules.MaxAttributeCount;
@@ -22,7 +22,7 @@ public class RulesTest {
 
     @Test
     void emptyOrderShouldSatisfyMaxAttributeCountRule() {
-        List<Product> products = new ArrayList<>();
+        List<OrderProduct> products = new ArrayList<>();
         Order order = new Order(1L, new User(), products, true);
 
         MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
@@ -31,7 +31,7 @@ public class RulesTest {
 
     @Test
     void emptyOrderShouldSatisfyAndRule() {
-        List<Product> products = new ArrayList<>();
+        List<OrderProduct> products = new ArrayList<>();
         Order order = new Order(1L, new User(), products, true);
 
         AndRule rules = new AndRule(
@@ -43,7 +43,7 @@ public class RulesTest {
 
     @Test
     void emptyOrderShouldSatisfyOrRule() {
-        List<Product> products = new ArrayList<>();
+        List<OrderProduct> products = new ArrayList<>();
         Order order = new Order(1L, new User(), products, true);
 
         OrRule rules = new OrRule(
@@ -55,7 +55,7 @@ public class RulesTest {
 
     @Test
     void emptyOrderShouldSatisfyNotRule() {
-        List<Product> products = new ArrayList<>();
+        List<OrderProduct> products = new ArrayList<>();
         Order order = new Order(1L, new User(), products, true);
 
         MaxAttributeCount rule = new MaxAttributeCount("color", "blue", "1");
@@ -68,10 +68,10 @@ public class RulesTest {
     void cantHaveOrderWithMoreThanOneRedProduct(){
         Map<String,String> attributes = new HashMap<>();
         attributes.put("color","red");
-        Product product = new Product(1L,"product_name1",1,attributes);
-        Product product2 = new Product(2L,"product_name2",1,attributes);
-        List<Product> products = new ArrayList<>();
-        products.add(product);
+        OrderProduct orderProduct = new OrderProduct(1L, 1L,"product_name1",1,attributes);
+        OrderProduct product2 = new OrderProduct(2L, 2L,"product_name2",1,attributes);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
         products.add(product2);
         Order order = new Order(1L,new User(),products,true);
 
@@ -83,9 +83,9 @@ public class RulesTest {
     void maxAttributeCountExactMatch() {
         Map<String, String> attributes = new HashMap<>();
         attributes.put("color", "red");
-        Product product = new Product(1L, "product_name1", 1, attributes);
-        List<Product> products = new ArrayList<>();
-        products.add(product);
+        OrderProduct orderProduct = new OrderProduct(1L, 1L,"product_name1", 1, attributes);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
         Order order = new Order(1L, new User(), products, true);
 
         MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
@@ -96,9 +96,9 @@ public class RulesTest {
     void maxAttributeCountExceedsLimit() {
         Map<String, String> attributes = new HashMap<>();
         attributes.put("color", "red");
-        Product product1 = new Product(1L, "product_name1", 1, attributes);
-        Product product2 = new Product(2L, "product_name2", 1, attributes);
-        List<Product> products = new ArrayList<>();
+        OrderProduct product1 = new OrderProduct(1L, 1L, "product_name1", 1, attributes);
+        OrderProduct product2 = new OrderProduct(2L, 2L, "product_name2", 1, attributes);
+        List<OrderProduct> products = new ArrayList<>();
         products.add(product1);
         products.add(product2);
         Order order = new Order(1L, new User(), products, true);
@@ -111,9 +111,9 @@ public class RulesTest {
     void maxAttributeCountWithNoMatchingAttribute() {
         Map<String, String> attributes = new HashMap<>();
         attributes.put("color", "blue");
-        Product product = new Product(1L, "product_name1", 1, attributes);
-        List<Product> products = new ArrayList<>();
-        products.add(product);
+        OrderProduct orderProduct = new OrderProduct(1L, 1L, "product_name1", 1, attributes);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
         Order order = new Order(1L, new User(), products, true);
 
         MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
@@ -126,10 +126,10 @@ public class RulesTest {
         Map<String,String> attributes2 = new HashMap<>();
         attributes.put("color","red");
         attributes2.put("color","blue");
-        Product product = new Product(1L,"product_name1",1,attributes);
-        Product product2 = new Product(2L,"product_name2",1,attributes2);
-        List<Product> products = new ArrayList<>();
-        products.add(product);
+        OrderProduct orderProduct = new OrderProduct(1L, 1L,"product_name1",1,attributes);
+        OrderProduct product2 = new OrderProduct(2L, 2L,"product_name2",1,attributes2);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
         products.add(product2);
         products.add(product2);
 
@@ -144,10 +144,10 @@ public class RulesTest {
         Map<String,String> attributes2 = new HashMap<>();
         attributes.put("color","green");
         attributes2.put("color","red");
-        Product product = new Product(1L,"product_name1",1,attributes);
-        Product product2 = new Product(2L,"product_name2",1,attributes2);
-        List<Product> products = new ArrayList<>();
-        products.add(product);
+        OrderProduct orderProduct = new OrderProduct(1L, 2L,"product_name1",1,attributes);
+        OrderProduct product2 = new OrderProduct(2L, 2L,"product_name2",1,attributes2);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
         products.add(product2);
         products.add(product2);
 
@@ -160,9 +160,9 @@ public class RulesTest {
     void notRuleTest() {
         Map<String, String> attributes = new HashMap<>();
         attributes.put("color", "blue");
-        Product product = new Product(1L, "product_name1", 1, attributes);
-        List<Product> products = new ArrayList<>();
-        products.add(product);
+        OrderProduct orderProduct = new OrderProduct(1L, 1L, "product_name1", 1, attributes);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
 
         Order order = new Order(1L, new User(), products, true);
         MaxAttributeCount originalRule = new MaxAttributeCount("color", "blue", "1");
@@ -178,10 +178,10 @@ public class RulesTest {
         attributes1.put("type", "liquid");
         attributes2.put("type", "gaseous");
 
-        Product product1 = new Product(1L, "product1", 1, attributes1);
-        Product product2 = new Product(2L, "product2", 1, attributes2);
+        OrderProduct product1 = new OrderProduct(1L, 1L, "product1", 1, attributes1);
+        OrderProduct product2 = new OrderProduct(2L, 2L, "product2", 1, attributes2);
 
-        List<Product> products = new ArrayList<>();
+        List<OrderProduct> products = new ArrayList<>();
         products.add(product1);
         products.add(product2);
 
@@ -203,9 +203,9 @@ public class RulesTest {
         Map<String, String> attributes2 = new HashMap<>();
         attributes1.put("color", "green");
         attributes2.put("color", "blue");
-        Product product1 = new Product(1L, "product_name1", 1, attributes1);
-        Product product2 = new Product(1L, "product_name2", 1, attributes2);
-        List<Product> products = new ArrayList<>();
+        OrderProduct product1 = new OrderProduct(1L, 1L, "product_name1", 1, attributes1);
+        OrderProduct product2 = new OrderProduct(1L, 1L, "product_name2", 1, attributes2);
+        List<OrderProduct> products = new ArrayList<>();
         products.add(product1);
         products.add(product2);
 
@@ -225,10 +225,10 @@ public class RulesTest {
         Map<String,String> attributes2 = new HashMap<>();
         attributes.put("color","green");
         attributes2.put("color","red");
-        Product product = new Product(1L,"product_name1",1,attributes);
-        Product product2 = new Product(2L,"product_name2",1,attributes2);
-        List<Product> products = new ArrayList<>();
-        products.add(product);
+        OrderProduct orderProduct = new OrderProduct(1L, 1L,"product_name1",1,attributes);
+        OrderProduct product2 = new OrderProduct(2L, 2L,"product_name2",1,attributes2);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
         products.add(product2);
         List<String> restrictions = List.of("red","green");
 
@@ -247,10 +247,10 @@ public class RulesTest {
         attributesGreen.put("color", "green");
         attributesGreen.put("size", "2");
 
-        Product productRed = new Product(1L, "product_red", 1, attributesRed);
-        Product productGreen = new Product(2L, "product_green", 1, attributesGreen);
+        OrderProduct productRed = new OrderProduct(1L, 1L, "product_red", 1, attributesRed);
+        OrderProduct productGreen = new OrderProduct(2L, 2L, "product_green", 1, attributesGreen);
 
-        List<Product> products = new ArrayList<>();
+        List<OrderProduct> products = new ArrayList<>();
         products.add(productRed);
         products.add(productGreen);
 
