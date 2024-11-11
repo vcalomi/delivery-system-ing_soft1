@@ -1,6 +1,7 @@
 package com.ing_software.tp.service;
 
 import com.ing_software.tp.model.Order;
+import com.ing_software.tp.model.OrderProduct;
 import com.ing_software.tp.model.Product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -35,9 +36,9 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
         emailBody.append("Productos:\n");
 
-        for (Product item : order.getProducts()) {
+        for (OrderProduct item : order.getProducts()) {
             emailBody.append("- ").append(item.getProduct_name())
-                    .append(" (Cantidad: ").append(item.getStock()) //modificar acá cantidad de c/producto
+                    .append(" (Cantidad: ").append(item.getQuantity()) //modificar acá cantidad de c/producto
                     //.append(", Precio: $").append(item.getPrice())
                     .append(")\n");
         }

@@ -1,6 +1,7 @@
 package com.ing_software.tp.controller;
 
 import com.ing_software.tp.dto.OrderRequest;
+import com.ing_software.tp.model.Order;
 import com.ing_software.tp.model.OrderRule;
 import com.ing_software.tp.service.OrderService;
 import com.ing_software.tp.service.RuleServiceImpl;
@@ -24,10 +25,10 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<String> createOrder(@RequestBody @Valid OrderRequest orderRequest,
+    public ResponseEntity<Order> createOrder(@RequestBody @Valid OrderRequest orderRequest,
                                               @RequestHeader("Authorization") String authorizationHeader){
-        orderService.createOrder(orderRequest, authorizationHeader);
-        return new ResponseEntity<>("", HttpStatus.CREATED);
+        Order order = orderService.createOrder(orderRequest, authorizationHeader);
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
     @PatchMapping("/confirmOrder/{order_id}")

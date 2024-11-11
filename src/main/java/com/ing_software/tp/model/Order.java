@@ -20,6 +20,6 @@ public class Order {
     @OneToOne
     private User owner;
     @OneToMany
-    private List<Product> products;
+    private List<OrderProduct> products;
     private boolean isConfirmed = false;
 }

@@ -2,10 +2,8 @@ package com.ing_software.tp.service;
 
 import com.ing_software.tp.dto.OrderRequest;
 import com.ing_software.tp.dto.ProductRequest;
-import com.ing_software.tp.model.Order;
-import com.ing_software.tp.model.OrderRule;
-import com.ing_software.tp.model.Product;
-import com.ing_software.tp.model.User;
+import com.ing_software.tp.model.*;
+import com.ing_software.tp.repository.OrderProductRepository;
 import com.ing_software.tp.repository.OrderRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -23,18 +21,19 @@ public class OrderServiceImpl implements OrderService{
     private final UserService userService;
     private final EmailSenderService emailSenderService;
     private final RuleService ruleService;
+    private final OrderProductRepository orderProductRepository;
 
-    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService, EmailSenderService emailSenderService, RuleService ruleService) {
+    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService, EmailSenderService emailSenderService, RuleService ruleService, OrderProductRepository orderProductRepository) {
         this.productService = productService;
         this.orderRepository = orderRepository;
         this.jwtService = jwtService;
         this.userService = userService;
         this.emailSenderService = emailSenderService;
         this.ruleService = ruleService;
+        this.orderProductRepository = orderProductRepository;
     }
 
-    public Order createOrder(@Valid OrderRequest orderRequest, String authorizationHeader) {
-
+    private String validateAuthorization(String authorizationHeader){
         String username = null;
         if (authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7);
@@ -46,31 +45,46 @@ public class OrderServiceImpl implements OrderService{
             String[] values = credentials.split(":", 2);
             username = values[0];
         }
+        return username;
+    }
 
+    public Order createOrder(@Valid OrderRequest orderRequest, String authorizationHeader) {
 
+        String username = validateAuthorization(authorizationHeader);
+        
         User user = userService.findByUsername(username);
 
         Map<ProductRequest, Boolean> nonValidProductsRequested = validateOrderRequestStock(orderRequest);
-        if (nonValidProductsRequested.isEmpty()){
-            Order order = new Order();
-            List<Product> products = new ArrayList<>();
-
-            for (ProductRequest productRequest: orderRequest.getProducts()){
-                Optional<Product> optionalProduct = productService.findProductById(productRequest.getId());
-                optionalProduct.ifPresent(products::add);
-            }
-            order.setProducts(products);
-            order.setOwner(user);
-
-            List<OrderRule> rules = ruleService.getAllRules();
-            for (OrderRule rule : rules) {
-                if(!rule.isSatisfiedBy(order))
-                    throw new RuntimeException("Rule not satisfied!");
-            }
-
-            return orderRepository.save(order);
+        if(!nonValidProductsRequested.isEmpty()) {
+            throw new RuntimeException("Invalid order");
         }
-        throw new RuntimeException("Invalid order");
+
+        Order order = new Order();
+        List<OrderProduct> products = new ArrayList<>();
+
+        for (ProductRequest productRequest: orderRequest.getProducts()){
+
+            Optional<Product> optionalProduct = productService.findProductById(productRequest.getId());
+            Map<String, String> attributes = null;
+            if (optionalProduct.isPresent()) {
+                attributes = new HashMap<>(Map.copyOf(optionalProduct.get().getAttributes()));
+            }
+
+            OrderProduct product = new OrderProduct(null, productRequest.getProduct_name(),
+                    productRequest.getQuantity(), attributes);
+            OrderProduct entityProduct = orderProductRepository.save(product);
+            products.add(entityProduct);
+        }
+        order.setProducts(products);
+        order.setOwner(user);
+
+        List<OrderRule> rules = ruleService.getAllRules();
+        for (OrderRule rule : rules) {
+            if(!rule.isSatisfiedBy(order))
+                throw new RuntimeException("Rule not satisfied!");
+        }
+
+        return orderRepository.save(order);
     }
 
     public Map<ProductRequest, Boolean> validateOrderRequestStock(OrderRequest orderRequest){
