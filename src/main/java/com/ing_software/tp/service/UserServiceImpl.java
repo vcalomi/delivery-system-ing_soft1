@@ -41,27 +41,27 @@ public class UserServiceImpl implements UserService {
         return token;
     }
 
-    public String loginUser(@Valid UserLoginRequest userCredentials){
+    public String loginUser(@Valid UserLoginRequest userCredentials) throws Exception {
 
         UserDetails userDetails = userRepository.findByUsername(userCredentials.getUsername());
         if (userDetails == null){
-            throw new UsernameNotFoundException("Invalid username.");
+            throw new Exception("Invalid username.");
         }
 
         if (passwordEncoder.matches(userCredentials.getPassword(), userDetails.getPassword())){
             return jwtService.generateToken(userDetails.getUsername());
         }
-        throw new UsernameNotFoundException("Invalid password");
+        throw new Exception("Invalid password");
     }
 
     public User findByUsername(String username) {
         return (User) userRepository.findByUsername(username);
     }
 
-    public void generateNewPassword(@Valid UserForgetPasswordRequest userCredentials) {
+    public void generateNewPassword(@Valid UserForgetPasswordRequest userCredentials) throws Exception {
         UserDetails userDetails = userRepository.findByUsername(userCredentials.getUsername());
         if (userDetails == null){
-            throw new UsernameNotFoundException("Invalid username.");
+            throw new Exception("Invalid username.");
         }
         String randomPassword = passwordGeneratorService.generateRandomPassword();
         User user = (User) userDetails;
@@ -70,10 +70,10 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    public void changePassword(@Valid UserChangePasswordRequest userCredentials) {
+    public void changePassword(@Valid UserChangePasswordRequest userCredentials) throws Exception {
         UserDetails userDetails = userRepository.findByUsername(userCredentials.getUsername());
         if (userDetails == null){
-            throw new UsernameNotFoundException("Invalid username.");
+            throw new Exception("Invalid username.");
         }
         if (passwordEncoder.matches(userCredentials.getOldPassword(), userDetails.getPassword()) &&
                 userCredentials.getNewPassword().equals(userCredentials.getRepeatedNewPassword()) ){
@@ -82,10 +82,10 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }
         else if(!userCredentials.getNewPassword().equals(userCredentials.getRepeatedNewPassword())){
-            throw new UsernameNotFoundException("New password and Repeated New Password do not match.");
+            throw new Exception("New password and Repeated New Password do not match.");
         }
         else{
-            throw new UsernameNotFoundException("Invalid password.");
+            throw new Exception("Invalid password.");
         }
     }
 }

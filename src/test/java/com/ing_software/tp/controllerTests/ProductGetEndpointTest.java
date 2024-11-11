@@ -13,7 +13,6 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,9 +36,8 @@ public class ProductGetEndpointTest {
 
     @Test
     void getProductsWithFourProductsReturnsTheCorrectAmountOfProducts(){
-        Map<String,String> attributes = new HashMap<>();
-        Product[] products = {new Product(null, "product_1", 5,attributes), new Product(null, "product_2", 5,attributes),new Product(null,
-                "product_3", 5,attributes),new Product(null, "product_4", 5,attributes)};
+        Product[] products = {new Product(null, "product_1", 5, new HashMap<>()), new Product(null, "product_2", 5, new HashMap<>()),
+                new Product(null, "product_3", 5, new HashMap<>()),new Product(null, "product_4", 5, new HashMap<>())};
         productRepository.saveAll(Arrays.asList(products));
 
         ResponseEntity<List> response = restTemplate.getForEntity(PRODUCTS_URI, List.class);

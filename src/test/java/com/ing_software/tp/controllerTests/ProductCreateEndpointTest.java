@@ -68,8 +68,7 @@ public class ProductCreateEndpointTest {
 
     @Test
     void userCantCreateAProduct(){
-        Map<String,String> attributes = new HashMap<>();
-        NewProductRequest newProduct = new NewProductRequest("product_1", 20,attributes);
+        NewProductRequest newProduct = new NewProductRequest("product_1", 20, new HashMap<>());
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("Bearer %s", userToken));
         HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(newProduct, headers);
@@ -80,8 +79,7 @@ public class ProductCreateEndpointTest {
 
     @Test
     void adminCanCreateAProduct(){
-        Map<String,String> attributes = new HashMap<>();
-        NewProductRequest newProduct = new NewProductRequest("product_1", 20,attributes);
+        NewProductRequest newProduct = new NewProductRequest("product_1", 20, new HashMap<>());
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("Bearer %s", adminToken));
         HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(newProduct, headers);
@@ -92,8 +90,7 @@ public class ProductCreateEndpointTest {
 
     @Test
     void cantCreateAProductWithANullName(){
-        Map<String,String> attributes = new HashMap<>();
-        NewProductRequest newProduct = new NewProductRequest(null, 20,attributes);
+        NewProductRequest newProduct = new NewProductRequest(null, 20, new HashMap<>());
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("Bearer %s", adminToken));
         HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(newProduct, headers);
@@ -103,8 +100,7 @@ public class ProductCreateEndpointTest {
 
     @Test
     void cantCreateAProductWithAnEmptyName(){
-        Map<String,String> attributes = new HashMap<>();
-        NewProductRequest newProduct = new NewProductRequest("", 20,attributes);
+        NewProductRequest newProduct = new NewProductRequest("", 20, new HashMap<>());
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("Bearer %s", adminToken));
         HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(newProduct, headers);
@@ -112,4 +108,13 @@ public class ProductCreateEndpointTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
+    @Test
+    void cantCreateAProductWithLessThanOneOfStock(){
+        NewProductRequest newProduct = new NewProductRequest("product_1", 0, new HashMap<>());
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", String.format("Bearer %s", adminToken));
+        HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(newProduct, headers);
+        ResponseEntity<?> response = restTemplate.postForEntity(String.format("%s/create", PRODUCTS_URI), requestEntity, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
 }

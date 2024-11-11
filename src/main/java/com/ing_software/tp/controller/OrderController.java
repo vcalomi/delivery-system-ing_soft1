@@ -1,8 +1,11 @@
 package com.ing_software.tp.controller;
 
+import com.ing_software.tp.dto.OrderConfirmedResponse;
+import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
 import com.ing_software.tp.model.Order;
 import com.ing_software.tp.model.OrderRule;
+import com.ing_software.tp.model.Order;
 import com.ing_software.tp.service.OrderService;
 import com.ing_software.tp.service.RuleServiceImpl;
 import jakarta.validation.Valid;
@@ -26,9 +29,9 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Order> createOrder(@RequestBody @Valid OrderRequest orderRequest,
-                                              @RequestHeader("Authorization") String authorizationHeader){
-        Order order = orderService.createOrder(orderRequest, authorizationHeader);
+    public ResponseEntity<OrderCreateResponse> createOrder(@RequestBody @Valid OrderRequest orderRequest,
+                                                           @RequestHeader("Authorization") String authorizationHeader){
+        OrderCreateResponse order = orderService.createOrder(orderRequest, authorizationHeader);
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
@@ -37,6 +40,11 @@ public class OrderController {
         orderService.confirmOrder(order_id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    @GetMapping("/confirmed")
+    public ResponseEntity<List<OrderConfirmedResponse>> getConfirmedOrders() throws Exception{
+        List<OrderConfirmedResponse> confirmedOrders = orderService.getConfirmedOrders();
+        return new ResponseEntity<>(confirmedOrders, HttpStatus.OK);
+    }
 
     @PostMapping("/createRule")
     public ResponseEntity<OrderRule> createRule(@RequestBody Map<String, Object> ruleRequest){
@@ -44,10 +52,6 @@ public class OrderController {
         return new ResponseEntity<>(rule, HttpStatus.CREATED);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Order>> getALlOrders(){
-        List<Order> orders = orderService.getAllOrders();
-        return new ResponseEntity<>(orders, HttpStatus.OK);
-    }
+
 
 }

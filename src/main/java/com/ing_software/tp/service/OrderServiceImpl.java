@@ -1,9 +1,11 @@
 package com.ing_software.tp.service;
 
+import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
 import com.ing_software.tp.dto.ProductRequest;
-import com.ing_software.tp.model.*;
-import com.ing_software.tp.repository.OrderProductRepository;
+import com.ing_software.tp.model.Order;
+import com.ing_software.tp.model.Product;
+import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.OrderRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ public class OrderServiceImpl implements OrderService{
     private final RuleService ruleService;
     private final OrderProductRepository orderProductRepository;
 
-    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService, EmailSenderService emailSenderService, RuleService ruleService, OrderProductRepository orderProductRepository) {
+    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService, EmailSenderService emailSenderService) {
         this.productService = productService;
         this.orderRepository = orderRepository;
         this.jwtService = jwtService;
@@ -46,10 +48,10 @@ public class OrderServiceImpl implements OrderService{
         return username;
     }
 
-    public Order createOrder(@Valid OrderRequest orderRequest, String authorizationHeader) {
+    public OrderCreateResponse createOrder(@Valid OrderRequest orderRequest, String authorizationHeader) {
 
         String username = validateAuthorization(authorizationHeader);
-        
+
         User user = userService.findByUsername(username);
 
         Map<ProductRequest, Boolean> nonValidProductsRequested = validateOrderRequestStock(orderRequest);
@@ -82,7 +84,8 @@ public class OrderServiceImpl implements OrderService{
                 throw new RuntimeException("Rule not satisfied!");
         }
 
-        return orderRepository.save(order);
+        orderRepository.save(order);
+        return new OrderCreateResponse(order.getId(), user.getUsername(), order.getProducts())
     }
 
     public Map<ProductRequest, Boolean> validateOrderRequestStock(OrderRequest orderRequest){
@@ -102,13 +105,27 @@ public class OrderServiceImpl implements OrderService{
         }
         User user = order.get().getOwner();
         order.get().setConfirmed(true);
-        System.out.println(order.get().getId());
         productService.updateStock(order.get().getProducts());
         orderRepository.save(order.get());
         emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email", emailSenderService.buildOrderConfirmationEmail(order.get()));
     }
 
-    public List<Order> getAllOrders() {
-        return (List<Order>) orderRepository.findAll();
+    public List<OrderConfirmedResponse> getConfirmedOrders() throws Exception {
+        List<Order> orders = (List<Order>) orderRepository.findAll();
+        List<OrderConfirmedResponse> confirmedOrders = new ArrayList<>();
+        if (orders.isEmpty()) {
+            throw new Exception("No orders found");
+        }
+        for (Order order: orders){
+            if(order.isConfirmed()){
+                OrderConfirmedResponse confirmedOrder = new OrderConfirmedResponse(order.getId(),
+                        order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
+                confirmedOrders.add(confirmedOrder);
+            }
+        }
+        if (confirmedOrders.isEmpty()){
+            throw new Exception("No confirmed orders found");
+        }
+        return confirmedOrders;
     }
 }

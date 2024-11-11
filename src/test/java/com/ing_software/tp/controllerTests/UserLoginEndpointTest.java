@@ -37,7 +37,9 @@ public class UserLoginEndpointTest {
     @BeforeAll
     static void registerUser(@Autowired TestRestTemplate restTemplate) {
 
-        registeredUser = new User(null, "John", "Doe", "email@email.com", 20, "address", "John1", "1234", "USER");
+        registeredUser = new User(null, "John", "Doe", "email@email.com", 20,
+                "address", "John1", "1234", "USER");
+        restTemplate.postForEntity(REGISTER_URI, registeredUser, String.class);
     }
 
     @Test
@@ -59,13 +61,13 @@ public class UserLoginEndpointTest {
     void cantLoginWithIncorrectUsername(){
         UserLoginRequest userLoginRequest = new UserLoginRequest("incorrectUsername", "1234");
         ResponseEntity<String> response = restTemplate.postForEntity(LOGIN_URI, userLoginRequest, String.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     @Test
     void cantLoginWithIncorrectPassword(){
         UserLoginRequest userLoginRequest = new UserLoginRequest("John1", "incorrectPassword");
         ResponseEntity<String> response = restTemplate.postForEntity(LOGIN_URI, userLoginRequest, String.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
     @Test
     void cantLoginWithMissingUsername(){

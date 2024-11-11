@@ -9,8 +9,8 @@ import com.ing_software.tp.model.User;
 public interface UserService {
 
     String registerUser(UserRegisterRequest user);
-    String loginUser(UserLoginRequest user);
+    String loginUser(UserLoginRequest user) throws Exception;
     User findByUsername(String username);
-    void generateNewPassword(UserForgetPasswordRequest user);
-    void changePassword(UserChangePasswordRequest user);
+    void generateNewPassword(UserForgetPasswordRequest user) throws Exception;
+    void changePassword(UserChangePasswordRequest user) throws Exception;
 }
