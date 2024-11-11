@@ -2,16 +2,22 @@ package com.ing_software.tp.model.rules;
 
 import com.ing_software.tp.model.Order;
 import com.ing_software.tp.model.OrderRule;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import lombok.NoArgsConstructor;
 
-public class MaxAttributeSum implements OrderRule {
 
-    private final String attribute;
-    private final String value;
-    private final int maxSum;
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@NoArgsConstructor
+public class MaxAttributeSum extends OrderRule {
 
-    public MaxAttributeSum(String attribute, String value, String maxSum) {
+    private String attribute;
+    private int maxSum;
+
+    public MaxAttributeSum(String attribute, String maxSum) {
         this.attribute = attribute;
-        this.value = value;
         this.maxSum = Integer.parseInt(maxSum);
     }
     public boolean isSatisfiedBy(Order order) {

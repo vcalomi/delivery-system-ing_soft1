@@ -2,6 +2,7 @@ package com.ing_software.tp.service;
 
 import com.ing_software.tp.model.OrderRule;
 import com.ing_software.tp.model.rules.*;
+import com.ing_software.tp.repository.RuleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,44 +11,47 @@ import java.util.Map;
 @Service
 public class RuleService {
 
+    private final RuleRepository ruleRepository;
+
+    public RuleService(RuleRepository ruleRepository) {
+        this.ruleRepository = ruleRepository;
+    }
+
     public OrderRule createOrderRule(Map<String, Object> ruleRequest) {
 
         Map<String, Object> rule = (Map<String, Object>) ruleRequest.get("rule");
         String ruleType = (String) rule.get("ruleType");
-        System.out.println(rule);
         switch (ruleType) {
             case "minAttributeCount": {
                 OrderRule minAttributeCountRule = new MinAttributeCount((String) rule.get("attribute"),
                         (String) rule.get("value"),
                         (String) rule.get("minValue"));
-                return minAttributeCountRule;
+                return ruleRepository.save(minAttributeCountRule);
             }
             case "maxAttributeCount": {
                 OrderRule maxAttributeCountRule = new MaxAttributeCount((String) rule.get("attribute"), (String) rule.get("value"),
                         (String) rule.get("maxValue"));
-                return maxAttributeCountRule;
+                return ruleRepository.save(maxAttributeCountRule);
             }
             case "maxAttributeSum": {
-                OrderRule maxAttributeSum = new MaxAttributeSum((String) rule.get("attribute"), (String) rule.get(
-                        "value"),
+                OrderRule maxAttributeSum = new MaxAttributeSum((String) rule.get("attribute"),
                         (String) rule.get("maxValue"));
-                return maxAttributeSum;
+                return ruleRepository.save(maxAttributeSum);
             }
             case "minAttributeSum": {
-                OrderRule minAttributeSum = new MinAttributeSum((String) rule.get("attribute"), (String) rule.get(
-                        "value"),
+                OrderRule minAttributeSum = new MinAttributeSum((String) rule.get("attribute"),
                         (String) rule.get("minValue"));
-                return minAttributeSum;
+                return ruleRepository.save(minAttributeSum);
             }
             case "restrictedAttributeCombination": {
                 OrderRule restrictedAttributeCombination = new RestrictedAttributeCombinationRule((String) rule.get(
                         "attribute"), (List<String>) rule.get("values"));
-                return restrictedAttributeCombination;
+                return ruleRepository.save(restrictedAttributeCombination);
             }
             case "not": {
                 OrderRule insideRule = createOrderRule(rule);
                 OrderRule notRule = new NotRule(insideRule);
-                return notRule;
+                return ruleRepository.save(notRule);
             }
             case "and": {
                 List<Map<String, Object>> rules = (List<Map<String, Object>>) rule.get("rules");
@@ -59,7 +63,7 @@ public class RuleService {
                 ruleRequest.put("rule", rule);
                 OrderRule rightRule = createOrderRule(ruleRequest);
                 OrderRule andRule = new AndRule(leftRule, rightRule);
-                return andRule;
+                return ruleRepository.save(andRule);
             }
             case "or": {
                 List<Map<String, Object>> rules = (List<Map<String, Object>>) rule.get("rules");
@@ -71,7 +75,7 @@ public class RuleService {
                 ruleRequest.put("rule", rule);
                 OrderRule rightRule = createOrderRule(ruleRequest);
                 OrderRule orRule = new OrRule(leftRule, rightRule);
-                return orRule;
+                return ruleRepository.save(orRule);
             }
         }
         return null;

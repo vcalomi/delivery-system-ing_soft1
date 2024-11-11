@@ -2,12 +2,19 @@ package com.ing_software.tp.model.rules;
 
 import com.ing_software.tp.model.Order;
 import com.ing_software.tp.model.OrderRule;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import lombok.NoArgsConstructor;
 
-public class MinAttributeCount implements OrderRule {
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@NoArgsConstructor
+public class MinAttributeCount extends OrderRule {
 
-    private final String attribute;
-    private final String value;
-    private final int minCount;
+    private String attribute;
+    private String value;
+    private int minCount;
 
     public MinAttributeCount(String attribute, String value, String minCount) {
         this.attribute = attribute;

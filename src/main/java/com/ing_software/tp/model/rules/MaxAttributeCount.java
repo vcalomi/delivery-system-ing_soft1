@@ -2,12 +2,19 @@ package com.ing_software.tp.model.rules;
 
 import com.ing_software.tp.model.Order;
 import com.ing_software.tp.model.OrderRule;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import lombok.NoArgsConstructor;
 
-public class MaxAttributeCount implements OrderRule {
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@NoArgsConstructor
+public class MaxAttributeCount extends OrderRule {
 
-    private final String attribute;
-    private final String value;
-    private final int maxCount;
+    private String attribute;
+    private String value;
+    private int maxCount;
 
     public MaxAttributeCount(String attribute, String value, String maxCount) {
         this.attribute = attribute;

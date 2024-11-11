@@ -2,14 +2,20 @@ package com.ing_software.tp.model.rules;
 
 import com.ing_software.tp.model.Order;
 import com.ing_software.tp.model.OrderRule;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class RestrictedAttributeCombinationRule implements OrderRule {
-    private final String attribute;
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@NoArgsConstructor
+public class RestrictedAttributeCombinationRule extends OrderRule {
+    private String attribute;
     private List<String> restrictedCombinations;
 
     public RestrictedAttributeCombinationRule(String attribute, List<String> values){
