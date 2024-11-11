@@ -1,11 +1,9 @@
 package com.ing_software.tp.controller;
 
-import com.ing_software.tp.dto.OrderConfirmedResponse;
+import com.ing_software.tp.dto.OrderResponse;
 import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
-import com.ing_software.tp.model.Order;
 import com.ing_software.tp.model.OrderRule;
-import com.ing_software.tp.model.Order;
 import com.ing_software.tp.service.OrderService;
 import com.ing_software.tp.service.RuleServiceImpl;
 import jakarta.validation.Valid;
@@ -40,9 +38,9 @@ public class OrderController {
         orderService.confirmOrder(order_id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @GetMapping("/confirmed")
-    public ResponseEntity<List<OrderConfirmedResponse>> getConfirmedOrders() throws Exception{
-        List<OrderConfirmedResponse> confirmedOrders = orderService.getConfirmedOrders();
+    @GetMapping("/all")
+    public ResponseEntity<List<OrderResponse>> getConfirmedOrders(@RequestParam(required = false) String sortBy) throws Exception{
+        List<OrderResponse> confirmedOrders = orderService.getConfirmedOrders(sortBy);
         return new ResponseEntity<>(confirmedOrders, HttpStatus.OK);
     }
 

@@ -1,11 +1,11 @@
 package com.ing_software.tp.service;
 
+import com.ing_software.tp.dto.OrderResponse;
 import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
 import com.ing_software.tp.dto.ProductRequest;
-import com.ing_software.tp.model.Order;
-import com.ing_software.tp.model.Product;
-import com.ing_software.tp.model.User;
+import com.ing_software.tp.model.*;
+import com.ing_software.tp.repository.OrderProductRepository;
 import com.ing_software.tp.repository.OrderRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
@@ -23,12 +23,13 @@ public class OrderServiceImpl implements OrderService{
     private final RuleService ruleService;
     private final OrderProductRepository orderProductRepository;
 
-    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService, EmailSenderService emailSenderService) {
+    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService, EmailSenderService emailSenderService, RuleService ruleService, OrderProductRepository orderProductRepository) {
         this.productService = productService;
         this.orderRepository = orderRepository;
         this.jwtService = jwtService;
         this.userService = userService;
         this.emailSenderService = emailSenderService;
+
         this.ruleService = ruleService;
         this.orderProductRepository = orderProductRepository;
     }
@@ -85,7 +86,7 @@ public class OrderServiceImpl implements OrderService{
         }
 
         orderRepository.save(order);
-        return new OrderCreateResponse(order.getId(), user.getUsername(), order.getProducts())
+        return new OrderCreateResponse(order.getId(), user.getUsername(), order.getProducts());
     }
 
     public Map<ProductRequest, Boolean> validateOrderRequestStock(OrderRequest orderRequest){
@@ -110,22 +111,31 @@ public class OrderServiceImpl implements OrderService{
         emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email", emailSenderService.buildOrderConfirmationEmail(order.get()));
     }
 
-    public List<OrderConfirmedResponse> getConfirmedOrders() throws Exception {
+    public List<OrderResponse> getConfirmedOrders(String sortBy) throws Exception {
         List<Order> orders = (List<Order>) orderRepository.findAll();
-        List<OrderConfirmedResponse> confirmedOrders = new ArrayList<>();
         if (orders.isEmpty()) {
             throw new Exception("No orders found");
         }
-        for (Order order: orders){
-            if(order.isConfirmed()){
-                OrderConfirmedResponse confirmedOrder = new OrderConfirmedResponse(order.getId(),
-                        order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
-                confirmedOrders.add(confirmedOrder);
+        if (Objects.equals(sortBy, "confirmed")) {
+            List<OrderResponse> confirmedOrders = new ArrayList<>();
+            for (Order order: orders){
+                if(order.isConfirmed()){
+                    OrderResponse confirmedOrder = new OrderResponse(order.getId(),
+                            order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
+                    confirmedOrders.add(confirmedOrder);
+                }
             }
+            if (confirmedOrders.isEmpty()){
+                throw new Exception("No confirmed orders found");
+            }
+            return confirmedOrders;
         }
-        if (confirmedOrders.isEmpty()){
-            throw new Exception("No confirmed orders found");
+        List<OrderResponse> ordersResponse = new ArrayList<>();
+        for (Order order: orders){
+            OrderResponse confirmedOrder = new OrderResponse(order.getId(),
+                        order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
+            ordersResponse.add(confirmedOrder);
         }
-        return confirmedOrders;
+        return ordersResponse;
     }
 }
