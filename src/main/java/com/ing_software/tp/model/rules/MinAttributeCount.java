@@ -1,6 +1,7 @@
 package com.ing_software.tp.model.rules;
 
 import com.ing_software.tp.model.Order;
+import com.ing_software.tp.model.OrderProduct;
 import com.ing_software.tp.model.OrderRule;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
@@ -22,8 +23,12 @@ public class MinAttributeCount extends OrderRule {
         this.minCount = Integer.parseInt(minCount);
     }
     public boolean isSatisfiedBy(Order order) {
-        long count = order.getProducts().stream().filter(product -> product.hasAttribute(attribute, value))
-                .count();
+        int count = 0;
+        for (OrderProduct orderProduct: order.getProducts()) {
+            if (orderProduct.hasAttribute(attribute, value)) {
+                count += orderProduct.getQuantity();
+            }
+        }
         return count >= minCount;
 
     }
