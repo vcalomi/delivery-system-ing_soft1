@@ -107,4 +107,8 @@ public class OrderServiceImpl implements OrderService{
         orderRepository.save(order.get());
         emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email", emailSenderService.buildOrderConfirmationEmail(order.get()));
     }
+
+    public List<Order> getAllOrders() {
+        return (List<Order>) orderRepository.findAll();
+    }
 }

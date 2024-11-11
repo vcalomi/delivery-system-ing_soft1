@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/create").authenticated()
                         .requestMatchers("/api/orders/confirmOrder/**").authenticated()
                         .requestMatchers("/api/products/create").hasRole("ADMIN")
+                        .requestMatchers("/api/orders/all").hasRole("ADMIN")
                         .requestMatchers("/api/products/").permitAll()
                         .requestMatchers("/api/products/edit").hasRole("ADMIN")
                         .requestMatchers("/api/orders/createRule").permitAll()

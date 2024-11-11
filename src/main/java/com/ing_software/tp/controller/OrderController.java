@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -41,6 +42,12 @@ public class OrderController {
     public ResponseEntity<OrderRule> createRule(@RequestBody Map<String, Object> ruleRequest){
         OrderRule rule = ruleService.createOrderRule(ruleRequest);
         return new ResponseEntity<>(rule, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Order>> getALlOrders(){
+        List<Order> orders = orderService.getAllOrders();
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
 }
