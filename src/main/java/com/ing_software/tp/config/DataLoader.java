@@ -1,27 +1,24 @@
 package com.ing_software.tp.config;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ing_software.tp.model.OrderRule;
-import com.ing_software.tp.service.RuleService;
+import com.ing_software.tp.service.RuleServiceImpl;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 
 @Component
 public class DataLoader {
     private ObjectMapper mapper;
     private Map<String,Object> rules;
-    private RuleService ruleService;
+    private RuleServiceImpl ruleService;
 
-    public DataLoader(RuleService ruleService) {
+    public DataLoader(RuleServiceImpl ruleService) {
         this.ruleService = ruleService;
         this.mapper = new ObjectMapper();
     }

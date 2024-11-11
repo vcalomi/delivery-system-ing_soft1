@@ -3,10 +3,13 @@ package com.ing_software.tp.service;
 import com.ing_software.tp.dto.OrderRequest;
 import com.ing_software.tp.dto.ProductRequest;
 import com.ing_software.tp.model.Order;
+import com.ing_software.tp.model.OrderRule;
 import com.ing_software.tp.model.Product;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.OrderRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,15 +20,17 @@ public class OrderServiceImpl implements OrderService{
     private final ProductService productService;
     private final OrderRepository orderRepository;
     private final JwtService jwtService;
-    private final  UserService userService;
+    private final UserService userService;
     private final EmailSenderService emailSenderService;
+    private final RuleService ruleService;
 
-    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService, EmailSenderService emailSenderService) {
+    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService, EmailSenderService emailSenderService, RuleService ruleService) {
         this.productService = productService;
         this.orderRepository = orderRepository;
         this.jwtService = jwtService;
         this.userService = userService;
         this.emailSenderService = emailSenderService;
+        this.ruleService = ruleService;
     }
 
     public Order createOrder(@Valid OrderRequest orderRequest, String authorizationHeader) {
@@ -42,6 +47,7 @@ public class OrderServiceImpl implements OrderService{
             username = values[0];
         }
 
+
         User user = userService.findByUsername(username);
 
         Map<ProductRequest, Boolean> nonValidProductsRequested = validateOrderRequestStock(orderRequest);
@@ -55,6 +61,13 @@ public class OrderServiceImpl implements OrderService{
             }
             order.setProducts(products);
             order.setOwner(user);
+
+            List<OrderRule> rules = ruleService.getAllRules();
+            for (OrderRule rule : rules) {
+                if(!rule.isSatisfiedBy(order))
+                    throw new RuntimeException("Rule not satisfied!");
+            }
+
             return orderRepository.save(order);
         }
         throw new RuntimeException("Invalid order");

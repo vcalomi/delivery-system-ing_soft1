@@ -2,9 +2,8 @@ package com.ing_software.tp.controller;
 
 import com.ing_software.tp.dto.OrderRequest;
 import com.ing_software.tp.model.OrderRule;
-import com.ing_software.tp.model.rules.AndRule;
 import com.ing_software.tp.service.OrderService;
-import com.ing_software.tp.service.RuleService;
+import com.ing_software.tp.service.RuleServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +16,9 @@ import java.util.Map;
 public class OrderController {
 
     private final OrderService orderService;
-    private final RuleService ruleService;
+    private final RuleServiceImpl ruleService;
 
-    public OrderController(OrderService orderService, RuleService ruleService) {
+    public OrderController(OrderService orderService, RuleServiceImpl ruleService) {
         this.orderService = orderService;
         this.ruleService = ruleService;
     }
