@@ -28,7 +28,6 @@ public class DataLoader {
         try(InputStream inputStream = getClass().getResourceAsStream("/rules.json")){
             rules = mapper.readValue(inputStream, new TypeReference<Map<String,Object>>(){});
             OrderRule rule = ruleService.createOrderRule(rules);
-            System.out.println(rule);
         } catch (IOException e) {
             System.out.println(e.getMessage());;
         }

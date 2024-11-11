@@ -17,9 +17,10 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-    @OneToOne
+    @ManyToOne
     private User owner;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id")
     private List<OrderProduct> products;
     private boolean isConfirmed = false;
 }

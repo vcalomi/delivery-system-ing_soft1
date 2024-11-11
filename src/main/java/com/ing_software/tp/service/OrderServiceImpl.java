@@ -6,8 +6,6 @@ import com.ing_software.tp.model.*;
 import com.ing_software.tp.repository.OrderProductRepository;
 import com.ing_software.tp.repository.OrderRepository;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -70,7 +68,7 @@ public class OrderServiceImpl implements OrderService{
                 attributes = new HashMap<>(Map.copyOf(optionalProduct.get().getAttributes()));
             }
 
-            OrderProduct product = new OrderProduct(null, productRequest.getProduct_name(),
+            OrderProduct product = new OrderProduct(null, optionalProduct.get().getId(), productRequest.getProduct_name(),
                     productRequest.getQuantity(), attributes);
             OrderProduct entityProduct = orderProductRepository.save(product);
             products.add(entityProduct);
@@ -104,6 +102,8 @@ public class OrderServiceImpl implements OrderService{
         }
         User user = order.get().getOwner();
         order.get().setConfirmed(true);
+        System.out.println(order.get().getId());
+        productService.updateStock(order.get().getProducts());
         orderRepository.save(order.get());
         emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email", emailSenderService.buildOrderConfirmationEmail(order.get()));
     }

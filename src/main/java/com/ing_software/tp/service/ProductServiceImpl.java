@@ -2,7 +2,7 @@ package com.ing_software.tp.service;
 
 import com.ing_software.tp.dto.EditProductRequest;
 import com.ing_software.tp.dto.NewProductRequest;
-import com.ing_software.tp.dto.ProductRequest;
+import com.ing_software.tp.model.OrderProduct;
 import com.ing_software.tp.model.Product;
 import com.ing_software.tp.repository.ProductRepository;
 import jakarta.validation.Valid;
@@ -62,5 +62,16 @@ public class ProductServiceImpl implements ProductService {
             return productRepository.save(product.get());
         }
         throw new Exception("Product not found");
+    }
+
+    public void updateStock(List<OrderProduct> products) {
+        for (OrderProduct orderProduct: products) {
+            Optional<Product> optionalProduct = productRepository.findById(orderProduct.getProduct_id());
+            if (optionalProduct.isPresent()) {
+                Product product = optionalProduct.get();
+                product.setStock(product.getStock() - orderProduct.getQuantity());
+                productRepository.save(product);
+            }
+        }
     }
 }
