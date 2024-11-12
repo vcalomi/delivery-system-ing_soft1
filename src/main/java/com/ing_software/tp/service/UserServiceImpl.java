@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     private String createUser(@Valid UserRegisterRequest user) {
         User newUser = new User(null, user.getName(), user.getLastname(), user.getEmail(), user.getAge(),
-                user.getAddress(), user.getUsername(), passwordEncoder.encode(user.getPassword()), "ADMIN");
+                user.getAddress(), user.getUsername(), passwordEncoder.encode(user.getPassword()), "USER");
         UserDetails userDetails = userRepository.save(newUser);
         return jwtService.generateToken(userDetails.getUsername());
     }

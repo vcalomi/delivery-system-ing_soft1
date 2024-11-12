@@ -138,4 +138,17 @@ public class OrderServiceImpl implements OrderService{
         }
         return ordersResponse;
     }
+
+    public List<OrderResponse> getOrders(String sortBy, String authorizationHeader) {
+        String username = validateAuthorization(authorizationHeader);
+        User owner = userService.findByUsername(username);
+        List<Order> orders = (List<Order>) orderRepository.findByOwner(owner);
+        List<OrderResponse> ordersResponse = new ArrayList<>();
+        for (Order order: orders){
+            OrderResponse confirmedOrder = new OrderResponse(order.getId(),
+                    order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
+            ordersResponse.add(confirmedOrder);
+        }
+        return ordersResponse;
+    }
 }

@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/products/").permitAll()
                         .requestMatchers("/api/products/edit").hasRole("ADMIN")
                         .requestMatchers("/api/orders/createRule").permitAll()
+                        .requestMatchers("/api/orders/").authenticated()
         )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

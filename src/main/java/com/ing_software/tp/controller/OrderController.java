@@ -44,6 +44,12 @@ public class OrderController {
         return new ResponseEntity<>(confirmedOrders, HttpStatus.OK);
     }
 
+    @GetMapping("/")
+    public ResponseEntity<List<OrderResponse>> getOrders(@RequestHeader("Authorization") String authorizationHeader, @RequestParam(required = false ) String sortBy){
+        List<OrderResponse> orders = orderService.getOrders(sortBy, authorizationHeader);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
     @PostMapping("/createRule")
     public ResponseEntity<OrderRule> createRule(@RequestBody Map<String, Object> ruleRequest){
         OrderRule rule = ruleService.createOrderRule(ruleRequest);
