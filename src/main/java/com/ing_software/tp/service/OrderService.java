@@ -17,4 +17,6 @@ public interface OrderService {
     List<OrderResponse> getConfirmedOrders(String sortBy) throws Exception;
 
     List<OrderResponse> getOrders(String sortBy, String authorizationHeader);
+
+    void cancelOrder(Long orderId);
 }

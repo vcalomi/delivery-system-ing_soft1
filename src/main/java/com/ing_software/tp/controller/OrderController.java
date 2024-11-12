@@ -50,6 +50,12 @@ public class OrderController {
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
+    @DeleteMapping("/cancel/{order_id}")
+    public ResponseEntity<String> cancelOrder(@PathVariable Long order_id){
+        orderService.cancelOrder(order_id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping("/createRule")
     public ResponseEntity<OrderRule> createRule(@RequestBody Map<String, Object> ruleRequest){
         OrderRule rule = ruleService.createOrderRule(ruleRequest);

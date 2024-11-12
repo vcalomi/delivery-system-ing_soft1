@@ -10,6 +10,7 @@ import com.ing_software.tp.repository.OrderRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -85,8 +86,18 @@ public class OrderServiceImpl implements OrderService{
                 throw new RuntimeException("Rule not satisfied!");
         }
 
+        order.setCreatedAt(LocalDateTime.now());
         orderRepository.save(order);
         return new OrderCreateResponse(order.getId(), user.getUsername(), order.getProducts());
+    }
+
+    public void cancelOrder(Long orderId) {
+        Optional<Order> orderToCancel = orderRepository.findById(orderId);
+        if (orderToCancel.isPresent()) {
+            orderRepository.delete(orderToCancel.get());
+            return;
+        }
+        throw new RuntimeException("Order not found");
     }
 
     public Map<ProductRequest, Boolean> validateOrderRequestStock(OrderRequest orderRequest){
