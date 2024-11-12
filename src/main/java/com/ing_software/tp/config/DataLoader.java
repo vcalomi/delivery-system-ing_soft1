@@ -6,10 +6,13 @@ import com.ing_software.tp.dto.NewProductRequest;
 import com.ing_software.tp.dto.ProductRequest;
 import com.ing_software.tp.model.OrderRule;
 import com.ing_software.tp.model.Product;
+import com.ing_software.tp.model.User;
+import com.ing_software.tp.repository.UserRepository;
 import com.ing_software.tp.service.ProductService;
 import com.ing_software.tp.service.RuleServiceImpl;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -24,10 +27,15 @@ public class DataLoader {
     private RuleServiceImpl ruleService;
     private List<NewProductRequest> products;
     private ProductService productService;
+    private UserRepository userRepository;
+    private User user;
+    private PasswordEncoder passwordEncoder;
 
-    public DataLoader(RuleServiceImpl ruleService, ProductService productService) {
+    public DataLoader(RuleServiceImpl ruleService, ProductService productService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.ruleService = ruleService;
         this.productService = productService;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         this.mapper = new ObjectMapper();
     }
 
@@ -48,6 +56,17 @@ public class DataLoader {
             for (NewProductRequest request: products) {
                 productService.createProduct(request);
             }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void loadAdmin(){
+        try(InputStream inputStream = getClass().getResourceAsStream("/admin_user.json")){
+            user = mapper.readValue(inputStream, new TypeReference<User>(){});
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepository.save(user);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
