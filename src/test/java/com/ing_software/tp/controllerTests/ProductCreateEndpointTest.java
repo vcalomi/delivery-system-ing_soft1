@@ -4,8 +4,10 @@ import com.ing_software.tp.dto.NewProductRequest;
 import com.ing_software.tp.dto.UserLoginRequest;
 import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.model.User;
+import com.ing_software.tp.repository.ProductRepository;
 import com.ing_software.tp.repository.UserRepository;
 import com.ing_software.tp.service.EmailSenderService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,8 @@ public class ProductCreateEndpointTest {
 
     static String adminToken;
     static String userToken;
+    @Autowired
+    private ProductRepository productRepository;
 
     @BeforeAll
     static void registerAnUser(@Autowired TestRestTemplate restTemplate, @Autowired UserRepository userRepository) {
@@ -63,6 +67,11 @@ public class ProductCreateEndpointTest {
 
         adminToken = adminResponse.getBody();
         userToken = userResponse.getBody();
+    }
+
+    @AfterEach
+    void cleanProductTable(){
+        productRepository.deleteAll();
     }
 
 
