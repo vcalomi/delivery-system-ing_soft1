@@ -10,7 +10,9 @@ import com.ing_software.tp.repository.OrderRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -23,16 +25,17 @@ public class OrderServiceImpl implements OrderService{
     private final EmailSenderService emailSenderService;
     private final RuleService ruleService;
     private final OrderProductRepository orderProductRepository;
+    private final Clock clock;
 
-    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService, EmailSenderService emailSenderService, RuleService ruleService, OrderProductRepository orderProductRepository) {
+    public OrderServiceImpl(ProductService productService, OrderRepository orderRepository, JwtService jwtService, UserService userService, EmailSenderService emailSenderService, RuleService ruleService, OrderProductRepository orderProductRepository, Clock clock) {
         this.productService = productService;
         this.orderRepository = orderRepository;
         this.jwtService = jwtService;
         this.userService = userService;
         this.emailSenderService = emailSenderService;
-
         this.ruleService = ruleService;
         this.orderProductRepository = orderProductRepository;
+        this.clock = clock;
     }
 
     private String validateAuthorization(String authorizationHeader){
@@ -94,8 +97,15 @@ public class OrderServiceImpl implements OrderService{
     public void cancelOrder(Long orderId) {
         Optional<Order> orderToCancel = orderRepository.findById(orderId);
         if (orderToCancel.isPresent()) {
-            orderRepository.delete(orderToCancel.get());
-            return;
+            LocalDateTime initialTime = orderToCancel.get().getCreatedAt();
+            LocalDateTime finalTime = LocalDateTime.now(clock);
+            long hoursBetween = ChronoUnit.HOURS.between(initialTime,finalTime);
+            if (hoursBetween <= 24) {
+                productService.decreaseStock(orderToCancel.get().getProducts());
+                orderRepository.delete(orderToCancel.get());
+                return;
+            }
+            throw new RuntimeException("Time to cancel the order expired");
         }
         throw new RuntimeException("Order not found");
     }

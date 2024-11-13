@@ -74,4 +74,15 @@ public class ProductServiceImpl implements ProductService {
             }
         }
     }
+
+    public void decreaseStock(List<OrderProduct> products) {
+        for (OrderProduct orderProduct: products) {
+            Optional<Product> productOptional = productRepository.findById(orderProduct.getProduct_id());
+            if (productOptional.isPresent()) {
+                Product product = productOptional.get();
+                product.setStock(product.getStock() + orderProduct.getQuantity());
+                productRepository.save(product);
+            }
+        }
+    }
 }

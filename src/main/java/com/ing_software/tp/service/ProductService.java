@@ -21,4 +21,6 @@ public interface ProductService {
     Product editProductAttributes(EditProductRequest productRequest) throws Exception;
 
     void updateStock(List<OrderProduct> products);
+
+    void decreaseStock(List<OrderProduct> products);
 }
