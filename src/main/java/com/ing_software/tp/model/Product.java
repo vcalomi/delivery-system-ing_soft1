@@ -16,6 +16,7 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
+    @Column(unique = true)
     private String product_name;
     private int stock;
     @ElementCollection
