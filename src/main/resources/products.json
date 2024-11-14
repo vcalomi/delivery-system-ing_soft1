@@ -1,0 +1,37 @@
+[
+  {
+    "product_name":"product_1",
+    "stock": 5,
+    "attributes":{
+      "color":"red"
+    }
+  },
+  {
+    "product_name":"product_2",
+    "stock": 3,
+    "attributes":{
+      "weight":"8"
+    }
+  },
+  {
+    "product_name":"product_3",
+    "stock": 7,
+    "attributes":{
+      "size":"M"
+    }
+  },
+  {
+    "product_name":"product_4",
+    "stock": 1,
+    "attributes":{
+      "color":"blue"
+    }
+  },
+  {
+    "product_name":"product_5",
+    "stock": 12,
+    "attributes":{
+      "type": "software"
+    }
+  }
+]

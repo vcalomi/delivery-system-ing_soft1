@@ -5,22 +5,30 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+public class OrderProduct {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
-    @Column(unique = true)
+    private Long id;
+    private Long product_id;
     private String product_name;
-    private int stock;
+    private int quantity;
     @ElementCollection
     private Map<String, String> attributes;
+
+    public boolean hasAttribute(String attributeType,String value){
+        return attributes.containsKey(attributeType) && attributes.get(attributeType).equals(value);
+    }
+
+    public String getAttribute(String attributeType) {
+
+        return attributes.get(attributeType);
+
+    }
 }
-
-

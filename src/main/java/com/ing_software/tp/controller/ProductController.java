@@ -1,5 +1,7 @@
 package com.ing_software.tp.controller;
 
+import com.ing_software.tp.dto.EditProductRequest;
+import com.ing_software.tp.dto.IncrementStockRequest;
 import com.ing_software.tp.dto.NewProductRequest;
 import com.ing_software.tp.dto.ProductRequest;
 import com.ing_software.tp.model.Product;
@@ -27,9 +29,20 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
 
+    @PatchMapping("/edit")
+    public ResponseEntity<Product> editProduct(@RequestBody @Valid EditProductRequest productRequest) throws Exception {
+        Product product = productService.editProductAttributes(productRequest);
+        return new ResponseEntity<>(product, HttpStatus.OK);
+    }
+
     @GetMapping("/")
-    public ResponseEntity<List<Product>> getAllProducts(){
+    public ResponseEntity<List<Product>> getAllProducts() throws Exception {
         List<Product> products = productService.getProducts();
         return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
+    }
+    @PatchMapping("/incrementStock/{productId}")
+    public ResponseEntity<Product> incrementStock(@PathVariable Long productId, @RequestBody @Valid IncrementStockRequest incrementStockRequest) throws Exception {
+        Product product = productService.incrementStock(productId, incrementStockRequest);
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 }
