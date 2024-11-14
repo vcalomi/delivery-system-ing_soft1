@@ -67,14 +67,10 @@ public class OrderCreateEndpointTest {
         adminToken = adminResponse.getBody();
         userToken = userResponse.getBody();
 
-        products = new Product[]{new Product(null, "product_1", 5, new HashMap<>()), new Product(null, "product_2", 5, new HashMap<>()),
-                new Product(null, "product_3", 5, new HashMap<>()), new Product(null, "product_4", 5, new HashMap<>())};
+        products = new Product[]{new Product(1L, "product_1", 5, new HashMap<>()), new Product(2L, "product_2", 5,
+                new HashMap<>()),
+                new Product(3L, "product_3", 5, new HashMap<>()), new Product(4L, "product_4", 5, new HashMap<>())};
         productRepository.saveAll(Arrays.asList(products));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", String.format("Bearer %s", adminToken));
-        HttpEntity<Product[]> requestEntity = new HttpEntity<>(products, headers);
-        restTemplate.postForEntity(String.format("%s/create", PRODUCTS_URI), requestEntity, Void.class);
     }
 
     @Test
