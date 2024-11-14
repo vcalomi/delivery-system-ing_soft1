@@ -38,7 +38,7 @@ public class ProductController {
     @GetMapping("/")
     public ResponseEntity<List<Product>> getAllProducts() throws Exception {
         List<Product> products = productService.getProducts();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
     }
     @PatchMapping("/incrementStock/{productId}")
     public ResponseEntity<Product> incrementStock(@PathVariable Long productId, @RequestBody @Valid IncrementStockRequest incrementStockRequest) throws Exception {
