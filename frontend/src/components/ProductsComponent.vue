@@ -1,131 +1,171 @@
 <template>
-  <div>
-    <h2 class="mt-5">Product List</h2>
-    
-    <!-- Botón Confirmar Pedido superior -->
-    <div class="d-flex justify-content-center mt-3">
-      <button class="btn btn-primary">Confirmar Pedido</button>
+  <div class="row w-100">
+    <div class="col-1 d-flex align-items-start vh-100">
+      <button class="btn btn-primary btn-sm" @click="createProduct">Crear Producto</button>
     </div>
+    <div class="col-8">
+      <div class="product-list-container">
+        <div class="row">
+          <div 
+            v-for="(product, key) in products" 
+            :key="product.id" 
+            class="col-sm-6 col-md-4 col-lg-3 mb-3"
+          >
+            <div class="card h-100">
+              <div class="card-body p-2">
+                <h6 class="card-title text-center">{{ product.product_name }}</h6>
+                <p class="card-text text-center">Stock: {{ product.stock }}</p>
 
-    <div class="container mt-5">
-      <div class="row">
-        <div 
-          v-for="(product, key) in products" 
-          :key="product.id" 
-          class="col-sm-6 col-md-4 col-lg-3 mb-4"
-        >
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title">{{ product.product_name }}</h5>
-              <p class="card-text">Stock: {{ product.stock }}</p>
+                <label for="quantity">Cantidad:</label>
+                <input 
+                  v-model="selectedQuantities[key]" 
+                  :disabled="product.stock <= 0"
+                  id="quantity"
+                  type="number"
+                  class="form-control form-control-sm mb-3"
+                  min="1"
+                  :max="product.stock"
+                />
 
-              <label for="quantity">Cantidad:</label>
-              <select 
-                v-model="selectedQuantities[key]" 
-                :disabled="product.stock <= 0"
-                id="quantity"
-                class="form-select mb-3"
-              >
-                <option v-for="n in product.stock + 1" :key="n" :value="n - 1">
-                  {{ n - 1 }}
-                </option>
-              </select>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                  <button 
+                    class="btn btn-primary btn-xs me-md-2 small-button" 
+                    :disabled="product.stock <= 0 || selectedQuantities[key] <= 0" 
+                    @click="addProduct(product, key)"
+                  >
+                    {{ product.stock > 0 ? 'Agregar al pedido' : 'No disponible' }}
+                  </button>
 
-              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button 
-                  class="btn btn-primary me-md-2" 
-                  :disabled="product.stock <= 0 || selectedQuantities[key] <= 0" 
-                  @click="addProduct(product, key)"
-                >
-                  {{ product.stock > 0 ? 'Agregar al pedido' : 'No disponible' }}
-                </button>
+                  <button 
+                    class="btn btn-secondary btn-xs small-button" 
+                    @click="product.showDetails = !product.showDetails"
+                  >
+                    {{ product.showDetails ? 'Ocultar Detalles' : 'Mostrar Detalles' }}
+                  </button>
+                </div>
 
-                <button 
-                  class="btn btn-secondary" 
-                  @click="product.showDetails = !product.showDetails"
-                >
-                  {{ product.showDetails ? 'Ocultar Detalles' : 'Mostrar Detalles' }}
-                </button>
-              </div>
-
-              <div v-if="product.showDetails" class="product-details mt-3">
-                <h6>Details:</h6>
-                <ul>
-                  <li v-for="(detail, index) in product.details" :key="index">
-                    {{ detail }}
-                  </li>
-                </ul>
+                <div v-if="product.showDetails" class="product-details mt-3">
+                  <h6>Detalles:</h6>
+                  <ul>
+                    <li v-for="(detail, index) in product.details" :key="index">
+                      {{ detail }}
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <div class="col-1 cart-container">
+      <h5>Carrito</h5>
+      <ul>
+        <li v-for="(item, index) in orden" :key="index">
+          {{ item.product.product_name }} - {{ selectedQuantities[item.productId] }}
+        </li>
+      </ul>
+      <div v-if="products" class="d-flex justify-content-center mt-4">
+        <RouterLink to="/createOrder" class="btn btn-primary btn-sm">Confirmar Pedido</RouterLink>
+      </div>
 
-    <!-- Botón Confirmar Pedido inferior -->
-    <div class="d-flex justify-content-center mt-4">
-      <button class="btn btn-primary">Confirmar Pedido</button>
     </div>
   </div>
 </template>
 
-
 <script>
-
 import axios from 'axios';
 
-export default{
-    name: 'HomeComponent',
-    data(){
-        return{
-            products: [],
-            orden: [],
-            selectedQuantities: {} 
-        }
-
+export default {
+  name: 'HomeComponent',
+  data() {
+    return {
+      products: [],
+      orden: [],
+      selectedQuantities: {}
+    };
+  },
+  async mounted() {
+    let token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaWNoYSJ9.7rNwjkBXI05IF8INBwQ0moNXuWPz6YGPvtQJOHTmJG4';
+    await axios.get('http://localhost:8081/api/products/', {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+      this.products = res.data;
+    }).catch(err => console.error(err));
+  },
+  methods: {
+    addProduct(product, productId) {
+      this.orden.push({ product, productId });
+      this.$store.dispatch('addProductToCart', product);
     },
-    async beforeMount(){
-        let token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaWNoYSJ9.7rNwjkBXI05IF8INBwQ0moNXuWPz6YGPvtQJOHTmJG4'
-            console.log("Bearer " + token)
-            await axios.post('http://localhost:8081/api/products/create', {product_name: "product_1", stock: 20 }, {
-             headers: {Authorization: "Bearer " + token } 
-            })
-            .then( res => console.log(res.status))
-            .catch( err => console.error(err))
-    }, 
-    async mounted()  {
-        let token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaWNoYSJ9.7rNwjkBXI05IF8INBwQ0moNXuWPz6YGPvtQJOHTmJG4'
-        console.log("Bearer " + token)
-        await axios.get('http://localhost:8081/api/products/', {}).then( res => {
-            this.products = res.data
-            console.log(res.data)
-        })
-        .catch( err => console.error(err))
-            
-    },
-    methods:{
-        getProducts(){
-            console.log(this.products)
-        },
-        addProduct(product, productId){
-          if(this.orden.filter(p => p.id === productId ).length === 0){
-            this.orden.push(product)
-            console.log(this.orden)
-          }            
-        }
+    createProduct() {
+      this.$router.push({ name: 'CreateProductComponent' });
     }
-}
+  }
+};
 </script>
 
 <style scoped>
-h2 {
+.product-list-container {
+  width: 75%;
+}
+
+.cart-container {
+  width: 25%;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cart-container h5 {
   text-align: center;
-  margin-bottom: 20px;
 }
 
 .product-details {
   padding: 10px;
   background-color: #f8f9fa;
   border-radius: 4px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.d-flex.justify-content-start {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+}
+
+.product-list-container {
+  max-width: 100%;
+}
+
+.cart-container {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+/* Estilo personalizado para botones pequeños */
+.small-button {
+  font-size: 0.75rem; /* Reduce el tamaño de la fuente */
+  padding: 2px 8px; /* Reduce el padding */
 }
 </style>

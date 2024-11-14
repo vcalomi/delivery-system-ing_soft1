@@ -3,6 +3,10 @@ import ProductsComponent from './components/ProductsComponent.vue'
 import forgotPasswordComponent from './components/forgotPasswordComponent.vue'
 import Register from './components/Register.vue'
 import LoginComponent from './components/LoginComponent.vue'
+import CreateProductComponent from './components/CreateProductComponent.vue'
+import CreateOrderComponent from './components/CreateOrderComponent.vue'
+import ChangePasswordComponent from './components/ChangePasswordComponent.vue'
+import UserOrdersComponent from './components/UserOrdersComponent.vue'
 
 // Define the routes
 const routes = [
@@ -25,6 +29,26 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: LoginComponent
+  },
+  {
+    path: '/createProduct',
+    name: 'CreateProductComponent',
+    component: CreateProductComponent
+  },
+  {
+    path: '/createOrder',
+    name: 'CreateOrderComponent',
+    component: CreateOrderComponent
+  },
+  {
+    path: '/changePassword',
+    name: 'ChangePasswordComponent',
+    component: ChangePasswordComponent
+  },
+  {
+    path: '/userOrders',
+    name: 'UserOrdersComponent',
+    component: UserOrdersComponent
   }
 
   // Add more routes here

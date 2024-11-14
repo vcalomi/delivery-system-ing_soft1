@@ -170,9 +170,9 @@
           "age": 20,"address": this.street+" "+this.streetNumber+" "+this.postalCode+" "+this.floorApartment,
           "username": this.user,"password": this.password 
         })
-          .then(response => {
+          .then(() => {
             this.active = false
-            console.log(response.data); //tengo que poder ir a /HOME 
+            this.$router.push({name:'Home'}) //tengo que poder ir a /HOME 
           }).catch( error => {
             console.error('Error: ', error);
           })
