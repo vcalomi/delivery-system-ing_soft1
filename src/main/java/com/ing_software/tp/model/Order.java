@@ -24,7 +24,7 @@ public class Order {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     private List<OrderProduct> products;
-    private boolean isConfirmed = false;
+    private OrderStatus status;
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;

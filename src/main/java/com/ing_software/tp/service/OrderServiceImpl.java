@@ -82,6 +82,7 @@ public class OrderServiceImpl implements OrderService{
         }
         order.setProducts(products);
         order.setOwner(user);
+        order.setStatus(OrderStatus.CREATED);
 
         List<OrderRule> rules = ruleService.getAllRules();
         for (OrderRule rule : rules) {
@@ -126,7 +127,7 @@ public class OrderServiceImpl implements OrderService{
             throw new RuntimeException("No order with provided id");
         }
         User user = order.get().getOwner();
-        order.get().setConfirmed(true);
+        order.get().setStatus(OrderStatus.CONFIRMED);
         productService.updateStock(order.get().getProducts());
         orderRepository.save(order.get());
         emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email", emailSenderService.buildOrderConfirmationEmail(order.get()));
@@ -140,7 +141,7 @@ public class OrderServiceImpl implements OrderService{
         if (Objects.equals(sortBy, "confirmed")) {
             List<OrderResponse> confirmedOrders = new ArrayList<>();
             for (Order order: orders){
-                if(order.isConfirmed()){
+                if(order.getStatus().equals(OrderStatus.CONFIRMED)){
                     OrderResponse confirmedOrder = new OrderResponse(order.getId(),
                             order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
                     confirmedOrders.add(confirmedOrder);
@@ -167,7 +168,7 @@ public class OrderServiceImpl implements OrderService{
         if (Objects.equals(sortBy, "confirmed")) {
             List<OrderResponse> confirmedOrders = new ArrayList<>();
             for (Order order: orders){
-                if(order.isConfirmed()){
+                if(order.getStatus().equals(OrderStatus.CONFIRMED)){
                     OrderResponse confirmedOrder = new OrderResponse(order.getId(),
                             order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
                     confirmedOrders.add(confirmedOrder);

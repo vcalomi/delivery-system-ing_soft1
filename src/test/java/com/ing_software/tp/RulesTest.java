@@ -1,9 +1,6 @@
 package com.ing_software.tp;
 
-import com.ing_software.tp.model.Order;
-import com.ing_software.tp.model.OrderRule;
-import com.ing_software.tp.model.OrderProduct;
-import com.ing_software.tp.model.User;
+import com.ing_software.tp.model.*;
 import com.ing_software.tp.model.rules.AndRule;
 import com.ing_software.tp.model.rules.MaxAttributeCount;
 import com.ing_software.tp.model.rules.OrRule;
@@ -24,7 +21,7 @@ public class RulesTest {
     @Test
     void emptyOrderShouldSatisfyMaxAttributeCountRule() {
         List<OrderProduct> products = new ArrayList<>();
-        Order order = new Order(1L, new User(), products, true, LocalDateTime.now());
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
 
         MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
         assertThat(rule.isSatisfiedBy(order)).isTrue();
@@ -33,7 +30,7 @@ public class RulesTest {
     @Test
     void emptyOrderShouldSatisfyAndRule() {
         List<OrderProduct> products = new ArrayList<>();
-        Order order = new Order(1L, new User(), products, true, LocalDateTime.now());
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
 
         AndRule rules = new AndRule(
                 new MaxAttributeCount("color", "red", "1"),
@@ -45,7 +42,7 @@ public class RulesTest {
     @Test
     void emptyOrderShouldSatisfyOrRule() {
         List<OrderProduct> products = new ArrayList<>();
-        Order order = new Order(1L, new User(), products, true, LocalDateTime.now());
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
 
         OrRule rules = new OrRule(
                 new MaxAttributeCount("color", "red", "1"),
@@ -57,7 +54,7 @@ public class RulesTest {
     @Test
     void emptyOrderShouldSatisfyNotRule() {
         List<OrderProduct> products = new ArrayList<>();
-        Order order = new Order(1L, new User(), products, true, LocalDateTime.now());
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
 
         MaxAttributeCount rule = new MaxAttributeCount("color", "blue", "1");
         NotRule notRule = new NotRule(rule);
@@ -74,7 +71,7 @@ public class RulesTest {
         List<OrderProduct> products = new ArrayList<>();
         products.add(orderProduct);
         products.add(product2);
-        Order order = new Order(1L,new User(),products,true, LocalDateTime.now());
+        Order order = new Order(1L,new User(),products,OrderStatus.CREATED, LocalDateTime.now());
 
         MaxAttributeCount rule = new MaxAttributeCount("color","red","1");
         assertThat(rule.isSatisfiedBy(order)).isFalse();
@@ -87,7 +84,7 @@ public class RulesTest {
         OrderProduct orderProduct = new OrderProduct(1L, 1L,"product_name1", 1, attributes);
         List<OrderProduct> products = new ArrayList<>();
         products.add(orderProduct);
-        Order order = new Order(1L, new User(), products, true, LocalDateTime.now());
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
 
         MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
         assertThat(rule.isSatisfiedBy(order)).isTrue();
@@ -102,7 +99,7 @@ public class RulesTest {
         List<OrderProduct> products = new ArrayList<>();
         products.add(product1);
         products.add(product2);
-        Order order = new Order(1L, new User(), products, true, LocalDateTime.now());
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
 
         MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
         assertThat(rule.isSatisfiedBy(order)).isFalse();
@@ -115,7 +112,7 @@ public class RulesTest {
         OrderProduct orderProduct = new OrderProduct(1L, 1L, "product_name1", 1, attributes);
         List<OrderProduct> products = new ArrayList<>();
         products.add(orderProduct);
-        Order order = new Order(1L, new User(), products, true, LocalDateTime.now());
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
 
         MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
         assertThat(rule.isSatisfiedBy(order)).isTrue();
@@ -134,7 +131,7 @@ public class RulesTest {
         products.add(product2);
         products.add(product2);
 
-        Order order = new Order(1L,new User(),products,true, LocalDateTime.now());
+        Order order = new Order(1L,new User(),products,OrderStatus.CREATED, LocalDateTime.now());
         AndRule rules = new AndRule(new MaxAttributeCount("color","red","1"),new MaxAttributeCount("color","blue","1"));
         assertThat(rules.isSatisfiedBy(order)).isFalse();
     }
@@ -152,7 +149,7 @@ public class RulesTest {
         products.add(product2);
         products.add(product2);
 
-        Order order = new Order(1L,new User(),products,true, LocalDateTime.now());
+        Order order = new Order(1L,new User(),products,OrderStatus.CREATED, LocalDateTime.now());
         OrRule rules = new OrRule(new MaxAttributeCount("color","red","1"),new MaxAttributeCount("color","blue","1"));
         assertThat(rules.isSatisfiedBy(order)).isTrue();
     }
@@ -165,7 +162,7 @@ public class RulesTest {
         List<OrderProduct> products = new ArrayList<>();
         products.add(orderProduct);
 
-        Order order = new Order(1L, new User(), products, true, LocalDateTime.now());
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
         MaxAttributeCount originalRule = new MaxAttributeCount("color", "blue", "1");
         NotRule notRule = new NotRule(originalRule);
 
@@ -186,7 +183,7 @@ public class RulesTest {
         products.add(product1);
         products.add(product2);
 
-        Order order = new Order(1L, new User(), products, true, LocalDateTime.now());
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
 
         MaxAttributeCount noLiquidRule = new MaxAttributeCount("type", "liquid", "0");
         MaxAttributeCount noGaseousRule = new MaxAttributeCount("type", "gaseous", "0");
@@ -210,7 +207,7 @@ public class RulesTest {
         products.add(product1);
         products.add(product2);
 
-        Order order = new Order(1L, new User(), products, true, LocalDateTime.now());
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
         NotRule notRule = new NotRule(
                 new OrRule(
                         new MaxAttributeCount("color", "green", "1"),
@@ -233,7 +230,7 @@ public class RulesTest {
         products.add(product2);
         List<String> restrictions = List.of("red","green");
 
-        Order order = new Order(1L,new User(),products,true, LocalDateTime.now());
+        Order order = new Order(1L,new User(),products,OrderStatus.CREATED, LocalDateTime.now());
         RestrictedAttributeCombinationRule rule = new RestrictedAttributeCombinationRule("color",restrictions);
 
         assertThat(rule.isSatisfiedBy(order)).isFalse();
@@ -263,7 +260,7 @@ public class RulesTest {
 
         AndRule combinedRule = new AndRule(restrictedColorRule, restrictedSizeRule);
 
-        Order order = new Order(1L, new User(), products, true, LocalDateTime.now());
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
 
         assertThat(combinedRule.isSatisfiedBy(order)).isFalse();
     }
