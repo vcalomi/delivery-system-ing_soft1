@@ -63,7 +63,7 @@ public class OrderServiceTest {
 
         orderService.cancelOrder(1L);
 
-        verify(productService).decreaseStock(order.getProducts());
+        verify(productService).restoreStock(order.getProducts());
         verify(orderRepository).delete(order);
     }
 
