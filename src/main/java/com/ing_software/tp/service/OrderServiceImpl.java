@@ -160,12 +160,26 @@ public class OrderServiceImpl implements OrderService{
         return ordersResponse;
     }
 
-    public List<OrderResponse> getOrders(String sortBy, String authorizationHeader) {
+    public List<OrderResponse> getOrders(String sortBy, String authorizationHeader) throws Exception {
         String username = validateAuthorization(authorizationHeader);
         User owner = userService.findByUsername(username);
         List<Order> orders = (List<Order>) orderRepository.findByOwner(owner);
+        if (Objects.equals(sortBy, "confirmed")) {
+            List<OrderResponse> confirmedOrders = new ArrayList<>();
+            for (Order order: orders){
+                if(order.isConfirmed()){
+                    OrderResponse confirmedOrder = new OrderResponse(order.getId(),
+                            order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
+                    confirmedOrders.add(confirmedOrder);
+                }
+            }
+            if (confirmedOrders.isEmpty()){
+                throw new Exception("No confirmed orders found");
+            }
+            return confirmedOrders;
+        }
         List<OrderResponse> ordersResponse = new ArrayList<>();
-        for (Order order: orders){
+        for (Order order: orders) {
             OrderResponse confirmedOrder = new OrderResponse(order.getId(),
                     order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
             ordersResponse.add(confirmedOrder);
