@@ -24,5 +24,11 @@ public class AndRule extends OrderRule {
         return this.left.isSatisfiedBy(order) && this.right.isSatisfiedBy(order);
     }
 
+    public String notSatisfiedMessage() {
+        String leftMessage = this.left.notSatisfiedMessage();
+        String rightMessage = this.right.notSatisfiedMessage();
+        return String.format("%s and %s", leftMessage, rightMessage);
+    }
+
 }
 

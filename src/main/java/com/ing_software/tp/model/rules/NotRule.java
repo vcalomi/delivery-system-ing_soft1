@@ -21,4 +21,9 @@ public class NotRule extends OrderRule {
     public boolean isSatisfiedBy(Order order) {
         return !this.rule.isSatisfiedBy(order);
     }
+
+    public String notSatisfiedMessage() {
+        String message = this.rule.notSatisfiedMessage();
+        return String.format("!%s", message);
+    }
 }
