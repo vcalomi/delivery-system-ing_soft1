@@ -1,14 +1,26 @@
 <template>
   <div class="row w-100">
-    <div class="col-1 d-flex align-items-start vh-100">
-      <button class="btn btn-primary btn-sm" @click="createProduct">Crear Producto</button>
-      
+    <!-- Columna izquierda con lista de pedidos confirmados -->
+    <div class="col-md-3 d-flex flex-column align-items-start vh-100">
+      <h5>Pedidos Confirmados</h5>
+      <ul class="list-unstyled">
+        <li v-for="(order, index) in orders" :key="index">
+          <strong>Pedido #{{ order.id }}</strong>
+          <ul>
+            <li v-for="(item, itemIndex) in order.items" :key="itemIndex">
+              {{ item.product_name }} - Cantidad: {{ item.quantity }}
+            </li>
+          </ul>
+        </li>
+      </ul>
     </div>
-    <div class="col-8">
+
+    <!-- Columna del medio con la lista de productos -->
+    <div class="col-md-6">
       <div class="product-list-container">
         <div class="row">
           <div 
-            v-for="(product) in products" 
+            v-for="(product, key) in products" 
             :key="product.id" 
             class="col-sm-6 col-md-4 col-lg-3 mb-3"
           >
@@ -19,7 +31,7 @@
 
                 <label for="quantity">Cantidad:</label>
                 <input 
-                  v-model="selectedQuantities[product.id]" 
+                  v-model="selectedQuantities[key]" 
                   :disabled="product.stock <= 0"
                   id="quantity"
                   type="number"
@@ -59,17 +71,18 @@
         </div>
       </div>
     </div>
-    <div class="col-1 cart-container">
+
+    <!-- Columna derecha con el carrito -->
+    <div class="col-md-3 cart-container">
       <h5>Carrito</h5>
       <ul>
         <li v-for="(item, index) in orden" :key="index">
-          {{ item.product_name }} - {{ selectedQuantities[item.id] }}
+          {{ item.product.product_name }} - {{ selectedQuantities[item.productId] }}
         </li>
       </ul>
       <div v-if="products" class="d-flex justify-content-center mt-4">
         <RouterLink to="/createOrder" class="btn btn-primary btn-sm">Confirmar Pedido</RouterLink>
       </div>
-
     </div>
   </div>
 </template>
@@ -83,27 +96,34 @@ export default {
     return {
       products: [],
       orden: [],
-      selectedQuantities: {}
+      selectedQuantities: {},
+      orders: []  // pedidos confirmados
     };
   },
   async mounted() {
-    //let token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaWNoYSJ9.7rNwjkBXI05IF8INBwQ0moNXuWPz6YGPvtQJOHTmJG4';
     await axios.get('http://localhost:8081/api/products/', {
       headers: { Authorization: `Bearer ${localStorage.authToken}` }
     }).then(res => {
       this.products = res.data;
     }).catch(err => console.error(err));
+
+    await axios.get('http://localhost:8081/api/orders/confirmed', {
+      headers: { Authorization: `Bearer ${localStorage.authToken}` }
+    }).then(res => {
+      this.orders = res.data;
+    }).catch(err => console.error(err));
   },
   methods: {
     addProduct(product, quantity) {
-      delete product.stock
-      product.quantity = quantity
-      this.orden.push(product)
-      console.log(this.orden)
-      this.$store.dispatch('addProductToCart', product);
-    },
-    createProduct() {
-      this.$router.push({ name: 'CreateProductComponent' });
+      var prod = { 
+        "product_name": product.product_name,
+        "id": product.id,
+        "attributes": product.attributes,
+        "quantity": quantity 
+      };
+      console.log(prod);
+      this.orden.push(prod);
+      this.$store.dispatch('addProductToCart', prod);
     }
   }
 };
@@ -111,11 +131,10 @@ export default {
 
 <style scoped>
 .product-list-container {
-  width: 75%;
+  width: 100%;
 }
 
 .cart-container {
-  width: 25%;
   background-color: #f8f9fa;
   padding: 15px;
   border-radius: 8px;

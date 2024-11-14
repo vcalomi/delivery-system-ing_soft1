@@ -6,7 +6,7 @@ import LoginComponent from './components/LoginComponent.vue'
 import CreateProductComponent from './components/CreateProductComponent.vue'
 import CreateOrderComponent from './components/CreateOrderComponent.vue'
 import ChangePasswordComponent from './components/ChangePasswordComponent.vue'
-import UserOrdersComponent from './components/UserOrdersComponent.vue'
+import UserComponent from './components/UserComponent.vue'
 
 // Define the routes
 const routes = [
@@ -46,9 +46,9 @@ const routes = [
     component: ChangePasswordComponent
   },
   {
-    path: '/userOrders',
-    name: 'UserOrdersComponent',
-    component: UserOrdersComponent
+    path: '/userHome',
+    name: 'UserHome',
+    component: UserComponent
   }
 
   // Add more routes here
