@@ -187,4 +187,15 @@ public class OrderServiceImpl implements OrderService{
         }
         return ordersResponse;
     }
+
+    public void changeOrderStatus(Long order_id, OrderStatus status) {
+        Optional<Order> optionalOrder = orderRepository.findById(order_id);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setStatus(status);
+            orderRepository.save(order);
+            return;
+        }
+        throw new RuntimeException("Order not found");
+    }
 }

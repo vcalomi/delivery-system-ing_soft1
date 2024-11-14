@@ -4,6 +4,7 @@ import com.ing_software.tp.dto.OrderResponse;
 import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
 import com.ing_software.tp.model.OrderRule;
+import com.ing_software.tp.model.OrderStatus;
 import com.ing_software.tp.service.OrderService;
 import com.ing_software.tp.service.RuleServiceImpl;
 import jakarta.validation.Valid;
@@ -63,6 +64,17 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PatchMapping("/changeStatus/{order_id}")
+    public ResponseEntity<Void> changeOrderStatus(@PathVariable Long order_id, @RequestBody Map<String, String> request) {
+        String status = request.get("orderStatus");
+        try {
+            OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase());
+            orderService.changeOrderStatus(order_id, orderStatus);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
 }
