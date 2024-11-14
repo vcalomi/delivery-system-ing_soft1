@@ -1,6 +1,7 @@
 package com.ing_software.tp.service;
 
 import com.ing_software.tp.dto.EditProductRequest;
+import com.ing_software.tp.dto.IncrementStockRequest;
 import com.ing_software.tp.dto.NewProductRequest;
 import com.ing_software.tp.model.OrderProduct;
 import com.ing_software.tp.model.Product;
@@ -84,5 +85,13 @@ public class ProductServiceImpl implements ProductService {
                 productRepository.save(product);
             }
         }
+    }
+    public Product incrementStock(Long productId, IncrementStockRequest incrementStockRequest) throws Exception {
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isPresent()) {
+            product.get().setStock(product.get().getStock() + incrementStockRequest.getQuantity());
+            return productRepository.save(product.get());
+        }
+        throw new Exception("Product not found");
     }
 }

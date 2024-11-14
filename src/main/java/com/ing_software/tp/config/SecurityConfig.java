@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/all").hasRole("ADMIN")
                         .requestMatchers("/api/products/").permitAll()
                         .requestMatchers("/api/products/edit").hasRole("ADMIN")
+                        .requestMatchers("/api/products/incrementStock/**").hasRole("ADMIN")
                         .requestMatchers("/api/orders/createRule").permitAll()
                         .requestMatchers("/api/orders/").authenticated()
                         .requestMatchers("/api/orders/cancel/**").authenticated()
