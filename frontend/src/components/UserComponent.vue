@@ -5,7 +5,7 @@
       <h5>Pedidos Confirmados</h5>
       <ul class="list-unstyled">
         <li v-for="(order, index) in orders" :key="index">
-          <strong>Pedido #{{ order.id }}</strong>
+          <strong>Pedido #{{ order.orderId }}</strong>
           <ul>
             <li v-for="(item, itemIndex) in order.items" :key="itemIndex">
               {{ item.product_name }} - Cantidad: {{ item.quantity }}
@@ -97,7 +97,7 @@ export default {
       products: [],
       orden: [],
       selectedQuantities: {},
-      orders: []  // pedidos confirmados
+      orders: []  
     };
   },
   async mounted() {
@@ -107,7 +107,7 @@ export default {
       this.products = res.data;
     }).catch(err => console.error(err));
 
-    await axios.get('http://localhost:8081/api/orders/confirmed', {
+    await axios.get('http://localhost:8081/api/orders/', {
       headers: { Authorization: `Bearer ${localStorage.authToken}` }
     }).then(res => {
       this.orders = res.data;
