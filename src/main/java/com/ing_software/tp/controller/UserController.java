@@ -2,6 +2,8 @@ package com.ing_software.tp.controller;
 
 import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.dto.UserLoginRequest;
+import com.ing_software.tp.dto.*;
+import com.ing_software.tp.model.User;
 import com.ing_software.tp.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,10 +28,20 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest userCredentials) {
+    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest userCredentials) throws Exception {
 
         String token = userService.loginUser(userCredentials);
         return new ResponseEntity<>(token, HttpStatus.OK);
+    }
 
+    @PatchMapping("/forgetPassword")
+    public ResponseEntity<String> forgetPassword(@RequestBody @Valid UserForgetPasswordRequest userCredentials) throws Exception {
+        userService.generateNewPassword(userCredentials);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @PatchMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@RequestBody @Valid UserChangePasswordRequest userCredentials) throws Exception {
+        userService.changePassword(userCredentials);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
