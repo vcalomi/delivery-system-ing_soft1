@@ -86,7 +86,7 @@ public class OrderServiceImpl implements OrderService{
         List<OrderRule> rules = ruleService.getAllRules();
         for (OrderRule rule : rules) {
             if(!rule.isSatisfiedBy(order))
-                throw new RuntimeException("Rule not satisfied!");
+                throw new RuntimeException(rule.notSatisfiedMessage());
         }
 
         order.setCreatedAt(LocalDateTime.now());
@@ -101,7 +101,7 @@ public class OrderServiceImpl implements OrderService{
             LocalDateTime finalTime = LocalDateTime.now(clock);
             long hoursBetween = ChronoUnit.HOURS.between(initialTime,finalTime);
             if (hoursBetween <= 24) {
-                productService.decreaseStock(orderToCancel.get().getProducts());
+                productService.restoreStock(orderToCancel.get().getProducts());
                 orderRepository.delete(orderToCancel.get());
                 return;
             }

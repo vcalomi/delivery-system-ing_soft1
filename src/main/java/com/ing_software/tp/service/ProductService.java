@@ -23,7 +23,7 @@ public interface ProductService {
 
     void updateStock(List<OrderProduct> products);
 
-    void decreaseStock(List<OrderProduct> products);
+    void restoreStock(List<OrderProduct> products);
 
     Product incrementStock(Long productId, IncrementStockRequest incrementStockRequest) throws Exception;
 }
