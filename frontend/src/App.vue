@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  
     <nav class="navbar navbar-light bg-dark fixed-top shadow-sm">
       <div class="container-fluid">
         <RouterLink to="/" class="navbar-brand">Home</RouterLink>
@@ -33,7 +33,7 @@
     <div class="container-fluid mt-3 pt-5 mh-100">
       <RouterView></RouterView>
     </div>
-  </div>
+
 </template>
 
 <script>

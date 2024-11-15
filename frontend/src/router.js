@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import ProductsComponent from './components/ProductsComponent.vue'
+import AdminComponent from './components/AdminComponent.vue'
 import forgotPasswordComponent from './components/forgotPasswordComponent.vue'
 import Register from './components/Register.vue'
 import LoginComponent from './components/LoginComponent.vue'
@@ -7,13 +7,14 @@ import CreateProductComponent from './components/CreateProductComponent.vue'
 import CreateOrderComponent from './components/CreateOrderComponent.vue'
 import ChangePasswordComponent from './components/ChangePasswordComponent.vue'
 import UserComponent from './components/UserComponent.vue'
+import OrdersAdminComponent from './components/OrdersAdmin.vue'
 
 // Define the routes
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: ProductsComponent
+    component: AdminComponent
   },
   {
     path: '/forgotPassword',
@@ -49,6 +50,11 @@ const routes = [
     path: '/userHome',
     name: 'UserHome',
     component: UserComponent
+  },
+  {
+    path: '/ordersAdmin',
+    name: 'ordersAdmin',
+    component: OrdersAdminComponent
   }
 
   // Add more routes here
