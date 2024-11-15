@@ -38,12 +38,9 @@ public class EmailSenderServiceImpl implements EmailSenderService {
 
         for (OrderProduct item : order.getProducts()) {
             emailBody.append("- ").append(item.getProduct_name())
-                    .append(" (Cantidad: ").append(item.getQuantity()) //modificar acá cantidad de c/producto
-                    //.append(", Precio: $").append(item.getPrice())
+                    .append(" (Cantidad: ").append(item.getQuantity())
                     .append(")\n");
         }
-
-       // emailBody.append("\nTotal: $").append(order.getTotalAmount()).append("\n\n")
                 emailBody.append("Tu orden ha sido confirmada y se está preparando para su envío.\n")
                         .append("Recorda que tenes 24hs para cancelar el pedido.\n")
                 .append("¡Gracias por comprar con nosotros!");
