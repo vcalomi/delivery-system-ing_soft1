@@ -34,6 +34,7 @@ public class User implements UserDetails {
     private String role;
     @Lob
     private Blob profilePicture;
+    private String gender;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(String.format("ROLE_%s", this.role)));

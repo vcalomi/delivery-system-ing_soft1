@@ -43,8 +43,10 @@ public class ProductCreateEndpointTest {
 
     @BeforeAll
     static void registerAnUser(@Autowired TestRestTemplate restTemplate, @Autowired UserRepository userRepository) {
-        UserRegisterRequest adminRegisterRequest = new UserRegisterRequest("John", "Doe", "johndoe@email.com", 32, "address", "john", "password");
-        UserRegisterRequest userRegisterRequest = new UserRegisterRequest("Marta", "Rodriguez", "mrodriguez@email.com", 28, "address2", "marta", "1234");
+        UserRegisterRequest adminRegisterRequest = new UserRegisterRequest("John", "Doe", "johndoe@email.com", 32,
+                "address", "john", "password", "M");
+        UserRegisterRequest userRegisterRequest = new UserRegisterRequest("Marta", "Rodriguez", "mrodriguez@email" +
+                ".com", 28, "address2", "marta", "1234", "F");
 
         restTemplate.postForEntity("/api/users/register", adminRegisterRequest, String.class);
         restTemplate.postForEntity("/api/users/register", userRegisterRequest, String.class);

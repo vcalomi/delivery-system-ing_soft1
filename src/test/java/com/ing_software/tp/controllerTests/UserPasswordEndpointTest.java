@@ -39,7 +39,7 @@ public class UserPasswordEndpointTest {
     @BeforeEach
     void resgisterUser() {
         User registeredUser = new User(null, "John", "Doe", "email@gmail.com", 20,
-                "address", "John", "1234", "USER", null);
+                "address", "John", "1234", "USER", null, "M");
         restTemplate.postForEntity(REGISTER_URI, registeredUser, String.class);
     }
     @AfterEach
