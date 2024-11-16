@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AndRule extends OrderRule {
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private OrderRule left;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private OrderRule right;
 
     public AndRule(OrderRule left, OrderRule right) {
