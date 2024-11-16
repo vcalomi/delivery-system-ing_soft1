@@ -38,24 +38,11 @@ public class OrderServiceImpl implements OrderService{
         this.clock = clock;
     }
 
-    private String validateAuthorization(String authorizationHeader){
-        String username = null;
-        if (authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7);
-            username = jwtService.extractUsername(token);
 
-        } else if (authorizationHeader.startsWith("Basic ")) {
-            String base64Credentials = authorizationHeader.substring(6);
-            String credentials = new String(Base64.getDecoder().decode(base64Credentials));
-            String[] values = credentials.split(":", 2);
-            username = values[0];
-        }
-        return username;
-    }
 
     public OrderCreateResponse createOrder(@Valid OrderRequest orderRequest, String authorizationHeader) {
 
-        String username = validateAuthorization(authorizationHeader);
+        String username = jwtService.validateAuthorization(authorizationHeader);
 
         User user = userService.findByUsername(username);
 
@@ -162,7 +149,7 @@ public class OrderServiceImpl implements OrderService{
     }
 
     public List<OrderResponse> getOrders(String sortBy, String authorizationHeader) throws Exception {
-        String username = validateAuthorization(authorizationHeader);
+        String username = jwtService.validateAuthorization(authorizationHeader);
         User owner = userService.findByUsername(username);
         List<Order> orders = (List<Order>) orderRepository.findByOwner(owner);
         if (Objects.equals(sortBy, "confirmed")) {
