@@ -1,9 +1,8 @@
 package com.ing_software.tp.controller;
 
-import com.ing_software.tp.dto.OrderResponse;
 import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
-import com.ing_software.tp.model.OrderRule;
+import com.ing_software.tp.dto.OrderResponse;
 import com.ing_software.tp.model.OrderStatus;
 import com.ing_software.tp.service.OrderService;
 import com.ing_software.tp.service.RuleServiceImpl;

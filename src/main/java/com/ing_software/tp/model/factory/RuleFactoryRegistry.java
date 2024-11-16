@@ -13,7 +13,6 @@ public class RuleFactoryRegistry {
     public RuleFactoryRegistry(List<RuleFactory> factoryList) {
         for (RuleFactory factory : factoryList) {
             String ruleType = factory.getClass().getSimpleName().replace("Factory", "").toLowerCase();
-            System.out.println("ACA: " + ruleType);
             factories.put(ruleType, factory);
         }
     }

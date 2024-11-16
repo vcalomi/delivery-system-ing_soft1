@@ -5,9 +5,6 @@ import com.ing_software.tp.dto.UserForgetPasswordRequest;
 import com.ing_software.tp.dto.UserLoginRequest;
 import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.model.User;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 public interface UserService {
 

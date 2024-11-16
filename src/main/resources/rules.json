@@ -1,6 +1,6 @@
 {
   "rule": {
-    "ruleType":"maxAttributeCount",
+    "ruleType":"maxattributecount",
     "attribute":"color",
     "value": "red",
     "maxValue": "2"

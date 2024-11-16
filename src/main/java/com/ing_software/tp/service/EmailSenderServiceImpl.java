@@ -2,7 +2,6 @@ package com.ing_software.tp.service;
 
 import com.ing_software.tp.model.Order;
 import com.ing_software.tp.model.OrderProduct;
-import com.ing_software.tp.model.Product;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

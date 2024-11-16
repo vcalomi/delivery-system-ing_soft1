@@ -1,6 +1,9 @@
 package com.ing_software.tp.controllerTests;
 
-import com.ing_software.tp.dto.*;
+import com.ing_software.tp.dto.OrderRequest;
+import com.ing_software.tp.dto.ProductRequest;
+import com.ing_software.tp.dto.UserLoginRequest;
+import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.model.Product;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.ProductRepository;

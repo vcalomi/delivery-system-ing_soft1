@@ -1,11 +1,10 @@
 package com.ing_software.tp;
 
-import com.ing_software.tp.model.*;
-import com.ing_software.tp.model.rules.AndRule;
-import com.ing_software.tp.model.rules.MaxAttributeCount;
-import com.ing_software.tp.model.rules.OrRule;
-import com.ing_software.tp.model.rules.NotRule;
-import com.ing_software.tp.model.rules.RestrictedAttributeCombinationRule;
+import com.ing_software.tp.model.Order;
+import com.ing_software.tp.model.OrderProduct;
+import com.ing_software.tp.model.OrderStatus;
+import com.ing_software.tp.model.User;
+import com.ing_software.tp.model.rules.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

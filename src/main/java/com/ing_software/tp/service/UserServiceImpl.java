@@ -1,8 +1,9 @@
 package com.ing_software.tp.service;
 
+import com.ing_software.tp.dto.UserChangePasswordRequest;
+import com.ing_software.tp.dto.UserForgetPasswordRequest;
 import com.ing_software.tp.dto.UserLoginRequest;
 import com.ing_software.tp.dto.UserRegisterRequest;
-import com.ing_software.tp.dto.*;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -10,16 +11,12 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
-import java.util.Base64;
 
 @Service
 public class UserServiceImpl implements UserService {

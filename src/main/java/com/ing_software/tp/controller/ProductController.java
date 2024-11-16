@@ -3,7 +3,6 @@ package com.ing_software.tp.controller;
 import com.ing_software.tp.dto.EditProductRequest;
 import com.ing_software.tp.dto.IncrementStockRequest;
 import com.ing_software.tp.dto.NewProductRequest;
-import com.ing_software.tp.dto.ProductRequest;
 import com.ing_software.tp.model.Product;
 import com.ing_software.tp.service.ProductService;
 import jakarta.validation.Valid;
