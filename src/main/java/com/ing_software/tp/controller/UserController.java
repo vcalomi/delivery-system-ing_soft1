@@ -1,9 +1,6 @@
 package com.ing_software.tp.controller;
 
-import com.ing_software.tp.dto.UserChangePasswordRequest;
-import com.ing_software.tp.dto.UserForgetPasswordRequest;
-import com.ing_software.tp.dto.UserLoginRequest;
-import com.ing_software.tp.dto.UserRegisterRequest;
+import com.ing_software.tp.dto.*;
 import com.ing_software.tp.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -60,6 +57,12 @@ public class UserController {
     public ResponseEntity<byte[]> getProfilePicture(@RequestHeader("Authorization") String authorizationHeader) throws Exception {
         byte[] pictureData = userService.getProfilePicture(authorizationHeader);
         return ResponseEntity.ok(pictureData);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserData> getUserProfile(@RequestHeader("Authorization") String authorizationHeader) {
+        UserData userData = userService.getUserData(authorizationHeader);
+        return new ResponseEntity<>(userData, HttpStatus.OK);
     }
 
 }

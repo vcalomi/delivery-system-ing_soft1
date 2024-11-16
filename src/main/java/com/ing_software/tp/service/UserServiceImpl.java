@@ -1,9 +1,6 @@
 package com.ing_software.tp.service;
 
-import com.ing_software.tp.dto.UserChangePasswordRequest;
-import com.ing_software.tp.dto.UserForgetPasswordRequest;
-import com.ing_software.tp.dto.UserLoginRequest;
-import com.ing_software.tp.dto.UserRegisterRequest;
+import com.ing_software.tp.dto.*;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -39,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     private String createUser(@Valid UserRegisterRequest user) {
         User newUser = new User(null, user.getName(), user.getLastname(), user.getEmail(), user.getAge(),
-                user.getAddress(), user.getUsername(), passwordEncoder.encode(user.getPassword()), "USER", null);
+                user.getAddress(), user.getUsername(), passwordEncoder.encode(user.getPassword()), "USER", null, "M");
         UserDetails userDetails = userRepository.save(newUser);
         return jwtService.generateToken(userDetails.getUsername());
     }
@@ -123,6 +120,13 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new Exception("Imagen no encontrada");
         }
+    }
+
+    public UserData getUserData(String authorizationHeader) {
+        String username = jwtService.validateAuthorization(authorizationHeader);
+        User user = (User) userRepository.findByUsername(username);
+        return new UserData(user.getName(), user.getLastname(), user.getEmail(), user.getAge(),
+                user.getAddress(), user.getGender());
     }
 
 }
