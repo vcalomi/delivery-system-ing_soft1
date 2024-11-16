@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/").authenticated()
                         .requestMatchers("/api/orders/cancel/**").authenticated()
                         .requestMatchers("/api/orders/changeStatus/**").hasRole("ADMIN")
+                        .requestMatchers("/api/users/profile").authenticated()
         )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
