@@ -28,4 +28,6 @@ public class UserRegisterRequest {
     private String username;
     @NotBlank
     private String password;
+    @NotBlank
+    private String gender;
 }
