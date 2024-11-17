@@ -30,7 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestPropertySource("classpath:application-test.properties")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class OrderCreateEndpointTest {
-    private static final String PRODUCTS_URI = "/api/products";
     private static final String LOGIN_URI = "/api/users/login";
     private static final String ORDERS_URI = "/api/orders";
 
@@ -45,7 +44,7 @@ public class OrderCreateEndpointTest {
     static Product[] products;
 
     @BeforeAll
-    static void registerAnUser(@Autowired TestRestTemplate restTemplate, @Autowired UserRepository userRepository, @Autowired ProductRepository productRepository) {
+    static void setUp(@Autowired TestRestTemplate restTemplate, @Autowired UserRepository userRepository, @Autowired ProductRepository productRepository) {
         UserRegisterRequest adminRegisterRequest = new UserRegisterRequest("John", "Doe", "johndoe@email.com", 32,
                 "address", "john", "password",  "M");
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest("Marta", "Rodriguez", "mrodriguez@email" +
@@ -86,7 +85,14 @@ public class OrderCreateEndpointTest {
         productRequests.add(new ProductRequest(2L, "product_2", 5));
 
         OrderRequest orderRequest = new OrderRequest(productRequests);
-        assertThat(orderService.validateOrderRequestStock(orderRequest)).isEmpty();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", String.format("Bearer %s", userToken));
+        HttpEntity<OrderRequest> requestEntity = new HttpEntity<>(orderRequest, headers);
+        ResponseEntity<?> response = restTemplate.postForEntity(String.format("%s/create", ORDERS_URI), requestEntity,
+                Void.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test
@@ -97,7 +103,13 @@ public class OrderCreateEndpointTest {
         productRequests.add(new ProductRequest(2L, "product_2", 5));
 
         OrderRequest orderRequest = new OrderRequest(productRequests);
-        assertThat(orderService.validateOrderRequestStock(orderRequest)).isNotEmpty();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", String.format("Bearer %s", userToken));
+        HttpEntity<OrderRequest> requestEntity = new HttpEntity<>(orderRequest, headers);
+        ResponseEntity<?> response = restTemplate.postForEntity(String.format("%s/create", ORDERS_URI), requestEntity,
+                Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
