@@ -91,7 +91,7 @@ public class OrderGetEndpointTest {
     void canGetAllOrdersAsAdmin(){
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("Bearer %s", adminToken));
-        HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<List> response = restTemplate.exchange(String.format("%s/all", ORDERS_URI), HttpMethod.GET, requestEntity, List.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -99,7 +99,7 @@ public class OrderGetEndpointTest {
     void cantGetAllOrdersAsUser(){
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("Bearer %s", userToken));
-        HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<List> response = restTemplate.exchange(String.format("%s/all", ORDERS_URI), HttpMethod.GET, requestEntity, List.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
@@ -107,7 +107,7 @@ public class OrderGetEndpointTest {
     void canGetAllConfirmedOrdersAsAdmin(){
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("Bearer %s", adminToken));
-        HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<List> response = restTemplate.exchange(String.format("%s/all?sortBy=confirmed", ORDERS_URI), HttpMethod.GET, requestEntity, List.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().size()).isEqualTo(1);
@@ -116,7 +116,7 @@ public class OrderGetEndpointTest {
     void cantGetAllConfirmedOrdersAsAdmin(){
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("Bearer %s", userToken));
-        HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<List> response = restTemplate.exchange(String.format("%s/all?sortBy=confirmed", ORDERS_URI), HttpMethod.GET, requestEntity, List.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
@@ -125,7 +125,7 @@ public class OrderGetEndpointTest {
     void canGetOwnOrders(){
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("Bearer %s", userToken));
-        HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<List> response = restTemplate.exchange(String.format("%s/", ORDERS_URI), HttpMethod.GET, requestEntity, List.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().size()).isEqualTo(3);
@@ -135,7 +135,7 @@ public class OrderGetEndpointTest {
     void canGetConfirmedOwnOrders(){
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", String.format("Bearer %s", userToken));
-        HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
         ResponseEntity<List> response = restTemplate.exchange(String.format("%s/?sortBy=confirmed", ORDERS_URI), HttpMethod.GET, requestEntity, List.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().size()).isEqualTo(1);
