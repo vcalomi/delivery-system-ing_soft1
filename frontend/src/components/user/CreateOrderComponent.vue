@@ -24,12 +24,11 @@
         this.$store.dispatch('clearCart');  // Clear cart (empty the selected products)
       },
       async acceptOrder(){
-        console.log(this.selectedProducts)
-        await axios.patch('http://localhost:8081/api/orders/create', {products: this.selectedProducts}, {
-          headers: {Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaWNoYSJ9.7rNwjkBXI05IF8INBwQ0moNXuWPz6YGPvtQJOHTmJG4'}
-      }).then( (response) => { 
-          //this.message = "";
-          console.log(response);
+        await axios.post('http://localhost:8081/api/orders/create', {products: this.selectedProducts}, {
+          headers: {Authorization: `Bearer ${localStorage.authToken}`}
+      }).then( () => { 
+          alert("Orden creada con éxito!");
+          this.$router.push({name:'UserHome'});
         })
         .catch( err => {
           console.error( err )

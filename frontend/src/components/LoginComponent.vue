@@ -38,7 +38,10 @@ export default {
         console.log(localStorage); 
         this.$router.push({name:'Home'});
       })
-      .catch( err => console.error( err ) )
+      .catch( err => {
+      alert("error al loguearse")
+      console.error( err )
+     } )
     },
   },
   components: {

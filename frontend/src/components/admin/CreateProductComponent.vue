@@ -21,10 +21,8 @@ export default{
     }, 
     methods:{
         async createProduct(){
-            let token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaWNoYSJ9.7rNwjkBXI05IF8INBwQ0moNXuWPz6YGPvtQJOHTmJG4'
-            console.log("Bearer " + token)
             await axios.post('http://localhost:8081/api/products/create', {product_name: this.product_name, stock: this.stock }, {
-             headers: {Authorization: "Bearer " + token } 
+             headers: {Authorization: `Bearer ${localStorage.authToken}`} 
             })
             .then( res => {
                 if(res.status === 201){

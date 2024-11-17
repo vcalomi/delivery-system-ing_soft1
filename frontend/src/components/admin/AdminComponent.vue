@@ -16,7 +16,7 @@
         <tbody>
           <tr v-for="product in products" :key="product.id">
             <td>{{ product.id }}</td>
-            <td>{{ product.name }}</td>
+            <td>{{ product.product_name }}</td>
             <td>
               <input
                 type="number"
@@ -28,7 +28,7 @@
             <td>
               <input
                 type="text"
-                v-model="product.atribute"
+                v-model="products.attributes"
                 class="form-control form-control-sm"
               />
             </td>
@@ -62,8 +62,22 @@ export default {
   name: "adminComponent",
   data() {
     return {
-      products: []
+      products: [],
+      orders: []
     };
+  },
+  async mounted(){
+    await axios.get('http://localhost:8081/api/products/', {
+      headers: { Authorization: `Bearer ${localStorage.authToken}` }
+    }).then(res => {
+      this.products = res.data;
+    }).catch(err => console.error(err));
+    // /orders/all?sortBy=confirmed
+    await axios.get('http://localhost:8081/api/orders/all', {
+      headers: { Authorization: `Bearer ${localStorage.authToken}` }
+    }).then(res => {
+      this.orders = res.data;
+    }).catch(err => console.error(err));
   },
   methods: {
     updateStock(product) {
@@ -92,8 +106,7 @@ export default {
         return;
       }
 
-      axios
-        .patch(
+      axios.patch(
           `http://localhost:8081/api/products/edit`,
           {
             id: product.id,

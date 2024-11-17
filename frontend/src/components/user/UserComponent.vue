@@ -10,6 +10,20 @@
             <li v-for="(item, itemIndex) in order.items" :key="itemIndex">
               {{ item.product_name }} - Cantidad: {{ item.quantity }}
             </li>
+        <div class="d-flex gap-2 mt-2">
+          <button 
+            class="btn btn-danger btn-sm"
+            @click="cancelOrder(order.orderId)"
+          >
+            Cancelar
+          </button>
+          <button 
+            class="btn btn-success btn-sm"
+            @click="confirmOrder(order.orderId)"
+          >
+            Confirmar
+          </button>
+        </div>
           </ul>
         </li>
       </ul>
@@ -124,6 +138,34 @@ export default {
       console.log(prod);
       this.orden.push(prod);
       this.$store.dispatch('addProductToCart', prod);
+    },
+    async cancelOrder(orderId) {
+      await axios
+        .delete(
+          `http://localhost:8081/api/products/cancel/${orderId}`,
+          { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
+        )
+        .then(() => {
+          alert("Orden cancelada correctamente.");
+        })
+        .catch((err) => {
+          console.error("Error al cancelar orden", err);
+          alert("Hubo un error al cancelar la stock.");
+        });
+    },
+    confirmOrder(orderId) {
+      axios
+        .patch(
+          `http://localhost:8081/api/products/confirm/${orderId}`,
+          { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
+        )
+        .then(() => {
+          alert("Orden confirmada correctamente.");
+        })
+        .catch((err) => {
+          console.error("Error al confirmar la orden", err);
+          alert("Hubo un error al confirmar la stock.");
+        });
     }
   }
 };

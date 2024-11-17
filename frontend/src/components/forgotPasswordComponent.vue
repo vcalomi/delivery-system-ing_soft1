@@ -27,8 +27,8 @@ export default {
         }
     },
     methods: {
-        recoverPassword(){
-            axios.post('http://localhost:8081/api/users/forgetPassword', { username: this.user })
+        recoverPassword(){ 
+            axios.patch('http://localhost:8081/api/users/forgetPassword', { username: this.user })
                 .then(response => { 
                     console.log("Recovery email sent to", this.forgotUsername)
                     this.user = ""

@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AdminComponent from './components/AdminComponent.vue'
+import AdminComponent from './components/admin/AdminComponent.vue'
 import forgotPasswordComponent from './components/forgotPasswordComponent.vue'
 import Register from './components/Register.vue'
 import LoginComponent from './components/LoginComponent.vue'
-import CreateProductComponent from './components/CreateProductComponent.vue'
-import CreateOrderComponent from './components/CreateOrderComponent.vue'
+import CreateProductComponent from './components/admin/CreateProductComponent.vue'
+import CreateOrderComponent from './components/user/CreateOrderComponent.vue'
 import ChangePasswordComponent from './components/ChangePasswordComponent.vue'
-import UserComponent from './components/UserComponent.vue'
-import OrdersAdminComponent from './components/OrdersAdmin.vue'
+import UserComponent from './components/user/UserComponent.vue'
+import OrdersAdminComponent from './components/admin/OrdersAdmin.vue'
 
 // Define the routes
 const routes = [

@@ -42,7 +42,7 @@ export default {
   data() {
     return {
       profileMenuOpen: false,
-      role: 'ADMIN', // Rol
+      role: 'ADMIN', 
     };
   },
   methods: {
