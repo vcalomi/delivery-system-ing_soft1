@@ -1,11 +1,5 @@
 package com.ing_software.tp.controllerTests;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
-
-import java.time.*;
-import java.util.Optional;
-
 import com.ing_software.tp.model.Order;
 import com.ing_software.tp.repository.OrderProductRepository;
 import com.ing_software.tp.repository.OrderRepository;
@@ -15,6 +9,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.time.*;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class OrderServiceTest {
 
@@ -63,7 +64,7 @@ public class OrderServiceTest {
 
         orderService.cancelOrder(1L);
 
-        verify(productService).decreaseStock(order.getProducts());
+        verify(productService).restoreStock(order.getProducts());
         verify(orderRepository).delete(order);
     }
 

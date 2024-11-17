@@ -1,8 +1,8 @@
 package com.ing_software.tp.service;
 
-import com.ing_software.tp.dto.OrderResponse;
 import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
+import com.ing_software.tp.dto.OrderResponse;
 import com.ing_software.tp.dto.ProductRequest;
 import com.ing_software.tp.model.*;
 import com.ing_software.tp.repository.OrderProductRepository;
@@ -38,24 +38,11 @@ public class OrderServiceImpl implements OrderService{
         this.clock = clock;
     }
 
-    private String validateAuthorization(String authorizationHeader){
-        String username = null;
-        if (authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7);
-            username = jwtService.extractUsername(token);
 
-        } else if (authorizationHeader.startsWith("Basic ")) {
-            String base64Credentials = authorizationHeader.substring(6);
-            String credentials = new String(Base64.getDecoder().decode(base64Credentials));
-            String[] values = credentials.split(":", 2);
-            username = values[0];
-        }
-        return username;
-    }
 
     public OrderCreateResponse createOrder(@Valid OrderRequest orderRequest, String authorizationHeader) {
 
-        String username = validateAuthorization(authorizationHeader);
+        String username = jwtService.validateAuthorization(authorizationHeader);
 
         User user = userService.findByUsername(username);
 
@@ -82,11 +69,12 @@ public class OrderServiceImpl implements OrderService{
         }
         order.setProducts(products);
         order.setOwner(user);
+        order.setStatus(OrderStatus.CREATED);
 
         List<OrderRule> rules = ruleService.getAllRules();
         for (OrderRule rule : rules) {
             if(!rule.isSatisfiedBy(order))
-                throw new RuntimeException("Rule not satisfied!");
+                throw new RuntimeException(rule.notSatisfiedMessage());
         }
 
         order.setCreatedAt(LocalDateTime.now());
@@ -101,7 +89,7 @@ public class OrderServiceImpl implements OrderService{
             LocalDateTime finalTime = LocalDateTime.now(clock);
             long hoursBetween = ChronoUnit.HOURS.between(initialTime,finalTime);
             if (hoursBetween <= 24) {
-                productService.decreaseStock(orderToCancel.get().getProducts());
+                productService.restoreStock(orderToCancel.get().getProducts());
                 orderRepository.delete(orderToCancel.get());
                 return;
             }
@@ -126,7 +114,7 @@ public class OrderServiceImpl implements OrderService{
             throw new RuntimeException("No order with provided id");
         }
         User user = order.get().getOwner();
-        order.get().setConfirmed(true);
+        order.get().setStatus(OrderStatus.CONFIRMED);
         productService.updateStock(order.get().getProducts());
         orderRepository.save(order.get());
         emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email", emailSenderService.buildOrderConfirmationEmail(order.get()));
@@ -140,7 +128,7 @@ public class OrderServiceImpl implements OrderService{
         if (Objects.equals(sortBy, "confirmed")) {
             List<OrderResponse> confirmedOrders = new ArrayList<>();
             for (Order order: orders){
-                if(order.isConfirmed()){
+                if(order.getStatus().equals(OrderStatus.CONFIRMED)){
                     OrderResponse confirmedOrder = new OrderResponse(order.getId(),
                             order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
                     confirmedOrders.add(confirmedOrder);
@@ -160,16 +148,41 @@ public class OrderServiceImpl implements OrderService{
         return ordersResponse;
     }
 
-    public List<OrderResponse> getOrders(String sortBy, String authorizationHeader) {
-        String username = validateAuthorization(authorizationHeader);
+    public List<OrderResponse> getOrders(String sortBy, String authorizationHeader) throws Exception {
+        String username = jwtService.validateAuthorization(authorizationHeader);
         User owner = userService.findByUsername(username);
         List<Order> orders = (List<Order>) orderRepository.findByOwner(owner);
+        if (Objects.equals(sortBy, "confirmed")) {
+            List<OrderResponse> confirmedOrders = new ArrayList<>();
+            for (Order order: orders){
+                if(order.getStatus().equals(OrderStatus.CONFIRMED)){
+                    OrderResponse confirmedOrder = new OrderResponse(order.getId(),
+                            order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
+                    confirmedOrders.add(confirmedOrder);
+                }
+            }
+            if (confirmedOrders.isEmpty()){
+                throw new Exception("No confirmed orders found");
+            }
+            return confirmedOrders;
+        }
         List<OrderResponse> ordersResponse = new ArrayList<>();
-        for (Order order: orders){
+        for (Order order: orders) {
             OrderResponse confirmedOrder = new OrderResponse(order.getId(),
                     order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
             ordersResponse.add(confirmedOrder);
         }
         return ordersResponse;
+    }
+
+    public void changeOrderStatus(Long order_id, OrderStatus status) {
+        Optional<Order> optionalOrder = orderRepository.findById(order_id);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setStatus(status);
+            orderRepository.save(order);
+            return;
+        }
+        throw new RuntimeException("Order not found");
     }
 }

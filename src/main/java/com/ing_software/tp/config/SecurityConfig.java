@@ -1,7 +1,6 @@
 package com.ing_software.tp.config;
 
 import com.ing_software.tp.service.UserDetailsServiceImpl;
-import org.apache.catalina.filters.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,6 +52,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/createRule").permitAll()
                         .requestMatchers("/api/orders/").authenticated()
                         .requestMatchers("/api/orders/cancel/**").authenticated()
+                        .requestMatchers("/api/orders/changeStatus/**").hasRole("ADMIN")
+                        .requestMatchers("/api/users/profile").authenticated()
         )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

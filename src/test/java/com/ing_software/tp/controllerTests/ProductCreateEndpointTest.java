@@ -4,8 +4,10 @@ import com.ing_software.tp.dto.NewProductRequest;
 import com.ing_software.tp.dto.UserLoginRequest;
 import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.model.User;
+import com.ing_software.tp.repository.ProductRepository;
 import com.ing_software.tp.repository.UserRepository;
 import com.ing_software.tp.service.EmailSenderService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,11 +38,15 @@ public class ProductCreateEndpointTest {
 
     static String adminToken;
     static String userToken;
+    @Autowired
+    private ProductRepository productRepository;
 
     @BeforeAll
     static void registerAnUser(@Autowired TestRestTemplate restTemplate, @Autowired UserRepository userRepository) {
-        UserRegisterRequest adminRegisterRequest = new UserRegisterRequest("John", "Doe", "johndoe@email.com", 32, "address", "john", "password");
-        UserRegisterRequest userRegisterRequest = new UserRegisterRequest("Marta", "Rodriguez", "mrodriguez@email.com", 28, "address2", "marta", "1234");
+        UserRegisterRequest adminRegisterRequest = new UserRegisterRequest("John", "Doe", "johndoe@email.com", 32,
+                "address", "john", "password", "M");
+        UserRegisterRequest userRegisterRequest = new UserRegisterRequest("Marta", "Rodriguez", "mrodriguez@email" +
+                ".com", 28, "address2", "marta", "1234", "F");
 
         restTemplate.postForEntity("/api/users/register", adminRegisterRequest, String.class);
         restTemplate.postForEntity("/api/users/register", userRegisterRequest, String.class);
@@ -63,6 +68,11 @@ public class ProductCreateEndpointTest {
 
         adminToken = adminResponse.getBody();
         userToken = userResponse.getBody();
+    }
+
+    @AfterEach
+    void cleanProductTable(){
+        productRepository.deleteAll();
     }
 
 

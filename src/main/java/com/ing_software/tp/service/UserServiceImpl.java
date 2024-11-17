@@ -1,15 +1,19 @@
 package com.ing_software.tp.service;
 
-import com.ing_software.tp.dto.UserLoginRequest;
-import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.dto.*;
 import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.sql.Blob;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,6 +23,8 @@ public class UserServiceImpl implements UserService {
     private final JwtService jwtService;
     private final EmailSenderService emailSenderService;
     private final PasswordGeneratorService passwordGeneratorService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, EmailSenderService emailSenderService, PasswordGeneratorService passwordGeneratorService) {
         this.userRepository = userRepository;
@@ -30,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     private String createUser(@Valid UserRegisterRequest user) {
         User newUser = new User(null, user.getName(), user.getLastname(), user.getEmail(), user.getAge(),
-                user.getAddress(), user.getUsername(), passwordEncoder.encode(user.getPassword()), "USER");
+                user.getAddress(), user.getUsername(), passwordEncoder.encode(user.getPassword()), "USER", null, "M");
         UserDetails userDetails = userRepository.save(newUser);
         return jwtService.generateToken(userDetails.getUsername());
     }
@@ -88,4 +94,39 @@ public class UserServiceImpl implements UserService {
             throw new Exception("Invalid password.");
         }
     }
+
+    @Transactional
+    public void uploadProfilePicture(String authorizationHeader,byte[] pictureData) throws Exception {
+        String username = jwtService.validateAuthorization(authorizationHeader);
+        User user = (User) userRepository.findByUsername(username);
+        if (user != null) {
+            Blob blob = entityManager.unwrap(org.hibernate.Session.class)
+                    .getLobHelper()
+                    .createBlob(new ByteArrayInputStream(pictureData), pictureData.length);
+            user.setProfilePicture(blob);
+            entityManager.merge(user);
+        } else {
+            throw new Exception("Usuario no encontrado");
+        }
+    }
+
+    public byte[] getProfilePicture(String authorizationHeader) throws Exception {
+        String username = jwtService.validateAuthorization(authorizationHeader);
+        User user = (User) userRepository.findByUsername(username);
+        if (user != null && user.getProfilePicture() != null) {
+            Blob blob = user.getProfilePicture();
+            InputStream inputStream = blob.getBinaryStream();
+            return inputStream.readAllBytes();
+        } else {
+            throw new Exception("Imagen no encontrada");
+        }
+    }
+
+    public UserData getUserData(String authorizationHeader) {
+        String username = jwtService.validateAuthorization(authorizationHeader);
+        User user = (User) userRepository.findByUsername(username);
+        return new UserData(user.getName(), user.getLastname(), user.getEmail(), user.getAge(),
+                user.getAddress(), user.getGender());
+    }
+
 }

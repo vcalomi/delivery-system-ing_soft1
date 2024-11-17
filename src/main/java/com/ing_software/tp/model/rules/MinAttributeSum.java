@@ -27,4 +27,8 @@ public class MinAttributeSum extends OrderRule {
         return sum >= minSum;
 
     }
+
+    public String notSatisfiedMessage() {
+        return String.format("There must be a min %s value of %d", this.attribute, this.minSum);
+    }
 }

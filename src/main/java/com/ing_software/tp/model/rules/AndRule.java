@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AndRule extends OrderRule {
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private OrderRule left;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private OrderRule right;
 
     public AndRule(OrderRule left, OrderRule right) {
@@ -22,6 +22,12 @@ public class AndRule extends OrderRule {
 
     public boolean isSatisfiedBy(Order order) {
         return this.left.isSatisfiedBy(order) && this.right.isSatisfiedBy(order);
+    }
+
+    public String notSatisfiedMessage() {
+        String leftMessage = this.left.notSatisfiedMessage();
+        String rightMessage = this.right.notSatisfiedMessage();
+        return String.format("%s and %s", leftMessage, rightMessage);
     }
 
 }

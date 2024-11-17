@@ -1,7 +1,6 @@
 package com.ing_software.tp.dto;
 
 import com.ing_software.tp.model.OrderProduct;
-import com.ing_software.tp.model.Product;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;

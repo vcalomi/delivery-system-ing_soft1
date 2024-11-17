@@ -33,4 +33,9 @@ public class RestrictedAttributeCombinationRule extends OrderRule {
         return !attributeValues.containsAll(restrictedCombinations);
     }
 
+    public String notSatisfiedMessage() {
+        return String.format("The following %s values can't be combined %s", this.attribute,
+                this.restrictedCombinations.toString());
+    }
+
 }

@@ -28,5 +28,9 @@ public class MaxAttributeSum extends OrderRule {
         return sum <= maxSum;
 
     }
+
+    public String notSatisfiedMessage() {
+        return String.format("There must be a max %s value of %d", this.attribute, this.maxSum);
+    }
 }
 

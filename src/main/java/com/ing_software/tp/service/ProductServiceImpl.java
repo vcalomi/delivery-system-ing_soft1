@@ -76,7 +76,7 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    public void decreaseStock(List<OrderProduct> products) {
+    public void restoreStock(List<OrderProduct> products) {
         for (OrderProduct orderProduct: products) {
             Optional<Product> productOptional = productRepository.findById(orderProduct.getProduct_id());
             if (productOptional.isPresent()) {

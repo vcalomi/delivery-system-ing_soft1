@@ -32,5 +32,10 @@ public class MinAttributeCount extends OrderRule {
         return count >= minCount;
 
     }
+
+    public String notSatisfiedMessage() {
+        return String.format("There must be a min of %d products with %s equal to %s", this.minCount,
+                this.attribute, this.attributeValue);
+    }
 }
 

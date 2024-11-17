@@ -32,4 +32,9 @@ public class MaxAttributeCount extends OrderRule {
         return count <= maxCount;
 
     }
+
+    public String notSatisfiedMessage() {
+        return String.format("There must be a max of %d products with %s equal to %s", this.maxCount,
+                this.attribute, this.attributeValue);
+    }
 }

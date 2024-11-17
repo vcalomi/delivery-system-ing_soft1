@@ -1,9 +1,9 @@
 package com.ing_software.tp.controller;
 
-import com.ing_software.tp.dto.OrderResponse;
 import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
-import com.ing_software.tp.model.OrderRule;
+import com.ing_software.tp.dto.OrderResponse;
+import com.ing_software.tp.model.OrderStatus;
 import com.ing_software.tp.service.OrderService;
 import com.ing_software.tp.service.RuleServiceImpl;
 import jakarta.validation.Valid;
@@ -39,13 +39,14 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/all")
-    public ResponseEntity<List<OrderResponse>> getConfirmedOrders(@RequestParam(required = false) String sortBy) throws Exception{
-        List<OrderResponse> confirmedOrders = orderService.getConfirmedOrders(sortBy);
-        return new ResponseEntity<>(confirmedOrders, HttpStatus.OK);
+    public ResponseEntity<List<OrderResponse>> getAllOrders(@RequestParam(required = false) String sortBy) throws Exception{
+        List<OrderResponse> orders = orderService.getConfirmedOrders(sortBy);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<OrderResponse>> getOrders(@RequestHeader("Authorization") String authorizationHeader, @RequestParam(required = false ) String sortBy){
+    public ResponseEntity<List<OrderResponse>> getOwnOrders(@RequestHeader("Authorization") String authorizationHeader,
+                                                          @RequestParam(required = false ) String sortBy) throws Exception {
         List<OrderResponse> orders = orderService.getOrders(sortBy, authorizationHeader);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
@@ -57,11 +58,22 @@ public class OrderController {
     }
 
     @PostMapping("/createRule")
-    public ResponseEntity<OrderRule> createRule(@RequestBody Map<String, Object> ruleRequest){
-        OrderRule rule = ruleService.createOrderRule(ruleRequest);
-        return new ResponseEntity<>(rule, HttpStatus.CREATED);
+    public ResponseEntity<Void> createRule(@RequestBody Map<String, Object> ruleRequest){
+        ruleService.createOrderRule(ruleRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PatchMapping("/changeStatus/{order_id}")
+    public ResponseEntity<Void> changeOrderStatus(@PathVariable Long order_id, @RequestBody Map<String, String> request) {
+        String status = request.get("orderStatus");
+        try {
+            OrderStatus orderStatus = OrderStatus.valueOf(status.toUpperCase());
+            orderService.changeOrderStatus(order_id, orderStatus);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
 
 }

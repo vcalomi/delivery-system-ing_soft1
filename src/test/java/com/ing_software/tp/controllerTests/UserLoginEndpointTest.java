@@ -38,7 +38,7 @@ public class UserLoginEndpointTest {
     static void registerUser(@Autowired TestRestTemplate restTemplate) {
 
         registeredUser = new User(null, "John", "Doe", "email@email.com", 20,
-                "address", "John1", "1234", "USER");
+                "address", "John1", "1234", "USER", null, "M");
         restTemplate.postForEntity(REGISTER_URI, registeredUser, String.class);
     }
 
