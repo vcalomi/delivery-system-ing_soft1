@@ -1,7 +1,7 @@
 <template>
   
     <nav class="navbar navbar-light bg-dark fixed-top shadow-sm">
-      <div class="container-fluid">
+      <div v-if="showNavBar"  class="container-fluid">
         <RouterLink to="/" class="navbar-brand">Home</RouterLink>
         <div class="navbar-text">
           <h4>{{ "Bienvenido al mejor sistema de compras del mundo" }}</h4>
@@ -24,6 +24,9 @@
               <li>
                 <RouterLink to="UserOrders">Pedidos</RouterLink>
               </li>
+              <li>
+                <RouterLink to="addProfileImage">agregar foto de perfil</RouterLink>
+              </li>
             </ul>
           </div>
         </div>
@@ -37,13 +40,34 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: 'App',
   data() {
     return {
       profileMenuOpen: false,
       role: 'ADMIN', 
+      profile: [],
+      profilePictureUrl: '',
+      showNavBar: true
     };
+  },
+  async mounted(){
+    await axios.get('http://localhost:8081/api/users/profile', {
+      headers: { Authorization: `Bearer ${localStorage.authToken}` }
+    }).then(res => {
+      this.profile = res.data;
+    }).catch(err => alert(err));
+
+
+    await axios.get("http://localhost:8081/api/profilePicture", {
+      headers: { Authorization: `Bearer ${localStorage.authToken}` },
+      responseType: "arraybuffer", // Importante para manejar datos binarios
+    }).then(res =>{
+      const blob = new Blob([res.data], { type: res.headers["content-type"] });
+      this.profilePictureUrl = URL.createObjectURL(blob);
+    }).catch(err => console.log(err));
   },
   methods: {
     toggleProfileMenu() {

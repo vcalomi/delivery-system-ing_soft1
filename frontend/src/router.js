@@ -8,6 +8,7 @@ import CreateOrderComponent from './components/user/CreateOrderComponent.vue'
 import ChangePasswordComponent from './components/ChangePasswordComponent.vue'
 import UserComponent from './components/user/UserComponent.vue'
 import OrdersAdminComponent from './components/admin/OrdersAdmin.vue'
+import UploadPicture from './components/UploadPicture.vue'
 
 // Define the routes
 const routes = [
@@ -55,6 +56,11 @@ const routes = [
     path: '/ordersAdmin',
     name: 'ordersAdmin',
     component: OrdersAdminComponent
+  },
+  {
+    path: '/uploadPicture',
+    name: 'UploadPicture',
+    component: UploadPicture
   }
 
   // Add more routes here
