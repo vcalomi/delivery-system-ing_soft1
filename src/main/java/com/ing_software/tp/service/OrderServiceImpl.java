@@ -71,11 +71,8 @@ public class OrderServiceImpl implements OrderService{
         order.setOwner(user);
         order.setStatus(OrderStatus.CREATED);
 
-        List<OrderRule> rules = ruleService.getAllRules();
-        for (OrderRule rule : rules) {
-            if(!rule.isSatisfiedBy(order))
-                throw new RuntimeException(rule.notSatisfiedMessage());
-        }
+        if (!validateRules(order))
+            divideOrder(order);
 
         order.setCreatedAt(LocalDateTime.now());
         orderRepository.save(order);
@@ -184,5 +181,73 @@ public class OrderServiceImpl implements OrderService{
             return;
         }
         throw new RuntimeException("Order not found");
+    }
+
+    private boolean validateRules(Order order) {
+        List<OrderRule> rules = ruleService.getAllRules();
+        for (OrderRule rule: rules) {
+            if (!rule.isSatisfiedBy(order))
+                return false;
+        }
+        return true;
+    }
+
+    private void addProduct(Order order, OrderProduct orderProduct) {
+        if (order.getProducts() == null) {
+            List<OrderProduct> products = new ArrayList<>(List.of(orderProduct));
+            order.setProducts(products);
+            return;
+        }
+        List<OrderProduct> products = order.getProducts();
+        products.add(orderProduct);
+        order.setProducts(products);
+    }
+
+    private void removeProduct(Order order, OrderProduct orderProduct) {
+        if (order.getProducts() == null) {
+            return;
+        }
+        List<OrderProduct> products = order.getProducts();
+        products.removeLast();
+        order.setProducts(products);
+    }
+
+    private List<OrderProduct> divideProductForQuantity(List<OrderProduct> products) {
+        List<OrderProduct> finalList = new ArrayList<>();
+        for (OrderProduct product: products) {
+            for (int i = 0; i < product.getQuantity(); i++) {
+                OrderProduct newOrderProduct = new OrderProduct(product.getId(), product.getProduct_id(),
+                        product.getProduct_name(), 1, product.getAttributes());
+                finalList.add(newOrderProduct);
+            }
+        }
+        return finalList;
+    }
+
+    private List<Order> divideOrder(Order order) {
+        List<Order> validOrders = new ArrayList<>();
+        List<OrderProduct> products = divideProductForQuantity(order.getProducts());
+
+
+        for (OrderProduct product: products) {
+            boolean added = false;
+
+            for (Order order1: validOrders) {
+                addProduct(order1, product);
+                if (validateRules(order1)) {
+                    added = true;
+                    break;
+                } else {
+                    removeProduct(order1, product);
+                }
+            }
+
+            if (!added) {
+                Order newOrder = new Order();
+                addProduct(newOrder, product);
+                validOrders.add(newOrder);
+            }
+        }
+        return validOrders;
     }
 }

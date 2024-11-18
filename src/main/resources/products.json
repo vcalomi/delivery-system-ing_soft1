@@ -8,30 +8,16 @@
   },
   {
     "product_name":"product_2",
-    "stock": 3,
+    "stock": 5,
     "attributes":{
-      "weight":"8"
+      "color":"red"
     }
   },
   {
     "product_name":"product_3",
-    "stock": 7,
+    "stock": 5,
     "attributes":{
-      "size":"M"
-    }
-  },
-  {
-    "product_name":"product_4",
-    "stock": 1,
-    "attributes":{
-      "color":"blue"
-    }
-  },
-  {
-    "product_name":"product_5",
-    "stock": 12,
-    "attributes":{
-      "type": "software"
+      "color":"red"
     }
   }
 ]
