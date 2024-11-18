@@ -1,5 +1,7 @@
 package com.ing_software.tp.advice;
 
+import com.ing_software.tp.dto.DividerOrdersResponse;
+import com.ing_software.tp.exceptions.RulesNotSatisfiedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,5 +64,10 @@ public class ApplicationExceptionHandler {
         Map<String, String> error = new HashMap<>();
         error.put("error", exception.getMessage());
         return error;
+    }
+
+    @ExceptionHandler(RulesNotSatisfiedException.class)
+    public ResponseEntity<DividerOrdersResponse> handleInvalidOrderException(RulesNotSatisfiedException ex) {
+        return new ResponseEntity<>(ex.getResponse(), HttpStatus.BAD_REQUEST);
     }
 }

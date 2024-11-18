@@ -1,9 +1,7 @@
 package com.ing_software.tp.service;
 
-import com.ing_software.tp.dto.OrderCreateResponse;
-import com.ing_software.tp.dto.OrderRequest;
-import com.ing_software.tp.dto.OrderResponse;
-import com.ing_software.tp.dto.ProductRequest;
+import com.ing_software.tp.dto.*;
+import com.ing_software.tp.exceptions.RulesNotSatisfiedException;
 import com.ing_software.tp.model.*;
 import com.ing_software.tp.repository.OrderProductRepository;
 import com.ing_software.tp.repository.OrderRepository;
@@ -71,8 +69,10 @@ public class OrderServiceImpl implements OrderService{
         order.setOwner(user);
         order.setStatus(OrderStatus.CREATED);
 
-        if (!validateRules(order))
-            divideOrder(order);
+        if (!validateRules(order)) {
+            DividerOrdersResponse response = parseDividedOrder(order);
+            throw new RulesNotSatisfiedException(response);
+        }
 
         order.setCreatedAt(LocalDateTime.now());
         orderRepository.save(order);
@@ -249,5 +249,16 @@ public class OrderServiceImpl implements OrderService{
             }
         }
         return validOrders;
+    }
+
+    private DividerOrdersResponse parseDividedOrder(Order order) {
+        List<Order> dividedOrder = divideOrder(order);
+        DividerOrdersResponse response = new DividerOrdersResponse();
+        List<List<OrderProduct>> newOrderProducts = new ArrayList<>();
+        for (Order order1: dividedOrder) {
+            newOrderProducts.add(order1.getProducts());
+        }
+        response.setDividedProducts(newOrderProducts);
+        return response;
     }
 }
