@@ -1,8 +1,13 @@
 package com.ing_software.tp.controllerTests;
 
 import com.ing_software.tp.dto.NewProductRequest;
+import com.ing_software.tp.dto.UserLoginRequest;
 import com.ing_software.tp.dto.UserRegisterRequest;
+import com.ing_software.tp.model.User;
+import com.ing_software.tp.repository.ProductRepository;
+import com.ing_software.tp.repository.UserRepository;
 import com.ing_software.tp.service.EmailSenderService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +20,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.HashMap;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestPropertySource("classpath:application-test.properties")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ProductCreateEndpointTest {
     private static final String PRODUCTS_URI = "/api/products";
-    private static final String REGISTER_URI = "/api/users/register";
+    private static final String LOGIN_URI = "/api/users/login";
 
     @Autowired
     TestRestTemplate restTemplate;
@@ -29,22 +36,62 @@ public class ProductCreateEndpointTest {
     @MockBean
     EmailSenderService emailSenderService;
 
-    static String token;
+    static String adminToken;
+    static String userToken;
+    @Autowired
+    private ProductRepository productRepository;
 
     @BeforeAll
-    static void registerAnUser(@Autowired TestRestTemplate restTemplate) {
-        UserRegisterRequest user = new UserRegisterRequest("John", "Doe", "vcalomi@gmail.com", 32, "address", "john",
-                "password");
-        ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URI,
-                user, String.class);
-        token = response.getBody();
+    static void registerAnUser(@Autowired TestRestTemplate restTemplate, @Autowired UserRepository userRepository) {
+        UserRegisterRequest adminRegisterRequest = new UserRegisterRequest("John", "Doe", "johndoe@email.com", 32,
+                "address", "john", "password", "M");
+        UserRegisterRequest userRegisterRequest = new UserRegisterRequest("Marta", "Rodriguez", "mrodriguez@email" +
+                ".com", 28, "address2", "marta", "1234", "F");
+
+        restTemplate.postForEntity("/api/users/register", adminRegisterRequest, String.class);
+        restTemplate.postForEntity("/api/users/register", userRegisterRequest, String.class);
+
+        User adminUser = (User) userRepository.findByUsername("john");
+        User normalUser = (User) userRepository.findByUsername("marta");
+
+        adminUser.setRole("ADMIN");
+        normalUser.setRole("USER");
+
+        userRepository.save(adminUser);
+        userRepository.save(normalUser);
+
+        UserLoginRequest adminLoginRequest = new UserLoginRequest("john", "password");
+        UserLoginRequest userLoginRequest = new UserLoginRequest("marta", "1234");
+
+        ResponseEntity<String> adminResponse = restTemplate.postForEntity(LOGIN_URI, adminLoginRequest, String.class);
+        ResponseEntity<String> userResponse = restTemplate.postForEntity(LOGIN_URI, userLoginRequest, String.class);
+
+        adminToken = adminResponse.getBody();
+        userToken = userResponse.getBody();
+    }
+
+    @AfterEach
+    void cleanProductTable(){
+        productRepository.deleteAll();
+    }
+
+
+    @Test
+    void userCantCreateAProduct(){
+        NewProductRequest newProduct = new NewProductRequest("product_1", 20, new HashMap<>());
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", String.format("Bearer %s", userToken));
+        HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(newProduct, headers);
+        ResponseEntity<?> response = restTemplate.postForEntity(String.format("%s/create", PRODUCTS_URI), requestEntity,
+                Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
     @Test
-    void canCreateAProduct(){
-        NewProductRequest newProduct = new NewProductRequest("product_1", 20);
+    void adminCanCreateAProduct(){
+        NewProductRequest newProduct = new NewProductRequest("product_1", 20, new HashMap<>());
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", String.format("Bearer %s", token));
+        headers.set("Authorization", String.format("Bearer %s", adminToken));
         HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(newProduct, headers);
         ResponseEntity<?> response = restTemplate.postForEntity(String.format("%s/create", PRODUCTS_URI), requestEntity,
                 Void.class);
@@ -53,9 +100,9 @@ public class ProductCreateEndpointTest {
 
     @Test
     void cantCreateAProductWithANullName(){
-        NewProductRequest newProduct = new NewProductRequest(null, 20);
+        NewProductRequest newProduct = new NewProductRequest(null, 20, new HashMap<>());
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", String.format("Bearer %s", token));
+        headers.set("Authorization", String.format("Bearer %s", adminToken));
         HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(newProduct, headers);
         ResponseEntity<?> response = restTemplate.postForEntity(String.format("%s/create", PRODUCTS_URI), requestEntity, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -63,9 +110,9 @@ public class ProductCreateEndpointTest {
 
     @Test
     void cantCreateAProductWithAnEmptyName(){
-        NewProductRequest newProduct = new NewProductRequest("", 20);
+        NewProductRequest newProduct = new NewProductRequest("", 20, new HashMap<>());
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", String.format("Bearer %s", token));
+        headers.set("Authorization", String.format("Bearer %s", adminToken));
         HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(newProduct, headers);
         ResponseEntity<?> response = restTemplate.postForEntity(String.format("%s/create", PRODUCTS_URI), requestEntity, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -73,9 +120,9 @@ public class ProductCreateEndpointTest {
 
     @Test
     void cantCreateAProductWithLessThanOneOfStock(){
-        NewProductRequest newProduct = new NewProductRequest("product_1", 0);
+        NewProductRequest newProduct = new NewProductRequest("product_1", 0, new HashMap<>());
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", String.format("Bearer %s", token));
+        headers.set("Authorization", String.format("Bearer %s", adminToken));
         HttpEntity<NewProductRequest> requestEntity = new HttpEntity<>(newProduct, headers);
         ResponseEntity<?> response = restTemplate.postForEntity(String.format("%s/create", PRODUCTS_URI), requestEntity, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

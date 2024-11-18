@@ -1,7 +1,6 @@
 package com.ing_software.tp.config;
 
 import com.ing_software.tp.service.UserDetailsServiceImpl;
-import org.apache.catalina.filters.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -43,8 +42,18 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(
                 request -> request
                         .requestMatchers("/api/users/**").permitAll()
-                        .requestMatchers("/api/orders/**").authenticated()
-                        .requestMatchers("/api/products/**").hasRole("ADMIN")
+                        .requestMatchers("/api/orders/create").authenticated()
+                        .requestMatchers("/api/orders/confirmOrder/**").authenticated()
+                        .requestMatchers("/api/products/create").hasRole("ADMIN")
+                        .requestMatchers("/api/orders/all").hasRole("ADMIN")
+                        .requestMatchers("/api/products/").permitAll()
+                        .requestMatchers("/api/products/edit").hasRole("ADMIN")
+                        .requestMatchers("/api/products/incrementStock/**").hasRole("ADMIN")
+                        .requestMatchers("/api/orders/createRule").permitAll()
+                        .requestMatchers("/api/orders/").authenticated()
+                        .requestMatchers("/api/orders/cancel/**").authenticated()
+                        .requestMatchers("/api/orders/changeStatus/**").hasRole("ADMIN")
+                        .requestMatchers("/api/users/profile").authenticated()
         )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

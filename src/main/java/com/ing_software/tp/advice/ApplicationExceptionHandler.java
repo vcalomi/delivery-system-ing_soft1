@@ -1,6 +1,5 @@
 package com.ing_software.tp.advice;
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,5 +54,13 @@ public class ApplicationExceptionHandler {
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
         String message = "El email o el nombre de usuario ya están en uso. Por favor, intenta con otros.";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(Exception.class)
+    public Map<String, String> noProductsFoundException(Exception exception){
+        Map<String, String> error = new HashMap<>();
+        error.put("error", exception.getMessage());
+        return error;
     }
 }

@@ -1,12 +1,13 @@
 package com.ing_software.tp.controller;
 
 import com.ing_software.tp.dto.*;
-import com.ing_software.tp.model.User;
 import com.ing_software.tp.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 
 @RestController
@@ -26,18 +27,42 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Valid UserLoginRequest userCredentials) {
-        LoginResponse response = userService.loginUser(userCredentials);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequest userCredentials) throws Exception {
+
+        String token = userService.loginUser(userCredentials);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
+
     @PatchMapping("/forgetPassword")
-    public ResponseEntity<String> forgetPassword(@RequestBody @Valid UserForgetPasswordRequest userCredentials) {
+    public ResponseEntity<String> forgetPassword(@RequestBody @Valid UserForgetPasswordRequest userCredentials) throws Exception {
         userService.generateNewPassword(userCredentials);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PatchMapping("/changePassword")
-    public ResponseEntity<String> changePassword(@RequestBody @Valid UserChangePasswordRequest userCredentials) {
+    public ResponseEntity<String> changePassword(@RequestBody @Valid UserChangePasswordRequest userCredentials) throws Exception {
         userService.changePassword(userCredentials);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/profilePicture")
+    public ResponseEntity<Void> uploadProfilePicture(@RequestHeader("Authorization") String authorizationHeader,
+                                                     @RequestBody Map<String, String> request) throws Exception {
+
+        String base64Image = request.get("profilePicture");
+        userService.uploadProfilePicture(authorizationHeader, base64Image.getBytes());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/profilePicture")
+    public ResponseEntity<byte[]> getProfilePicture(@RequestHeader("Authorization") String authorizationHeader) throws Exception {
+        byte[] pictureData = userService.getProfilePicture(authorizationHeader);
+        return ResponseEntity.ok(pictureData);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserData> getUserProfile(@RequestHeader("Authorization") String authorizationHeader) {
+        UserData userData = userService.getUserData(authorizationHeader);
+        return new ResponseEntity<>(userData, HttpStatus.OK);
+    }
+
 }

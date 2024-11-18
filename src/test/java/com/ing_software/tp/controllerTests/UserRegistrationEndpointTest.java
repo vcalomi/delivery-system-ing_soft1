@@ -44,14 +44,17 @@ public class UserRegistrationEndpointTest {
     @Test
     void canRegisterUser(){
         UserRegisterRequest user = new UserRegisterRequest("John", "Doe", "vcalomi@gmail.com", 32, "address", "john",
-                "password");
+                "password", "M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test
     void aSuccessfulRegistrationReturnsAToken(){
-        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password", "ADMIN");
+
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password", "USER", null,
+                "M");
+
         ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URI, user, String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotBlank();
@@ -67,6 +70,7 @@ public class UserRegistrationEndpointTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -80,6 +84,7 @@ public class UserRegistrationEndpointTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -93,6 +98,7 @@ public class UserRegistrationEndpointTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -106,6 +112,7 @@ public class UserRegistrationEndpointTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -119,6 +126,7 @@ public class UserRegistrationEndpointTest {
         user.setAge(32);
         user.setUsername("johndoe");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -130,6 +138,7 @@ public class UserRegistrationEndpointTest {
         user.setEmail("email@gmail.com");
         user.setAge(32);
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -141,6 +150,7 @@ public class UserRegistrationEndpointTest {
         user.setEmail("email@gmail.com");
         user.setAge(32);
         user.setUsername("johndoe");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -155,6 +165,7 @@ public class UserRegistrationEndpointTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -169,6 +180,7 @@ public class UserRegistrationEndpointTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -183,6 +195,7 @@ public class UserRegistrationEndpointTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -197,6 +210,7 @@ public class UserRegistrationEndpointTest {
         user.setAddress("");
         user.setUsername("johndoe");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -211,6 +225,7 @@ public class UserRegistrationEndpointTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -225,6 +240,7 @@ public class UserRegistrationEndpointTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -238,6 +254,7 @@ public class UserRegistrationEndpointTest {
         user.setAddress("address");
         user.setUsername("");
         user.setPassword("password");
+        user.setGender("M");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -251,6 +268,34 @@ public class UserRegistrationEndpointTest {
         user.setAddress("address");
         user.setUsername("johndoe");
         user.setPassword("");
+        user.setGender("M");
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    @Test
+    void cantRegisterWithEmptyGender(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAge(32);
+        user.setAddress("address");
+        user.setUsername("johndoe");
+        user.setPassword("password");
+        user.setGender("");
+        ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+    @Test
+    void cantRegisterWithMissingGender(){
+        User user = new User();
+        user.setName("John");
+        user.setLastname("Doe");
+        user.setEmail("email@gmail.com");
+        user.setAge(32);
+        user.setAddress("address");
+        user.setUsername("johndoe");
+        user.setPassword("password");
         ResponseEntity<?> response = restTemplate.postForEntity(REGISTER_URI, user,Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
@@ -258,7 +303,7 @@ public class UserRegistrationEndpointTest {
     @Test
     void registeringReturnsACorrectJWT() {
         String uniqueUsername = String.format("john%d", System.currentTimeMillis());
-        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", uniqueUsername, "password", "USER");
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", uniqueUsername, "password", "USER", null, "M");
         ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URI, user,String.class);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -269,7 +314,8 @@ public class UserRegistrationEndpointTest {
 
     @Test
     void usernameCanBeExtractedFromJWT() {
-        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password", "USER");
+        User user = new User(null, "John", "Doe", "email@gmail.com", 32, "address", "john", "password", "USER", null,
+                "M");
         ResponseEntity<String> response = restTemplate.postForEntity(REGISTER_URI, user,String.class);
 
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);

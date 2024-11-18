@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -58,5 +59,20 @@ public class JwtServiceImpl implements JwtService {
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()));
+    }
+
+    public String validateAuthorization(String authorizationHeader){
+        String username = null;
+        if (authorizationHeader.startsWith("Bearer ")) {
+            String token = authorizationHeader.substring(7);
+            username = this.extractUsername(token);
+
+        } else if (authorizationHeader.startsWith("Basic ")) {
+            String base64Credentials = authorizationHeader.substring(6);
+            String credentials = new String(Base64.getDecoder().decode(base64Credentials));
+            String[] values = credentials.split(":", 2);
+            username = values[0];
+        }
+        return username;
     }
 }
