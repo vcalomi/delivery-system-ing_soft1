@@ -6,6 +6,7 @@ import com.ing_software.tp.model.User;
 import com.ing_software.tp.repository.OrderRepository;
 import com.ing_software.tp.repository.ProductRepository;
 import com.ing_software.tp.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.http.*;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,11 +32,13 @@ public class ProductEditEndpointTest {
 
     static String adminToken;
     static String userToken;
+    static Long product_id;
 
     @BeforeAll
     static void setUp(@Autowired TestRestTemplate restTemplate, @Autowired UserRepository userRepository, @Autowired ProductRepository productRepository, @Autowired OrderRepository orderRepository) {
         orderRepository.deleteAll();
         productRepository.deleteAll();
+        userRepository.deleteAll();
         UserRegisterRequest adminRegisterRequest = new UserRegisterRequest("John", "Doe", "johndoe@email.com", 32,
                 "address", "john", "password", "M");
         UserRegisterRequest userRegisterRequest = new UserRegisterRequest("Marta", "Rodriguez", "mrodriguez@email" +
@@ -60,8 +64,8 @@ public class ProductEditEndpointTest {
 
         adminToken = adminResponse.getBody();
         userToken = userResponse.getBody();
-
-        productRepository.save(new Product(1L, "product_1", 5, new HashMap<>()));
+        Product product = productRepository.save(new Product(null, "product_1", 5, new HashMap<>()));
+        product_id = product.getId();
     }
 
     @Test
@@ -70,7 +74,7 @@ public class ProductEditEndpointTest {
         headers.set("Authorization", String.format("Bearer %s", adminToken));
         Map<String, String> attributes = new HashMap<>();
         attributes.put("color", "red");
-        EditProductRequest editProductRequest = new EditProductRequest(1L, attributes);
+        EditProductRequest editProductRequest = new EditProductRequest(product_id, attributes);
         HttpEntity<EditProductRequest> requestEntity = new HttpEntity<>(editProductRequest, headers);
         ResponseEntity<?> response = restTemplate.exchange(String.format("%s/edit", PRODUCTS_URI), HttpMethod.PATCH, requestEntity, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -81,7 +85,7 @@ public class ProductEditEndpointTest {
         headers.set("Authorization", String.format("Bearer %s", userToken));
         Map<String, String> attributes = new HashMap<>();
         attributes.put("color", "red");
-        EditProductRequest editProductRequest = new EditProductRequest(1L, attributes);
+        EditProductRequest editProductRequest = new EditProductRequest(product_id, attributes);
         HttpEntity<EditProductRequest> requestEntity = new HttpEntity<>(editProductRequest, headers);
         ResponseEntity<?> response = restTemplate.exchange(String.format("%s/edit", PRODUCTS_URI), HttpMethod.PATCH, requestEntity, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -93,7 +97,8 @@ public class ProductEditEndpointTest {
         headers.set("Authorization", String.format("Bearer %s", adminToken));
         IncrementStockRequest incrementStockRequest = new IncrementStockRequest(1);
         HttpEntity<IncrementStockRequest> requestEntity = new HttpEntity<>(incrementStockRequest, headers);
-        ResponseEntity<?> response = restTemplate.exchange(String.format("%s/incrementStock/1", PRODUCTS_URI), HttpMethod.PATCH, requestEntity, Void.class);
+        ResponseEntity<?> response = restTemplate.exchange(String.format("%s/incrementStock/%,d", PRODUCTS_URI, product_id),
+                HttpMethod.PATCH, requestEntity, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
     @Test
@@ -102,7 +107,8 @@ public class ProductEditEndpointTest {
         headers.set("Authorization", String.format("Bearer %s", userToken));
         IncrementStockRequest incrementStockRequest = new IncrementStockRequest(1);
         HttpEntity<IncrementStockRequest> requestEntity = new HttpEntity<>(incrementStockRequest, headers);
-        ResponseEntity<?> response = restTemplate.exchange(String.format("%s/incrementStock/1", PRODUCTS_URI), HttpMethod.PATCH, requestEntity, Void.class);
+        ResponseEntity<?> response = restTemplate.exchange(String.format("%s/incrementStock/%,d", PRODUCTS_URI, product_id),
+                HttpMethod.PATCH, requestEntity, Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 }
