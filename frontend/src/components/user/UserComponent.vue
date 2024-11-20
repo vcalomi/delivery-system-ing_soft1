@@ -2,12 +2,12 @@
   <div class="row w-100">
     <!-- Columna izquierda con lista de pedidos confirmados -->
     <div class="col-md-3 d-flex flex-column align-items-start vh-100">
-      <h5>Pedidos Confirmados</h5>
+      <h5 style="color: white;">Pedidos Confirmados</h5>
       <ul class="list-unstyled">
         <li v-for="(order, index) in orders" :key="index">
-          <strong>Pedido #{{ order.orderId }}</strong>
+          <strong style="color: white;">Pedido #{{ order.orderId }}</strong>
           <ul>
-            <li v-for="(item, itemIndex) in order.items" :key="itemIndex">
+            <li v-for="(item, itemIndex) in order.products" :key="itemIndex" class="text-white">
               {{ item.product_name }} - Cantidad: {{ item.quantity }}
             </li>
         <div class="d-flex gap-2 mt-2">
@@ -46,7 +46,7 @@
                 <label for="quantity">Cantidad:</label>
                 <input 
                   v-model="selectedQuantities[key]" 
-                  :disabled="product.stock <= 0"
+                  :disabled="product.stock < 0"
                   id="quantity"
                   type="number"
                   class="form-control form-control-sm mb-3"
@@ -72,11 +72,16 @@
                 </div>
 
                 <div v-if="product.showDetails" class="product-details mt-3">
-                  <h6>Detalles:</h6>
+                  <h6>Atributos:</h6>
                   <ul>
-                    <li v-for="(detail, index) in product.details" :key="index">
-                      {{ detail }}
-                    </li>
+                    <!-- <li v-for="(attribute, index) in products.attributes":key="index"> -->
+                      <!--{{ products.attributes[index].key }}: {{ products.attributes[index].value }}-->
+                       <!-- {{product.attributes.size}} -->
+                       <li v-for="([attribute, value], index) in Object.entries(product.attributes)" :key="index">
+                        {{ attribute }}: {{ value }}
+                       </li>
+
+                    <!-- </li> -->
                   </ul>
                 </div>
               </div>
@@ -91,7 +96,7 @@
       <h5>Carrito</h5>
       <ul>
         <li v-for="(item, index) in orden" :key="index">
-          {{ item.product.product_name }} - {{ selectedQuantities[item.productId] }}
+          Producto: {{ item.product_name }} - Cantidad: {{ item.quantity }}
         </li>
       </ul>
       <div v-if="products" class="d-flex justify-content-center mt-4">
@@ -105,7 +110,7 @@
 import axios from 'axios';
 
 export default {
-  name: 'HomeComponent',
+  name: 'UserComponent',
   data() {
     return {
       products: [],
@@ -132,10 +137,8 @@ export default {
       var prod = { 
         "product_name": product.product_name,
         "id": product.id,
-        "attributes": product.attributes,
         "quantity": quantity 
       };
-      console.log(prod);
       this.orden.push(prod);
       this.$store.dispatch('addProductToCart', prod);
     },

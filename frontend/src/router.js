@@ -9,58 +9,72 @@ import ChangePasswordComponent from './components/ChangePasswordComponent.vue'
 import UserComponent from './components/user/UserComponent.vue'
 import OrdersAdminComponent from './components/admin/OrdersAdmin.vue'
 import UploadPicture from './components/UploadPicture.vue'
+//import { jwtDecode } from 'jwt-decode'
 
 // Define the routes
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: AdminComponent
+    component: AdminComponent,
+    meta: { 
+      requiresAuth: true,
+      /*roles: [ 'ADMIN']*/
+     }
   },
   {
     path: '/forgotPassword',
     name: 'forgotPasswordComponent',
-    component: forgotPasswordComponent
+    component: forgotPasswordComponent,
+    meta: { requiresAuth: false }
   },
   {
     path: '/register',
     name: 'Register',
-    component: Register
+    component: Register,
+    meta: { requiresAuth: false  }
   },
   {
     path: '/login',
     name: 'Login',
-    component: LoginComponent
+    component: LoginComponent,
+    meta: { requiresAuth: false }
   },
   {
     path: '/createProduct',
     name: 'CreateProductComponent',
-    component: CreateProductComponent
+    component: CreateProductComponent,
+    meta: { requiresAuth: true, /*roles: ['ADMIN'] */ }
   },
   {
     path: '/createOrder',
     name: 'CreateOrderComponent',
-    component: CreateOrderComponent
+    component: CreateOrderComponent,
+    meta: { requiresAuth: true, /*roles: ['USER']*/ }
   },
   {
     path: '/changePassword',
     name: 'ChangePasswordComponent',
-    component: ChangePasswordComponent
+    component: ChangePasswordComponent,
+    meta: { requiresAuth: true, /*roles: ['ADMIN', 'USER']*/ }
   },
   {
     path: '/userHome',
     name: 'UserHome',
-    component: UserComponent
+    component: UserComponent,
+    meta: { requiresAuth: true, /*roles: [ 'USER']*/ }
   },
   {
     path: '/ordersAdmin',
     name: 'ordersAdmin',
-    component: OrdersAdminComponent
+    component: OrdersAdminComponent,
+    meta: { requiresAuth: true, /*roles: ['ADMIN'] */}
   },
   {
     path: '/uploadPicture',
     name: 'UploadPicture',
-    component: UploadPicture
+    component: UploadPicture,
+    meta: { requiresAuth: true, /*roles: ['ADMIN', 'USER']*/ }
   }
 
   // Add more routes here
@@ -73,20 +87,30 @@ const router = createRouter({
 })
 
 
-router.beforeEach((to, from, next) => {
-  // Check if the route requires authentication
-  // tiene que ser bearer token en vez de authToken
-  if (to.meta.requiresAuth) {
-    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken'); // Check for token in localStorage or sessionStorage
 
-    // If no token is found, redirect to login page
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth) {
+    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken'); 
+
     if (!token) {
       next({ name: 'Login' });
-    } else {
-      next(); // Allow the navigation
+    }else{
+      next();
     }
+    /*else{
+      const decodedToken = jwtDecode(token); // Puedes usar la librería jwt-decode
+      const userRoles = decodedToken.sub || []; // Asumimos que el token tiene un campo 'roles'
+      console.log(decodedToken);
+      // Verificar si el usuario tiene uno de los roles permitidos para la ruta
+      if (to.meta.roles && !to.meta.roles.some(sub => userRoles.includes(sub))) {
+        // Si el usuario no tiene el rol adecuado, redirigir o mostrar un error
+        next({ name: 'Login' }); // O redirigir a una página de acceso denegado
+      } else {
+        next(); // Si tiene el rol adecuado, permitir la navegación
+      }
+    } */
   } else {
-    next(); // If no authentication is required, just allow the navigation
+    next();
   }
 });
 

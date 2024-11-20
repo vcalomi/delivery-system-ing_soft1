@@ -9,12 +9,10 @@
         <div class="profile-menu">
           <div class="profile-info">
             <span class="role-text">{{ role }}</span>
-            <img
-              src="https://via.placeholder.com/40" 
+            <img :src="profilePictureUrl || 'https://via.placeholder.com/40'" 
               alt="Profile"
               class="profile-img"
-              @click="toggleProfileMenu"
-            />
+              @click="toggleProfileMenu"/>
           </div>
           <div v-if="profileMenuOpen" class="profile-dropdown">
             <ul>
@@ -25,7 +23,7 @@
                 <RouterLink to="UserOrders">Pedidos</RouterLink>
               </li>
               <li>
-                <RouterLink to="addProfileImage">agregar foto de perfil</RouterLink>
+                <RouterLink to="UploadPicture">cambiar foto de perfil</RouterLink>
               </li>
             </ul>
           </div>
@@ -54,6 +52,11 @@ export default {
     };
   },
   async mounted(){
+    if (!localStorage.authToken) {
+    console.warn("No hay token de autenticación.");
+    this.showNavBar = false; 
+    return;
+    }
     await axios.get('http://localhost:8081/api/users/profile', {
       headers: { Authorization: `Bearer ${localStorage.authToken}` }
     }).then(res => {
@@ -61,13 +64,15 @@ export default {
     }).catch(err => alert(err));
 
 
-    await axios.get("http://localhost:8081/api/profilePicture", {
-      headers: { Authorization: `Bearer ${localStorage.authToken}` },
-      responseType: "arraybuffer", // Importante para manejar datos binarios
-    }).then(res =>{
-      const blob = new Blob([res.data], { type: res.headers["content-type"] });
-      this.profilePictureUrl = URL.createObjectURL(blob);
-    }).catch(err => console.log(err));
+    await axios.get("http://localhost:8081/api/users/profilePicture", {
+      headers: { Authorization: `Bearer ${localStorage.authToken}` }
+    }).then(res => {
+      var base64Image = res.data; 
+      this.profilePictureUrl = `data:image/jpeg;base64,${base64Image}`
+    }).catch(err => {
+      console.error("Error al cargar la imagen de perfil:", err);
+      this.profilePictureUrl = 'https://via.placeholder.com/40'; 
+    })
   },
   methods: {
     toggleProfileMenu() {

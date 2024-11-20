@@ -1,13 +1,14 @@
 <template>
     <div>
-      <h2>Order Summary</h2>
+      <h2 style="color: white;">Orden</h2>
       <ul>
-        <li v-for="product in selectedProducts" :key="product.id">
+        <li style="color: white;" v-for="product in selectedProducts" :key="product.id">
           {{ product.product_name }}
+          {{ " - cantidad: " + product.quantity }}
         </li>
       </ul>
-      <button @click="clearCart" >Clear Cart</button>
-      <button @click="acceptOrder" class="btn btn-primary">Accept Order</button>
+      <button @click="clearCart" >Limpiar carrito</button>
+      <button @click="acceptOrder" class="btn btn-primary">Aceptar orden</button>
     </div>
   </template>
   
@@ -24,6 +25,7 @@
         this.$store.dispatch('clearCart');  // Clear cart (empty the selected products)
       },
       async acceptOrder(){
+        console.log("selected" + this.selectedProducts)
         await axios.post('http://localhost:8081/api/orders/create', {products: this.selectedProducts}, {
           headers: {Authorization: `Bearer ${localStorage.authToken}`}
       }).then( () => { 
@@ -39,3 +41,4 @@
     },
   };
   </script>
+
