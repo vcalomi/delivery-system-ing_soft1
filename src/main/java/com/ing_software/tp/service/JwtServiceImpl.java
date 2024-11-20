@@ -21,8 +21,9 @@ public class JwtServiceImpl implements JwtService {
     @Value("${security.jwt.secret-key}")
     private String SECRET;
 
-    public String generateToken(String username) {
+    public String generateToken(String username, String role) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);
         return createToken(claims, username);
     }
 
