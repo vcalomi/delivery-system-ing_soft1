@@ -9,7 +9,7 @@ import ChangePasswordComponent from './components/ChangePasswordComponent.vue'
 import UserComponent from './components/user/UserComponent.vue'
 import OrdersAdminComponent from './components/admin/OrdersAdmin.vue'
 import UploadPicture from './components/UploadPicture.vue'
-//import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode'
 
 // Define the routes
 const routes = [
@@ -19,7 +19,7 @@ const routes = [
     component: AdminComponent,
     meta: { 
       requiresAuth: true,
-      /*roles: [ 'ADMIN']*/
+      role: [ 'ADMIN']
      }
   },
   {
@@ -44,37 +44,37 @@ const routes = [
     path: '/createProduct',
     name: 'CreateProductComponent',
     component: CreateProductComponent,
-    meta: { requiresAuth: true, /*roles: ['ADMIN'] */ }
+    meta: { requiresAuth: true, role: ['ADMIN']  }
   },
   {
     path: '/createOrder',
     name: 'CreateOrderComponent',
     component: CreateOrderComponent,
-    meta: { requiresAuth: true, /*roles: ['USER']*/ }
+    meta: { requiresAuth: true, role: ['USER'] }
   },
   {
     path: '/changePassword',
     name: 'ChangePasswordComponent',
     component: ChangePasswordComponent,
-    meta: { requiresAuth: true, /*roles: ['ADMIN', 'USER']*/ }
+    meta: { requiresAuth: true, role: ['ADMIN', 'USER'] }
   },
   {
     path: '/userHome',
     name: 'UserHome',
     component: UserComponent,
-    meta: { requiresAuth: true, /*roles: [ 'USER']*/ }
+    meta: { requiresAuth: true, role: [ 'USER'] }
   },
   {
     path: '/ordersAdmin',
     name: 'ordersAdmin',
     component: OrdersAdminComponent,
-    meta: { requiresAuth: true, /*roles: ['ADMIN'] */}
+    meta: { requiresAuth: true, role: ['ADMIN'] }
   },
   {
     path: '/uploadPicture',
     name: 'UploadPicture',
     component: UploadPicture,
-    meta: { requiresAuth: true, /*roles: ['ADMIN', 'USER']*/ }
+    meta: { requiresAuth: true, role: ['ADMIN', 'USER'] }
   }
 
   // Add more routes here
@@ -95,20 +95,16 @@ router.beforeEach((to, from, next) => {
     if (!token) {
       next({ name: 'Login' });
     }else{
-      next();
-    }
-    /*else{
       const decodedToken = jwtDecode(token); // Puedes usar la librería jwt-decode
-      const userRoles = decodedToken.sub || []; // Asumimos que el token tiene un campo 'roles'
-      console.log(decodedToken);
+      const userRoles = decodedToken.role || []; // Asumimos que el token tiene un campo 'roles'
       // Verificar si el usuario tiene uno de los roles permitidos para la ruta
-      if (to.meta.roles && !to.meta.roles.some(sub => userRoles.includes(sub))) {
+      if (to.meta.roles && !to.meta.roles.some(role => userRoles.includes(role))) {
         // Si el usuario no tiene el rol adecuado, redirigir o mostrar un error
         next({ name: 'Login' }); // O redirigir a una página de acceso denegado
       } else {
         next(); // Si tiene el rol adecuado, permitir la navegación
       }
-    } */
+    } 
   } else {
     next();
   }

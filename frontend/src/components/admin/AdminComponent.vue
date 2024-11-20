@@ -79,7 +79,7 @@ export default {
   name: "adminComponent",
   data() {
     return {
-      products: [], // Lista de productos
+      products: [],
     };
   },
   async mounted() {
