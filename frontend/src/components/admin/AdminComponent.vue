@@ -6,7 +6,6 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <!-- <th scope="col">ID</th> -->
             <th scope="col">Nombre</th>
             <th scope="col">Stock</th>
             <th scope="col">Atributos</th>
@@ -15,7 +14,6 @@
         </thead>
         <tbody>
           <tr v-for="product in products" :key="product.id">
-            <!-- <td>{{ product.id }}</td> -->
             <td>{{ product.product_name }}</td>
             <td>
               <input
@@ -25,7 +23,7 @@
                 :min="0"
               />
               <button
-                  class="btn btn-info btn-sm"
+                  class="btn btn-green btn-sm"
                   @click="updateStock(product)"
                 >
                   incrementar stock
@@ -87,7 +85,6 @@ export default {
       const { data: products } = await axios.get("http://localhost:8081/api/products/", {
         headers: { Authorization: `Bearer ${localStorage.authToken}` },
       });
-      // Inicializar atributos editables
       this.products = products.map((product) => ({
         ...product,
         attributesEditable: this.attributesToEditable(product.attributes),
@@ -97,27 +94,23 @@ export default {
     }
   },
   methods: {
-    // Convertir atributos de objeto a arreglo editable
     attributesToEditable(attributes) {
       return Object.entries(attributes).map(([key, value]) => ({
         key,
         value,
       }));
     },
-    // Convertir atributos de arreglo editable a objeto
     editableToAttributes(attributesEditable) {
       return attributesEditable.reduce((acc, attr) => {
         if (attr.key.trim()) acc[attr.key] = attr.value.trim();
         return acc;
       }, {});
     },
-    // Actualizar stock del producto
     async updateStock(product) {
       if (product.stock < 0) {
         alert("El stock no puede ser negativo.");
         return;
       }
-
       try {
         await axios.patch(
       `http://localhost:8081/api/products/incrementStock/${product.id}`,
@@ -130,7 +123,6 @@ export default {
         alert("Hubo un error al actualizar el stock.");
       }
     },
-    // Actualizar atributos del producto
     async updateAttributes(product) {
       const updatedAttributes = this.editableToAttributes(product.attributesEditable);
 
@@ -140,18 +132,16 @@ export default {
           { id: product.id, attributes: updatedAttributes },
           { headers: { Authorization: `Bearer ${localStorage.authToken}` }
         });
-        product.attributes = updatedAttributes; // Actualizar localmente
+        product.attributes = updatedAttributes;
         alert("Atributos actualizados con éxito.");
       } catch (err) {
         console.error("Error al actualizar los atributos:", err);
         alert("Hubo un error al actualizar los atributos.");
       }
     },
-    // Agregar un nuevo atributo vacío
     addAttribute(product) {
       product.attributesEditable.push({ key: "", value: "" });
     },
-    // Navegar a la página para crear un producto
     createProduct() {
       this.$router.push({ name: "CreateProductComponent" });
     },
@@ -192,5 +182,11 @@ button.w-10 {
 
 .white-text {
   color: rgb(220, 220, 220);
+}
+
+.btn-green {
+  background-color: #28a061;
+  border-color: #28a061;
+  color: white;
 }
 </style>

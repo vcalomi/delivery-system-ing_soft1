@@ -56,7 +56,7 @@ export default {
       if (file && file.type.startsWith("image/")) {
         this.selectedFile = file;
 
-        // Crear una vista previa de la imagen
+        // vista previa de la imagen
         const reader = new FileReader();
         reader.onload = (e) => {
           this.preview = e.target.result;
@@ -69,13 +69,12 @@ export default {
     async uploadPhoto() {
       if (!this.selectedFile) return;
 
-      // Convertir la imagen a Base64
+    //imagen a Base64
       const reader = new FileReader();
       reader.onload = async (e) => {
-        const base64Image = e.target.result.split(",")[1]; // Eliminar el prefijo de la cadena Base64
+        const base64Image = e.target.result.split(",")[1]; // elimina el prefijo de la cadena Base64
 
         try {
-          // Enviar la solicitud al backend
           await axios.post(
             "http://localhost:8081/api/users/profilePicture",
             { profilePicture: base64Image },

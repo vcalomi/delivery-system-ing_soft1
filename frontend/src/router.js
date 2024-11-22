@@ -1,25 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AdminComponent from './components/admin/AdminComponent.vue'
 import forgotPasswordComponent from './components/forgotPasswordComponent.vue'
 import Register from './components/Register.vue'
 import LoginComponent from './components/LoginComponent.vue'
 import CreateProductComponent from './components/admin/CreateProductComponent.vue'
 import CreateOrderComponent from './components/user/CreateOrderComponent.vue'
 import ChangePasswordComponent from './components/ChangePasswordComponent.vue'
-import UserComponent from './components/user/UserComponent.vue'
 import OrdersAdminComponent from './components/admin/OrdersAdmin.vue'
 import UploadPicture from './components/UploadPicture.vue'
+import HomeView from './views/homeView.vue'
 import { jwtDecode } from 'jwt-decode'
 
-// Define the routes
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: AdminComponent,
+    name: 'HomeView',
+    component: HomeView,
     meta: { 
       requiresAuth: true,
-      role: [ 'ADMIN']
+      role: [ 'ADMIN', 'USER']
      }
   },
   {
@@ -59,12 +57,6 @@ const routes = [
     meta: { requiresAuth: true, role: ['ADMIN', 'USER'] }
   },
   {
-    path: '/userHome',
-    name: 'UserHome',
-    component: UserComponent,
-    meta: { requiresAuth: true, role: [ 'USER'] }
-  },
-  {
     path: '/ordersAdmin',
     name: 'ordersAdmin',
     component: OrdersAdminComponent,
@@ -76,14 +68,12 @@ const routes = [
     component: UploadPicture,
     meta: { requiresAuth: true, role: ['ADMIN', 'USER'] }
   }
-
-  // Add more routes here
 ]
 
-// Create the router instance
+
 const router = createRouter({
-  history: createWebHistory(),  // Uses HTML5 History mode
-  routes  // The array of routes defined above
+  history: createWebHistory(),
+  routes
 })
 
 
@@ -95,8 +85,8 @@ router.beforeEach((to, from, next) => {
     if (!token) {
       next({ name: 'Login' });
     }else{
-      const decodedToken = jwtDecode(token); // Puedes usar la librería jwt-decode
-      const userRoles = decodedToken.role || []; // Asumimos que el token tiene un campo 'roles'
+      const decodedToken = jwtDecode(token);
+      const userRoles = decodedToken.role || []; // el token tiene un campo 'role'
       // Verificar si el usuario tiene uno de los roles permitidos para la ruta
       if (to.meta.roles && !to.meta.roles.some(role => userRoles.includes(role))) {
         // Si el usuario no tiene el rol adecuado, redirigir o mostrar un error

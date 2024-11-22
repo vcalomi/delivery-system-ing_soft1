@@ -1,38 +1,33 @@
 <template>
     <div class="container mt-4">
-      <!-- NAME -->
+      <!-- inputs del registro -->
       <div class="input-group mb-3">        
         <input type="text" v-model="name" class="form-control" placeholder="Nombre" aria-label="Nombre" aria-describedby="basic-addon1">
       </div>
   
-      <!-- Last Name -->
       <div class="input-group mb-3">
         <input type="text" v-model="lastname" class="form-control" placeholder="Apellido" aria-label="Apellido" aria-describedby="basic-addon1">
       </div>
-      <!-- Usuario -->
+
       <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">@</span>
         <input type="text" v-model="user" class="form-control" placeholder="Usuario" aria-label="Usuario" aria-describedby="basic-addon1">
       </div>
   
-      <!-- Correo electrónico -->
       <div class="input-group mb-3">
         <input type="email" v-model="email" class="form-control" placeholder="Correo electrónico" aria-label="Correo electrónico" aria-describedby="basic-addon2">
       </div>
   
-      <!-- Contraseña -->
       <div class="input-group mb-3">
         <span class="input-group-text" id="password-addon"></span>
         <input type="password" v-model="password" class="form-control" placeholder="Contraseña" aria-label="Contraseña" aria-describedby="password-addon">
       </div>
   
-      <!-- Confirmar Contraseña -->
       <div class="input-group mb-3">
         <span class="input-group-text"></span>
         <input type="password" v-model="confirmPassword" class="form-control" placeholder="Confirmar Contraseña" aria-label="Confirmar Contraseña">
       </div>
   
-    <!-- Fecha de Nacimiento -->
     <div class="input-group mb-3">
       <span class="input-group-text" id="birthdate-addon">Fecha de Nacimiento</span>
       <input 
@@ -47,7 +42,6 @@
       >
     </div>
   
-      <!-- Género -->
       <div class="input-group mb-3">
         <span class="input-group-text" id="gender-addon">Género</span>
         <select v-model="gender" class="form-select" aria-label="Género" aria-describedby="gender-addon">
@@ -57,7 +51,6 @@
         </select>
       </div>
   
-      <!-- Domicilio -->
       <div class="input-group mb-3">
         <span class="input-group-text">Domicilio</span>
         <input type="text" v-model="street" class="form-control" placeholder="Calle" aria-label="calle">
@@ -99,28 +92,23 @@
       checkRegister() {
        const errors = [];
 
-        // Validar Usuario
         if (!this.user || this.user.length < 3) {
           errors.push("El nombre de usuario debe tener al menos 3 caracteres.");
         }
 
-        // Validar Email
         const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailPattern.test(this.email)) {
           errors.push("Por favor, ingresa un correo electrónico válido.");
         }
 
-        // Validar Contraseña
         if (!this.password || this.password.length < 6) {
           errors.push("La contraseña debe tener al menos 6 caracteres.");
         }
 
-        // Confirmación de Contraseña
         if (this.password !== this.confirmPassword) {
           errors.push("Las contraseñas no coinciden.");
         }
 
-        // Validar Fecha de Nacimiento
         if (!this.birthDate) {
           errors.push("Por favor, selecciona tu fecha de nacimiento.");
         } else {
@@ -131,13 +119,9 @@
             errors.push("Debes tener al menos 18 años para registrarte.");
           }
         }
-
-        // Validar Género
         if (!this.gender) {
           errors.push("Por favor, selecciona tu género.");
         }
-
-        // Validar Domicilio
         if (!this.street || !this.streetNumber) {
           errors.push("Por favor, ingresa una dirección válida (calle y número).");
         } else if (isNaN(this.streetNumber)) {
@@ -146,13 +130,12 @@
         if (!this.postalCode || this.postalCode.length < 4) {
           errors.push("Por favor, ingresa un código postal válido (mínimo 4 dígitos).");
         }
-        // Mostrar errores o mensaje de éxito
         return errors;
       },
     formatBirthDate() {
       let cleaned = this.birthDate.replace(/\D/g, "");
       
-      // Formatear como dd/mm/yyyy
+      // formato dd/mm/yyyy
       if (cleaned.length > 2) {
         cleaned = cleaned.slice(0, 2) + '/' + cleaned.slice(2);
       }
@@ -172,21 +155,20 @@
         })
           .then(() => {
             this.active = false
-            this.$router.push({name:'Home'}) //tengo que poder ir a /HOME 
+            this.$router.push({name:'Home'}) // ir a /HOME 
           }).catch( error => {
             console.error('Error: ', error);
           })
       }else {
-        alert(status) //ARREGLAR ESTE CODIGO
+        alert(status)
       }
       
     },
   }
 }
-  </script>
+</script>
   
-  <!-- Add "scoped" attribute to limit CSS to this component only -->
-  <style scoped>
+<style scoped>
   h3 {
     margin: 40px 0 0;
   }
@@ -201,4 +183,4 @@
   a {
     color: #32b077;
   }
-  </style>
+</style>

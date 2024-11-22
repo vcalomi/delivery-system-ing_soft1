@@ -1,6 +1,6 @@
 <template>
   <div class="row w-100">
-    <!-- Columna izquierda con lista de pedidos -->
+    <!-- lista de pedidos -->
     <div class="col-md-3 d-flex flex-column align-items-start vh-100">
       <h5>Pedidos</h5>
       <ul class="list-unstyled">
@@ -54,7 +54,6 @@ export default {
         const response = await axios.patch(`http://localhost:8081/api/orders/changeStatus/${orderId}`,{ordenStatus: "in_process"},  {
           headers: { Authorization: `Bearer ${localStorage.authToken}` }
         });
-        // Eliminamos el pedido de la lista
         this.orders = this.orders.filter(order => order.orderId !== orderId);
         console.log('Pedido cancelado:', response.data);
       } catch (error) {
@@ -66,7 +65,6 @@ export default {
         const response = await axios.patch(`http://localhost:8081/api/orders/changeStatus/${orderId}`,{ordenStatus: "sent"},  {
           headers: { Authorization: `Bearer ${localStorage.authToken}` }
         });
-        // Eliminamos el pedido de la lista
         this.orders = this.orders.filter(order => order.orderId !== orderId);
         console.log('Pedido cancelado:', response.data);
       } catch (error) {
@@ -78,20 +76,18 @@ export default {
 </script>
 
 <style scoped>
-/* Estilo para los botones */
 .btn {
   font-size: 0.875rem;
   padding: 0.375rem 0.75rem;
 }
 
 .small-button {
-  font-size: 0.75rem; /* Reduce el tamaño de la fuente */
-  padding: 2px 8px; /* Reduce el padding */
+  font-size: 0.75rem;
+  padding: 2px 8px;
 }
 
-/* Estilo de los botones: Confirmar (verde) y Cancelar (rojo) */
 .btn-success {
-  background-color: #28a745; /* Verde */
+  background-color: #28a745;
   border-color: #28a745;
 }
 
@@ -101,7 +97,7 @@ export default {
 }
 
 .btn-danger {
-  background-color: #dc3545; /* Rojo */
+  background-color: #dc3545;
   border-color: #dc3545;
 }
 
@@ -110,12 +106,10 @@ export default {
   border-color: #bd2130;
 }
 
-/* Agregar algo de espacio entre botones */
 .d-flex.justify-content-between {
   margin-top: 1rem;
 }
 
-/* Estilo de la lista de pedidos */
 .list-unstyled {
   padding-left: 0;
 }
@@ -129,7 +123,6 @@ h5 {
   margin-bottom: 1rem;
 }
 
-/* Asegura que la lista ocupe toda la altura disponible */
 .vh-100 {
   min-height: 100vh;
 }
@@ -190,9 +183,8 @@ h5 {
   background-color: #f9f9f9;
 }
 
-/* Estilo personalizado para botones pequeños */
 .small-button {
-  font-size: 0.75rem; /* Reduce el tamaño de la fuente */
-  padding: 2px 8px; /* Reduce el padding */
+  font-size: 0.75rem;
+  padding: 2px 8px;
 }
 </style>

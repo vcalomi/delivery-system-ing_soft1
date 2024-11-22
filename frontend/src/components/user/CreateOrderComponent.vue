@@ -17,12 +17,12 @@
   export default {
     computed: {
       selectedProducts() {
-        return this.$store.getters.getSelectedProducts;  // Access selected products from Vuex
+        return this.$store.getters.getSelectedProducts;
       },
     },
     methods: {
       clearCart() {
-        this.$store.dispatch('clearCart');  // Clear cart (empty the selected products)
+        this.$store.dispatch('clearCart');
       },
       async acceptOrder(){
         console.log("selected" + this.selectedProducts)
@@ -30,7 +30,7 @@
           headers: {Authorization: `Bearer ${localStorage.authToken}`}
       }).then( () => { 
           alert("Orden creada con éxito!");
-          this.$router.push({name:'UserHome'});
+          this.$router.push({name:'HomeView'});
         })
         .catch( err => {
           console.error( err )

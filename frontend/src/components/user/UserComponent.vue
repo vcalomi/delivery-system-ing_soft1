@@ -1,6 +1,6 @@
 <template>
   <div class="row w-100">
-    <!-- Columna izquierda con lista de pedidos confirmados -->
+    <!-- lista de pedidos confirmados -->
     <div class="col-md-3 d-flex flex-column align-items-start vh-100">
       <h5 style="color: white;">Pedidos Confirmados</h5>
       <ul class="list-unstyled">
@@ -29,7 +29,7 @@
       </ul>
     </div>
 
-    <!-- Columna del medio con la lista de productos -->
+    <!-- la lista de productos -->
     <div class="col-md-6">
       <div class="product-list-container">
         <div class="row">
@@ -70,18 +70,12 @@
                     {{ product.showDetails ? 'Ocultar Detalles' : 'Mostrar Detalles' }}
                   </button>
                 </div>
-
                 <div v-if="product.showDetails" class="product-details mt-3">
                   <h6>Atributos:</h6>
                   <ul>
-                    <!-- <li v-for="(attribute, index) in products.attributes":key="index"> -->
-                      <!--{{ products.attributes[index].key }}: {{ products.attributes[index].value }}-->
-                       <!-- {{product.attributes.size}} -->
                        <li v-for="([attribute, value], index) in Object.entries(product.attributes)" :key="index">
                         {{ attribute }}: {{ value }}
                        </li>
-
-                    <!-- </li> -->
                   </ul>
                 </div>
               </div>
@@ -90,8 +84,7 @@
         </div>
       </div>
     </div>
-
-    <!-- Columna derecha con el carrito -->
+    <!-- el carrito -->
     <div class="col-md-3 cart-container">
       <h5>Carrito</h5>
       <ul>
@@ -231,9 +224,8 @@ export default {
   background-color: #f9f9f9;
 }
 
-/* Estilo personalizado para botones pequeños */
 .small-button {
-  font-size: 0.75rem; /* Reduce el tamaño de la fuente */
-  padding: 2px 8px; /* Reduce el padding */
+  font-size: 0.75rem;
+  padding: 2px 8px;
 }
 </style>
