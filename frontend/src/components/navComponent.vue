@@ -1,9 +1,9 @@
 <template>
     <nav class="navbar navbar-light bg-dark fixed-top shadow-sm">
       <div v-if="showNavBar"  class="container-fluid">
-        <RouterLink to="/" class="navbar-brand">Home</RouterLink>
+        <RouterLink to="/" class="navbar-brand text-white" >Home</RouterLink>
         <div class="navbar-text">
-          <h4>{{ "Bienvenido al mejor sistema de compras del mundo" }}</h4>
+          <h4 class="title-name">{{ "Bienvenido al mejor sistema de compras del mundo" }}</h4>
         </div>
         <div class="profile-menu">
           <div class="profile-info">
@@ -19,13 +19,10 @@
                 <RouterLink to="ChangePassword">Cambiar Contraseña</RouterLink>
               </li>
               <li>
-               <!-- <RouterLink to="UserOrders">Pedidos</RouterLink> -->
-              </li>
-              <li>
                  <RouterLink to="UploadPicture">Cambiar foto de perfil</RouterLink> 
               </li>
               <li>
-                <button @click="logout">Cerrar Sesión</button>
+                <button class="router-link-style"  @click="logout">Cerrar Sesión</button>
                 </li>
             </ul>
           </div>
@@ -150,4 +147,19 @@ export default{
   background-color: #007bff;
   color: white;
 }
+
+.router-link-style {
+  color: #f6481d; 
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0; 
+}
+
+.title-name {
+  color: white;
+  font-size: 20px;
+}
+
 </style>

@@ -122,11 +122,16 @@ export default {
     await axios.get('http://localhost:8081/api/orders/', {
       headers: { Authorization: `Bearer ${localStorage.authToken}` }
     }).then(res => {
-      this.orders = res.data;
+      // this.orders = res.data;
+      this.orders = res.data.filter(order => !order.confirmed);
     }).catch(err => console.error(err));
   },
   methods: {
     addProduct(product, quantity) {
+      if (!this.isValidQuantity(quantity, product.stock)) {
+        alert("Cantidad inválida. Debe ser mayor a 0 y no superar el stock.");
+        return;
+      }
       var prod = { 
         "product_name": product.product_name,
         "id": product.id,
@@ -138,29 +143,33 @@ export default {
     async cancelOrder(orderId) {
       await axios
         .delete(
-          `http://localhost:8081/api/products/cancel/${orderId}`,
+          `http://localhost:8081/api/orders/cancel/${orderId}`,
           { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
         )
         .then(() => {
           alert("Orden cancelada correctamente.");
+          this.orders = this.orders.filter(order => order.orderId !== orderId);
         })
         .catch((err) => {
-          console.error("Error al cancelar orden", err);
-          alert("Hubo un error al cancelar la stock.");
+          console.error("Error al cancelar orden.", err);
+          alert("Hubo un error al cancelar el stock.", err);
         });
     },
+    isValidQuantity(quantity, stock) {
+      return quantity > 0 && quantity <= stock && !isNaN(quantity);
+    },
     confirmOrder(orderId) {
-      axios
-        .patch(
-          `http://localhost:8081/api/products/confirm/${orderId}`,
-          { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
+      axios.patch(
+        `http://localhost:8081/api/orders/confirmOrder/${orderId}`,
+        { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
         )
         .then(() => {
           alert("Orden confirmada correctamente.");
+          this.orders = this.orders.filter(order => order.orderId !== orderId);
         })
         .catch((err) => {
           console.error("Error al confirmar la orden", err);
-          alert("Hubo un error al confirmar la stock.");
+          alert("Hubo un error al confirmar el stock.");
         });
     }
   }

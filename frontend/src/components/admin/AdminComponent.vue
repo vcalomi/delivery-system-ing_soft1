@@ -2,7 +2,8 @@
   <div class="row w-100">
     <div class="col-12">
       <h3 class="white-text">Gestión de Productos</h3>
-      <button class="btn btn-primary btn-sm mb-3" @click="createProduct">Crear Producto</button>
+      <button class="btn btn-primary btn-sm mb-3 mx-2" @click="createProduct">Crear Producto</button>
+      <RouterLink class="btn btn-primary btn-sm mb-3" to="/ordersAdmin">Ver ordenes</RouterLink>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -23,10 +24,10 @@
                 :min="0"
               />
               <button
-                  class="btn btn-green btn-sm"
+                  class="btn btn-green btn-sm mt-1"
                   @click="updateStock(product)"
                 >
-                  incrementar stock
+                  Incrementar Stock
                 </button>
             </td>
             <td>
@@ -45,7 +46,7 @@
                 />
               </div>
               <button
-                class="btn btn-primary btn-sm mt-2"
+                class="btn btn-primary btn-sm mt-1"
                 @click="addAttribute(product)"
               >
                 Agregar Atributo
@@ -133,7 +134,7 @@ export default {
           { headers: { Authorization: `Bearer ${localStorage.authToken}` }
         });
         product.attributes = updatedAttributes;
-        alert("Atributos actualizados con éxito.");
+        alert("Atributo actualizado con éxito.");
       } catch (err) {
         console.error("Error al actualizar los atributos:", err);
         alert("Hubo un error al actualizar los atributos.");

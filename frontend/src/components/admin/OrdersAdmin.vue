@@ -2,17 +2,17 @@
   <div class="row w-100">
     <!-- lista de pedidos -->
     <div class="col-md-3 d-flex flex-column align-items-start vh-100">
-      <h5>Pedidos</h5>
+      <h4 style="color: white;">Pedidos</h4>
       <ul class="list-unstyled">
         <li v-for="(order, index) in orders" :key="index">
           <strong>Pedido #{{ order.orderId }}</strong>
           <ul>
-            <li v-for="(item, itemIndex) in order.items" :key="itemIndex">
-              {{ item.product_name }} - Cantidad: {{ item.quantity }}
+            <li v-for="(product, index) in order.products" :key="index">
+              <strong>{{ product.product_name }}</strong> - Cantidad: {{ product.quantity }}
             </li>
           </ul>
           <div class="d-flex justify-content-between mt-2">
-            <!-- Botones de en proceso y enviado -->
+            <!-- en proceso y enviado -->
             <button class="btn btn-success small-button" @click="inProcessOrder(order.orderId)">En proceso</button>
             <button class="btn btn-danger small-button" @click="sentOrder(order.orderId)">Enviado</button>
           </div>
@@ -29,20 +29,14 @@ export default {
   name: 'OrdersAdmin',
   data() {
     return {
-      products: [],
       orden: [],
       selectedQuantities: {},
       orders: []  
     };
   },
   async mounted() {
-    await axios.get('http://localhost:8081/api/products/', {
-      headers: { Authorization: `Bearer ${localStorage.authToken}` }
-    }).then(res => {
-      this.products = res.data;
-    }).catch(err => console.error(err));
 
-    await axios.get('http://localhost:8081/api/orders/', {
+    await axios.get('http://localhost:8081/api/orders/all', {
       headers: { Authorization: `Bearer ${localStorage.authToken}` }
     }).then(res => {
       this.orders = res.data;
@@ -51,24 +45,24 @@ export default {
   methods: {
     async inProcessOrder(orderId) {
       try {
-        const response = await axios.patch(`http://localhost:8081/api/orders/changeStatus/${orderId}`,{ordenStatus: "in_process"},  {
+        const response = await axios.patch(`http://localhost:8081/api/orders/changeStatus/${orderId}`,{"orderStatus": "IN_PROCESS"},  {
           headers: { Authorization: `Bearer ${localStorage.authToken}` }
         });
         this.orders = this.orders.filter(order => order.orderId !== orderId);
-        console.log('Pedido cancelado:', response.data);
+        console.log('Pedido en proceso:', response.data);
       } catch (error) {
-        console.error('Error cancelando pedido:', error);
+        console.error('Error pedido en proceso:', error);
       }
     },
     async sentOrder(orderId) {
       try {
-        const response = await axios.patch(`http://localhost:8081/api/orders/changeStatus/${orderId}`,{ordenStatus: "sent"},  {
+        const response = await axios.patch(`http://localhost:8081/api/orders/changeStatus/${orderId}`,{"orderStatus": "SENT"},  {
           headers: { Authorization: `Bearer ${localStorage.authToken}` }
         });
         this.orders = this.orders.filter(order => order.orderId !== orderId);
-        console.log('Pedido cancelado:', response.data);
+        console.log('Pedido enviado:', response.data);
       } catch (error) {
-        console.error('Error cancelando pedido:', error);
+        console.error('Error enviando pedido:', error);
       }
     }
   }
@@ -88,7 +82,7 @@ export default {
 
 .btn-success {
   background-color: #28a745;
-  border-color: #28a745;
+  border-color: #47b160;
 }
 
 .btn-success:hover {
@@ -97,13 +91,13 @@ export default {
 }
 
 .btn-danger {
-  background-color: #dc3545;
-  border-color: #dc3545;
+  background-color: #3535b6;
+  border-color: #4e35dc;
 }
 
 .btn-danger:hover {
-  background-color: #c82333;
-  border-color: #bd2130;
+  background-color: #7823c8;
+  border-color: #ad21bd;
 }
 
 .d-flex.justify-content-between {
@@ -187,4 +181,8 @@ h5 {
   font-size: 0.75rem;
   padding: 2px 8px;
 }
+
+.list-unstyled li {
+  color: white;
+} 
 </style>
