@@ -1,6 +1,7 @@
 package com.ing_software.tp.dto;
 
 import com.ing_software.tp.model.OrderProduct;
+import com.ing_software.tp.model.OrderStatus;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class OrderResponse {
     private String email;
     @Size(min = 1, max = 100)
     private List<OrderProduct> products;
+    private OrderStatus orderStatus;
 }
