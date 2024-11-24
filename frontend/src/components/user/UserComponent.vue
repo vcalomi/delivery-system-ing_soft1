@@ -8,7 +8,7 @@
           <strong style="color: white;">Pedido #{{ order.orderId }}</strong>
           <ul>
             <li v-for="(item, itemIndex) in order.products" :key="itemIndex" class="text-white">
-              {{ item.product_name }} - Cantidad: {{ item.quantity }}
+              {{ item.product_name }} - Cantidad: {{ item.quantity }} - Estado: {{ status[item.status] }}
             </li>
         <div class="d-flex gap-2 mt-2">
           <button 
@@ -109,7 +109,8 @@ export default {
       products: [],
       orden: [],
       selectedQuantities: {},
-      orders: []  
+      orders: [],
+      status: ["CREATED", "CONFIRMED", "IN_PROCESS", "SENT"]  
     };
   },
   async mounted() {
@@ -123,7 +124,7 @@ export default {
       headers: { Authorization: `Bearer ${localStorage.authToken}` }
     }).then(res => {
       // this.orders = res.data;
-      this.orders = res.data.filter(order => !order.confirmed);
+      this.orders = res.data
     }).catch(err => console.error(err));
   },
   methods: {
@@ -141,6 +142,7 @@ export default {
       this.$store.dispatch('addProductToCart', prod);
     },
     async cancelOrder(orderId) {
+      
       await axios
         .delete(
           `http://localhost:8081/api/orders/cancel/${orderId}`,
@@ -158,11 +160,9 @@ export default {
     isValidQuantity(quantity, stock) {
       return quantity > 0 && quantity <= stock && !isNaN(quantity);
     },
-    confirmOrder(orderId) {
-      axios.patch(
-        `http://localhost:8081/api/orders/confirmOrder/${orderId}`,
-        { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
-        )
+    async confirmOrder(orderId) {
+      
+      await axios.patch(`http://localhost:8081/api/orders/confirmOrder/${orderId}`,{},{ headers: { Authorization: `Bearer ${localStorage.authToken}` } })
         .then(() => {
           alert("Orden confirmada correctamente.");
           this.orders = this.orders.filter(order => order.orderId !== orderId);

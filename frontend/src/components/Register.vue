@@ -149,13 +149,13 @@
       if(status.length === 0){
         this.active = true
           await axios.post('http://localhost:8081/api/users/register', { 
-            "id":null, "name": this.name,"lastname": this.lastname,"email": this.email,
+          "name": this.name,"lastname": this.lastname,"email": this.email,
           "age": 20,"address": this.street+" "+this.streetNumber+" "+this.postalCode+" "+this.floorApartment,
-          "username": this.user,"password": this.password 
+          "username": this.user,"password": this.password, "gender": this.gender 
         })
           .then(() => {
             this.active = false
-            this.$router.push({name:'Home'}) // ir a /HOME 
+            this.$router.push({name:'HomeView'}) 
           }).catch( error => {
             console.error('Error: ', error);
           })

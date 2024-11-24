@@ -30,7 +30,7 @@
           headers: {Authorization: `Bearer ${localStorage.authToken}`}
       }).then( () => { 
           alert("Orden creada con éxito!");
-          this.$store.dispatch('clearCart')
+          this.$store.dispatch('clearCart');
           this.$router.push({name:'HomeView'});
         })
         .catch( err => {

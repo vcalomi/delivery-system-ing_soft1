@@ -10,6 +10,7 @@ import UploadPicture from './components/UploadPicture.vue'
 import HomeView from './views/homeView.vue'
 import { jwtDecode } from 'jwt-decode'
 
+
 const routes = [
   {
     path: '/',
@@ -17,8 +18,8 @@ const routes = [
     component: HomeView,
     meta: { 
       requiresAuth: true,
-      role: [ 'ADMIN', 'USER']
-     }
+      role: ['ADMIN', 'USER']
+    }
   },
   {
     path: '/forgotPassword',
