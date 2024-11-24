@@ -8,7 +8,7 @@
           <strong style="color: white;">Pedido #{{ order.orderId }}</strong>
           <ul>
             <li v-for="(item, itemIndex) in order.products" :key="itemIndex" class="text-white">
-              {{ item.product_name }} - Cantidad: {{ item.quantity }} - Estado: {{ status[item.status] }}
+              {{ item.product_name }} - Cantidad: {{ item.quantity }} - Estado: {{ order.orderStatus }}
             </li>
         <div class="d-flex gap-2 mt-2">
           <button 
@@ -109,8 +109,7 @@ export default {
       products: [],
       orden: [],
       selectedQuantities: {},
-      orders: [],
-      status: ["CREATED", "CONFIRMED", "IN_PROCESS", "SENT"]  
+      orders: [], 
     };
   },
   async mounted() {

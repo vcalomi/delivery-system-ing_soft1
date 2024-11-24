@@ -8,7 +8,7 @@
           <strong>Pedido #{{ order.orderId }}</strong>
           <ul>
             <li v-for="(product, index) in order.products" :key="index">
-              <strong>{{ product.product_name }}</strong> - Cantidad: {{ product.quantity }}
+              <strong>{{ product.product_name }}</strong> - Cantidad: {{ product.quantity }} - Estado: {{ order.orderStatus }}
             </li>
           </ul>
           <div class="d-flex justify-content-between mt-2">
