@@ -1,6 +1,7 @@
 package com.ing_software.tp.model.rules;
 
 import com.ing_software.tp.model.Order;
+import com.ing_software.tp.model.OrderProduct;
 import com.ing_software.tp.model.OrderRule;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
@@ -20,9 +21,13 @@ public class MinAttributeSum extends OrderRule {
         this.minSum = Integer.parseInt(maxSum);
     }
     public boolean isSatisfiedBy(Order order) {
-        Double sum = order.getProducts().stream()
-                .mapToDouble(product -> Double.parseDouble(product.getAttribute(attribute)))
-                .sum();
+        double sum = 0;
+        for (OrderProduct orderProduct: order.getProducts()) {
+            if (orderProduct.getAttribute(attribute) == null) {
+                continue;
+            }
+            sum += Double.parseDouble(orderProduct.getAttributes().get(attribute)) * orderProduct.getQuantity();
+        }
 
         return sum >= minSum;
 
