@@ -117,38 +117,25 @@ public class OrderServiceImpl implements OrderService{
         emailSenderService.sendConfirmationEmail(user.getEmail(),"Confirmation Email", emailSenderService.buildOrderConfirmationEmail(order.get()));
     }
 
-    public List<OrderResponse> getConfirmedOrders(String sortBy) throws Exception {
+    public List<OrderResponse> getAllOrders() throws Exception {
         List<Order> orders = (List<Order>) orderRepository.findAll();
         if (orders.isEmpty()) {
             throw new Exception("No orders found");
         }
-        if (Objects.equals(sortBy, "confirmed")) {
-            List<OrderResponse> confirmedOrders = new ArrayList<>();
-            for (Order order: orders){
-                if(order.getStatus().equals(OrderStatus.CONFIRMED)){
-                    OrderResponse confirmedOrder = new OrderResponse(order.getId(),
-                            order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts(), order.getStatus());
-                    confirmedOrders.add(confirmedOrder);
-                }
-            }
-            if (confirmedOrders.isEmpty()){
-                throw new Exception("No confirmed orders found");
-            }
-            return confirmedOrders;
-        }
-        List<OrderResponse> ordersResponse = new ArrayList<>();
-        for (Order order: orders){
-            OrderResponse confirmedOrder = new OrderResponse(order.getId(),
-                        order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts(), order.getStatus());
-            ordersResponse.add(confirmedOrder);
-        }
-        return ordersResponse;
+        return parseOrdersToOrderResponse(orders);
     }
 
-    public List<OrderResponse> getOrders(String authorizationHeader) throws Exception {
+    public List<OrderResponse> getUserOrders(String authorizationHeader) throws Exception {
         String username = jwtService.validateAuthorization(authorizationHeader);
         User owner = userService.findByUsername(username);
-        List<Order> orders = (List<Order>) orderRepository.findByOwner(owner);
+        List<Order> orders = orderRepository.findByOwner(owner);
+        if (orders.isEmpty()) {
+            throw new Exception("No orders found");
+        }
+        return parseOrdersToOrderResponse(orders);
+    }
+
+    private List<OrderResponse> parseOrdersToOrderResponse(List<Order> orders) {
         List<OrderResponse> ordersResponse = new ArrayList<>();
         for (Order order: orders) {
             OrderResponse confirmedOrder = new OrderResponse(order.getId(),
