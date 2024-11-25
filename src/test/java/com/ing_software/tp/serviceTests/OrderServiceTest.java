@@ -135,28 +135,6 @@ public class OrderServiceTest {
     }
 
     @Test
-    void testGetConfirmedOrders_ShouldReturnOnlyConfirmedOrders() throws Exception {
-        // Configuración
-        Order confirmedOrder = new Order();
-        confirmedOrder.setStatus(OrderStatus.CONFIRMED);
-        confirmedOrder.setOwner(new User(null, "user", "user", "email@example.com", 20, "address",  "username",
-                "password", "USER", null, "M"));
-        confirmedOrder.setProducts(Collections.emptyList());
-
-        Order unconfirmedOrder = new Order();
-        unconfirmedOrder.setStatus(OrderStatus.CREATED);
-
-        when(orderRepository.findAll()).thenReturn(List.of(confirmedOrder, unconfirmedOrder));
-
-        // Ejecutar
-        List<OrderResponse> responses = orderService.getConfirmedOrders("confirmed");
-
-        // Verificaciones
-        assertEquals(1, responses.size());
-        assertEquals(OrderStatus.CONFIRMED, responses.get(0).getOrderStatus());
-    }
-
-    @Test
     public void testCancelOrderWithin24Hours() {
         Order order = new Order();
         order.setCreatedAt(LocalDateTime.now(fixedClock));
@@ -228,9 +206,23 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testGetOrders_GetWithNoOrdersCreated_ThrowsException() {
+    public void testGetOrders_GetAllWithNoOrdersCreated_ThrowsException() {
             when(orderRepository.findAll()).thenReturn(List.of());
-            assertThrows(Exception.class, () -> orderService.getConfirmedOrders(""));
+            assertThrows(Exception.class, () -> orderService.getAllOrders());
+    }
+
+    @Test
+    public void testGetAllOrder_ReturnsAllOrders() throws Exception {
+        User user = new User();
+        user.setUsername("user");
+
+        Order order = new Order();
+        order.setOwner(user);
+
+        when(orderRepository.findAll()).thenReturn(List.of(order));
+
+        List<OrderResponse> responses = orderService.getAllOrders();
+        assertEquals(responses.size(), 1);
     }
 
     @Test
@@ -246,7 +238,29 @@ public class OrderServiceTest {
 
     @Test
     public void testChangeOrderStatus_ChangeStatusToNonExistentOrder_ThrowsException() {
-
         assertThrows(RuntimeException.class, () -> orderService.changeOrderStatus(any(), any()));
+    }
+
+    @Test
+    public void testGetUserOrder_WithNoOrders_ThrowsException() {
+            assertThrows(Exception.class, () -> orderService.getUserOrders(anyString()));
+    }
+
+    @Test
+    public void testGetUserOrder_canGetOwnOrders() throws Exception {
+            String authorizationHeader = "Bearer token";
+            String username = "testUser";
+            User user = new User();
+            user.setUsername(username);
+
+            Order order = new Order();
+            order.setOwner(user);
+
+            when(jwtService.validateAuthorization(authorizationHeader)).thenReturn(username);
+            when(userService.findByUsername(username)).thenReturn(user);
+            when(orderRepository.findByOwner(user)).thenReturn(List.of(order));
+
+            List<OrderResponse> responses = orderService.getUserOrders(authorizationHeader);
+            assertEquals(responses.size(), 1);
     }
 }
