@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.sql.Blob;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,14 +24,20 @@ public class User implements UserDetails {
     private Long Id;
     private String name;
     private String lastname;
+    @Column(unique = true)
     private String email;
     private int age;
     private String address;
+    @Column(unique = true)
     private String username;
     private String password;
+    private String role;
+    @Lob
+    private Blob profilePicture;
+    private String gender;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(new SimpleGrantedAuthority(String.format("ROLE_%s", this.role)));
     }
 
     public boolean isAccountNonExpired() {

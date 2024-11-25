@@ -1,6 +1,10 @@
 package com.ing_software.tp.advice;
 
+import com.ing_software.tp.dto.DividerOrdersResponse;
+import com.ing_software.tp.exceptions.RulesNotSatisfiedException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -38,5 +42,32 @@ public class ApplicationExceptionHandler {
         Map<String, String> error = new HashMap<>();
         error.put("error", "The request requires a body with login credentials");
         return error;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(RuntimeException.class)
+    public Map<String, String> invalidOrderException(RuntimeException exception) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", exception.getMessage());
+        return error;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
+        String message = "El email o el nombre de usuario ya están en uso. Por favor, intenta con otros.";
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(Exception.class)
+    public Map<String, String> noProductsFoundException(Exception exception){
+        Map<String, String> error = new HashMap<>();
+        error.put("error", exception.getMessage());
+        return error;
+    }
+
+    @ExceptionHandler(RulesNotSatisfiedException.class)
+    public ResponseEntity<DividerOrdersResponse> handleInvalidOrderException(RulesNotSatisfiedException ex) {
+        return new ResponseEntity<>(ex.getResponse(), HttpStatus.BAD_REQUEST);
     }
 }

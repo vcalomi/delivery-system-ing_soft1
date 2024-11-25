@@ -1,0 +1,23 @@
+[
+  {
+    "product_name":"product_1",
+    "stock": 5,
+    "attributes":{
+      "color":"red"
+    }
+  },
+  {
+    "product_name":"product_2",
+    "stock": 5,
+    "attributes":{
+      "color":"red"
+    }
+  },
+  {
+    "product_name":"product_3",
+    "stock": 5,
+    "attributes":{
+      "color":"red"
+    }
+  }
+]

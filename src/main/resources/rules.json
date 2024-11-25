@@ -1,0 +1,10 @@
+[
+  {
+    "rule": {
+      "ruleType":"maxattributecount",
+      "attribute":"color",
+      "value": "red",
+      "maxValue": "2"
+    }
+  }
+]
