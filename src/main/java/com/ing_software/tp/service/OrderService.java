@@ -15,9 +15,9 @@ public interface OrderService {
 
     void confirmOrder(Long orderId);
 
-    List<OrderResponse> getConfirmedOrders(String sortBy) throws Exception;
+    List<OrderResponse> getAllOrders() throws Exception;
 
-    List<OrderResponse> getOrders(String sortBy, String authorizationHeader) throws Exception;
+    List<OrderResponse> getUserOrders(String authorizationHeader) throws Exception;
 
     void cancelOrder(Long orderId);
 

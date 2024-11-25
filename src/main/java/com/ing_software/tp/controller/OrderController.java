@@ -39,15 +39,14 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/all")
-    public ResponseEntity<List<OrderResponse>> getAllOrders(@RequestParam(required = false) String sortBy) throws Exception{
-        List<OrderResponse> orders = orderService.getConfirmedOrders(sortBy);
+    public ResponseEntity<List<OrderResponse>> getAllOrders() throws Exception{
+        List<OrderResponse> orders = orderService.getAllOrders();
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<OrderResponse>> getOwnOrders(@RequestHeader("Authorization") String authorizationHeader,
-                                                          @RequestParam(required = false ) String sortBy) throws Exception {
-        List<OrderResponse> orders = orderService.getOrders(sortBy, authorizationHeader);
+    public ResponseEntity<List<OrderResponse>> getOwnOrders(@RequestHeader("Authorization") String authorizationHeader) throws Exception {
+        List<OrderResponse> orders = orderService.getUserOrders(authorizationHeader);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 

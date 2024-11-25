@@ -4,9 +4,12 @@ import com.ing_software.tp.dto.NewProductRequest;
 import com.ing_software.tp.dto.UserLoginRequest;
 import com.ing_software.tp.dto.UserRegisterRequest;
 import com.ing_software.tp.model.User;
+import com.ing_software.tp.repository.OrderProductRepository;
+import com.ing_software.tp.repository.OrderRepository;
 import com.ing_software.tp.repository.ProductRepository;
 import com.ing_software.tp.repository.UserRepository;
 import com.ing_software.tp.service.EmailSenderService;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -70,9 +73,14 @@ public class ProductCreateEndpointTest {
         userToken = userResponse.getBody();
     }
 
-    @AfterEach
-    void cleanProductTable(){
+    @AfterAll
+    static void cleanDatabase(@Autowired OrderProductRepository orderProductRepository,
+                              @Autowired ProductRepository productRepository,
+                              @Autowired UserRepository userRepository, @Autowired OrderRepository orderRepository) {
         productRepository.deleteAll();
+        orderRepository.deleteAll();
+        userRepository.deleteAll();
+        orderProductRepository.deleteAll();
     }
 
 

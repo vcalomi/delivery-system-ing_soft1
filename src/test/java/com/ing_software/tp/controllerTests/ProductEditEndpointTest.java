@@ -7,6 +7,7 @@ import com.ing_software.tp.repository.OrderRepository;
 import com.ing_software.tp.repository.ProductRepository;
 import com.ing_software.tp.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,11 @@ public class ProductEditEndpointTest {
         userToken = userResponse.getBody();
         Product product = productRepository.save(new Product(null, "product_1", 5, new HashMap<>()));
         product_id = product.getId();
+    }
+
+    @AfterAll
+    static void cleanDatabase(@Autowired ProductRepository productRepository) {
+        productRepository.deleteAll();
     }
 
     @Test

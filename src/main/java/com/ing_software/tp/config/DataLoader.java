@@ -20,7 +20,7 @@ import java.util.Map;
 @Component
 public class DataLoader {
     private ObjectMapper mapper;
-    private Map<String,Object> rules;
+    private List<Map<String,Object>> rules;
     private RuleServiceImpl ruleService;
     private List<NewProductRequest> products;
     private ProductService productService;
@@ -39,8 +39,10 @@ public class DataLoader {
     @EventListener(ApplicationReadyEvent.class)
     public void loadRules(){
         try(InputStream inputStream = getClass().getResourceAsStream("/rules.json")){
-            rules = mapper.readValue(inputStream, new TypeReference<Map<String,Object>>(){});
-            ruleService.createOrderRule(rules);
+            rules = mapper.readValue(inputStream, new TypeReference<List<Map<String,Object>>>(){});
+            for (Map<String, Object> rule: rules) {
+                ruleService.createOrderRule(rule);
+            }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

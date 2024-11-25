@@ -1,7 +1,11 @@
 package com.ing_software.tp.controllerTests;
 
 import com.ing_software.tp.model.Product;
+import com.ing_software.tp.repository.OrderProductRepository;
+import com.ing_software.tp.repository.OrderRepository;
 import com.ing_software.tp.repository.ProductRepository;
+import com.ing_software.tp.repository.UserRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,16 @@ public class ProductGetEndpointTest {
     @BeforeEach
     void deleteProducts() {
         productRepository.deleteAll();
+    }
+
+    @AfterAll
+    static void cleanDatabase(@Autowired OrderProductRepository orderProductRepository,
+                              @Autowired ProductRepository productRepository,
+                              @Autowired UserRepository userRepository, @Autowired OrderRepository orderRepository) {
+        productRepository.deleteAll();
+        orderRepository.deleteAll();
+        userRepository.deleteAll();
+        orderProductRepository.deleteAll();
     }
 
     @Test
