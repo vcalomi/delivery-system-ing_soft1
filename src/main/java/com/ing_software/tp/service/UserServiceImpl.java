@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
         User newUser = new User(null, user.getName(), user.getLastname(), user.getEmail(), user.getAge(),
                 user.getAddress(), user.getUsername(), passwordEncoder.encode(user.getPassword()), "USER", null, "M");
         UserDetails userDetails = userRepository.save(newUser);
-        return jwtService.generateToken(userDetails.getUsername());
+        return jwtService.generateToken(userDetails.getUsername(), newUser.getRole());
     }
 
     public String registerUser(@Valid UserRegisterRequest user) {
@@ -55,7 +55,8 @@ public class UserServiceImpl implements UserService {
         }
 
         if (passwordEncoder.matches(userCredentials.getPassword(), userDetails.getPassword())){
-            return jwtService.generateToken(userDetails.getUsername());
+            User user = (User) userDetails;
+            return jwtService.generateToken(userDetails.getUsername(), user.getRole());
         }
         throw new Exception("Invalid password");
     }

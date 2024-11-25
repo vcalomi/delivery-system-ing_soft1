@@ -1,14 +1,14 @@
 <template>
   <div class="row w-100">
-    <!-- Columna izquierda con lista de pedidos confirmados -->
+    <!-- lista de pedidos confirmados -->
     <div class="col-md-3 d-flex flex-column align-items-start vh-100">
-      <h5>Pedidos Confirmados</h5>
+      <h5 style="color: white;">Pedidos Confirmados</h5>
       <ul class="list-unstyled">
         <li v-for="(order, index) in orders" :key="index">
-          <strong>Pedido #{{ order.orderId }}</strong>
+          <strong style="color: white;">Pedido #{{ order.orderId }}</strong>
           <ul>
-            <li v-for="(item, itemIndex) in order.items" :key="itemIndex">
-              {{ item.product_name }} - Cantidad: {{ item.quantity }}
+            <li v-for="(item, itemIndex) in order.products" :key="itemIndex" class="text-white">
+              {{ item.product_name }} - Cantidad: {{ item.quantity }} - Estado: {{ order.orderStatus }}
             </li>
         <div class="d-flex gap-2 mt-2">
           <button 
@@ -29,7 +29,7 @@
       </ul>
     </div>
 
-    <!-- Columna del medio con la lista de productos -->
+    <!-- la lista de productos -->
     <div class="col-md-6">
       <div class="product-list-container">
         <div class="row">
@@ -46,7 +46,7 @@
                 <label for="quantity">Cantidad:</label>
                 <input 
                   v-model="selectedQuantities[key]" 
-                  :disabled="product.stock <= 0"
+                  :disabled="product.stock < 0"
                   id="quantity"
                   type="number"
                   class="form-control form-control-sm mb-3"
@@ -70,13 +70,12 @@
                     {{ product.showDetails ? 'Ocultar Detalles' : 'Mostrar Detalles' }}
                   </button>
                 </div>
-
                 <div v-if="product.showDetails" class="product-details mt-3">
-                  <h6>Detalles:</h6>
+                  <h6>Atributos:</h6>
                   <ul>
-                    <li v-for="(detail, index) in product.details" :key="index">
-                      {{ detail }}
-                    </li>
+                       <li v-for="([attribute, value], index) in Object.entries(product.attributes)" :key="index">
+                        {{ attribute }}: {{ value }}
+                       </li>
                   </ul>
                 </div>
               </div>
@@ -85,13 +84,12 @@
         </div>
       </div>
     </div>
-
-    <!-- Columna derecha con el carrito -->
+    <!-- el carrito -->
     <div class="col-md-3 cart-container">
       <h5>Carrito</h5>
       <ul>
         <li v-for="(item, index) in orden" :key="index">
-          {{ item.product.product_name }} - {{ selectedQuantities[item.productId] }}
+          Producto: {{ item.product_name }} - Cantidad: {{ item.quantity }}
         </li>
       </ul>
       <div v-if="products" class="d-flex justify-content-center mt-4">
@@ -105,13 +103,13 @@
 import axios from 'axios';
 
 export default {
-  name: 'HomeComponent',
+  name: 'UserComponent',
   data() {
     return {
       products: [],
       orden: [],
       selectedQuantities: {},
-      orders: []  
+      orders: [], 
     };
   },
   async mounted() {
@@ -124,47 +122,53 @@ export default {
     await axios.get('http://localhost:8081/api/orders/', {
       headers: { Authorization: `Bearer ${localStorage.authToken}` }
     }).then(res => {
-      this.orders = res.data;
+      // this.orders = res.data;
+      this.orders = res.data
     }).catch(err => console.error(err));
   },
   methods: {
     addProduct(product, quantity) {
+      if (!this.isValidQuantity(quantity, product.stock)) {
+        alert("Cantidad inválida. Debe ser mayor a 0 y no superar el stock.");
+        return;
+      }
       var prod = { 
         "product_name": product.product_name,
         "id": product.id,
-        "attributes": product.attributes,
         "quantity": quantity 
       };
-      console.log(prod);
       this.orden.push(prod);
       this.$store.dispatch('addProductToCart', prod);
     },
     async cancelOrder(orderId) {
+      
       await axios
         .delete(
-          `http://localhost:8081/api/products/cancel/${orderId}`,
+          `http://localhost:8081/api/orders/cancel/${orderId}`,
           { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
         )
         .then(() => {
           alert("Orden cancelada correctamente.");
+          this.orders = this.orders.filter(order => order.orderId !== orderId);
         })
         .catch((err) => {
-          console.error("Error al cancelar orden", err);
-          alert("Hubo un error al cancelar la stock.");
+          console.error("Error al cancelar orden.", err);
+          alert("Hubo un error al cancelar el stock.", err);
         });
     },
-    confirmOrder(orderId) {
-      axios
-        .patch(
-          `http://localhost:8081/api/products/confirm/${orderId}`,
-          { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
-        )
+    isValidQuantity(quantity, stock) {
+      return quantity > 0 && quantity <= stock && !isNaN(quantity);
+    },
+    async confirmOrder(orderId) {
+      
+      await axios.patch(`http://localhost:8081/api/orders/confirmOrder/${orderId}`,{},{ headers: { Authorization: `Bearer ${localStorage.authToken}` } })
         .then(() => {
           alert("Orden confirmada correctamente.");
+          this.orders = this.orders.filter(order => order.orderId !== orderId);
         })
         .catch((err) => {
           console.error("Error al confirmar la orden", err);
-          alert("Hubo un error al confirmar la stock.");
+          alert("Hubo un error al confirmar el stock.");
         });
     }
   }
@@ -228,9 +232,8 @@ export default {
   background-color: #f9f9f9;
 }
 
-/* Estilo personalizado para botones pequeños */
 .small-button {
-  font-size: 0.75rem; /* Reduce el tamaño de la fuente */
-  padding: 2px 8px; /* Reduce el padding */
+  font-size: 0.75rem;
+  padding: 2px 8px;
 }
 </style>

@@ -70,6 +70,9 @@ public class ProductServiceImpl implements ProductService {
             Optional<Product> optionalProduct = productRepository.findById(orderProduct.getProduct_id());
             if (optionalProduct.isPresent()) {
                 Product product = optionalProduct.get();
+                if (product.getStock() - orderProduct.getQuantity() < 0) {
+                    throw new RuntimeException("Missing stock!");
+                }
                 product.setStock(product.getStock() - orderProduct.getQuantity());
                 productRepository.save(product);
             }

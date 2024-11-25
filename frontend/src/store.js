@@ -1,8 +1,8 @@
-import { createStore } from 'vuex'; // Use Vuex's createStore function for Vue 3
+import { createStore } from 'vuex'; 
 
 export default createStore({
   state: {
-    selectedProducts: [],  // Array to hold the selected products
+    selectedProducts: [],
   },
   mutations: {
     addProduct(state, product) {

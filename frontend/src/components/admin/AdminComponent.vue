@@ -1,12 +1,12 @@
 <template>
   <div class="row w-100">
     <div class="col-12">
-      <h3>Gestión de Productos</h3>
-      <button class="btn btn-primary btn-sm mb-3" @click="createProduct">Crear Producto</button>
+      <h3 class="white-text">Gestión de Productos</h3>
+      <button class="btn btn-primary btn-sm mb-3 mx-2" @click="createProduct">Crear Producto</button>
+      <RouterLink class="btn btn-primary btn-sm mb-3" to="/ordersAdmin">Ver ordenes</RouterLink>
       <table class="table table-striped">
         <thead>
           <tr>
-            <th scope="col">ID</th>
             <th scope="col">Nombre</th>
             <th scope="col">Stock</th>
             <th scope="col">Atributos</th>
@@ -15,7 +15,6 @@
         </thead>
         <tbody>
           <tr v-for="product in products" :key="product.id">
-            <td>{{ product.id }}</td>
             <td>{{ product.product_name }}</td>
             <td>
               <input
@@ -24,27 +23,43 @@
                 class="form-control form-control-sm"
                 :min="0"
               />
+              <button
+                  class="btn btn-green btn-sm mt-1"
+                  @click="updateStock(product)"
+                >
+                  Incrementar Stock
+                </button>
             </td>
             <td>
-              <input
-                type="text"
-                v-model="products.attributes"
-                class="form-control form-control-sm"
-              />
+              <div v-for="(attribute, index) in product.attributesEditable" :key="index" class="mb-1">
+                <input
+                  type="text"
+                  v-model="product.attributesEditable[index].key"
+                  placeholder="Clave"
+                  class="form-control form-control-sm d-inline w-45"
+                />
+                <input
+                  type="text"
+                  v-model="product.attributesEditable[index].value"
+                  placeholder="Valor"
+                  class="form-control form-control-sm d-inline w-45"
+                />
+              </div>
+              <button
+                class="btn btn-primary btn-sm mt-1"
+                @click="addAttribute(product)"
+              >
+                Agregar Atributo
+              </button>
             </td>
             <td>
               <div class="btn-group">
-                <button
-                  class="btn btn-info btn-sm"
-                  @click="updateStock(product)"
-                >
-                  Guardar Stock
-                </button>
+                
                 <button
                   class="btn btn-success btn-sm"
                   @click="updateAttributes(product)"
                 >
-                  Guardar Atributos
+                  guardar nuevo atributos
                 </button>
               </div>
             </td>
@@ -55,6 +70,7 @@
   </div>
 </template>
 
+
 <script>
 import axios from "axios";
 
@@ -63,64 +79,69 @@ export default {
   data() {
     return {
       products: [],
-      orders: []
     };
   },
-  async mounted(){
-    await axios.get('http://localhost:8081/api/products/', {
-      headers: { Authorization: `Bearer ${localStorage.authToken}` }
-    }).then(res => {
-      this.products = res.data;
-    }).catch(err => console.error(err));
-    // /orders/all?sortBy=confirmed
-    await axios.get('http://localhost:8081/api/orders/all', {
-      headers: { Authorization: `Bearer ${localStorage.authToken}` }
-    }).then(res => {
-      this.orders = res.data;
-    }).catch(err => console.error(err));
+  async mounted() {
+    try {
+      const { data: products } = await axios.get("http://localhost:8081/api/products/", {
+        headers: { Authorization: `Bearer ${localStorage.authToken}` },
+      });
+      this.products = products.map((product) => ({
+        ...product,
+        attributesEditable: this.attributesToEditable(product.attributes),
+      }));
+    } catch (err) {
+      console.error(err);
+    }
   },
   methods: {
-    updateStock(product) {
+    attributesToEditable(attributes) {
+      return Object.entries(attributes).map(([key, value]) => ({
+        key,
+        value,
+      }));
+    },
+    editableToAttributes(attributesEditable) {
+      return attributesEditable.reduce((acc, attr) => {
+        if (attr.key.trim()) acc[attr.key] = attr.value.trim();
+        return acc;
+      }, {});
+    },
+    async updateStock(product) {
       if (product.stock < 0) {
         alert("El stock no puede ser negativo.");
         return;
       }
-
-      axios
-        .patch(
-          `http://localhost:8081/api/products/incrementStock/${product.id}`,
-          { incrementBy: product.stock },
-          { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
-        )
-        .then(() => {
-          alert("Stock actualizado con éxito.");
-        })
-        .catch((err) => {
-          console.error("Error al actualizar el stock:", err);
-          alert("Hubo un error al actualizar el stock.");
-        });
-    },
-    updateAttributes(product) {
-      if (!product.atribute.trim()) {
-        alert("La descripción no puede estar vacía.");
-        return;
+      try {
+        await axios.patch(
+      `http://localhost:8081/api/products/incrementStock/${product.id}`,
+      { quantity: product.stock },
+      { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
+    );
+        alert("Stock actualizado con éxito.");
+      } catch (err) {
+        console.error("Error al actualizar el stock:", err);
+        alert("Hubo un error al actualizar el stock.");
       }
+    },
+    async updateAttributes(product) {
+      const updatedAttributes = this.editableToAttributes(product.attributesEditable);
 
-      axios.patch(
+      try {
+        await axios.patch(
           `http://localhost:8081/api/products/edit`,
-          {
-            id: product.id,
-            atribute: product.atribute,
-          },
-          { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
-        )
-        .then(() => {
-          alert("Atributos actualizados con éxito.");
-        })
-        .catch((err) => {
-          console.error("Error al actualizar los atributos:", err);
-          alert("Hubo un error al actualizar los atributos.");
+          { id: product.id, attributes: updatedAttributes },
+          { headers: { Authorization: `Bearer ${localStorage.authToken}` }
         });
+        product.attributes = updatedAttributes;
+        alert("Atributo actualizado con éxito.");
+      } catch (err) {
+        console.error("Error al actualizar los atributos:", err);
+        alert("Hubo un error al actualizar los atributos.");
+      }
+    },
+    addAttribute(product) {
+      product.attributesEditable.push({ key: "", value: "" });
     },
     createProduct() {
       this.$router.push({ name: "CreateProductComponent" });
@@ -128,6 +149,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .table {
@@ -142,5 +164,30 @@ export default {
 .btn-group {
   display: flex;
   gap: 5px;
+}
+
+input.w-45 {
+  width: 45%;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+button.w-10 {
+  width: 10%;
+  display: inline-block;
+}
+
+.mb-1 {
+  margin-bottom: 5px;
+}
+
+.white-text {
+  color: rgb(220, 220, 220);
+}
+
+.btn-green {
+  background-color: #28a061;
+  border-color: #28a061;
+  color: white;
 }
 </style>

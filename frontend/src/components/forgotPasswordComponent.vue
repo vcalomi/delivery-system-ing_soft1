@@ -32,7 +32,7 @@ export default {
                 .then(response => { 
                     console.log("Recovery email sent to", this.forgotUsername)
                     this.user = ""
-                    console.log(response) //me tiene que mandar a una pagina que diga que se envio exitosamente
+                    console.log(response)
                 })
                 .catch(err => console.error(err));
         }

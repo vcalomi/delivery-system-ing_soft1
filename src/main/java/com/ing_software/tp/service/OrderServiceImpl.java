@@ -127,7 +127,7 @@ public class OrderServiceImpl implements OrderService{
             for (Order order: orders){
                 if(order.getStatus().equals(OrderStatus.CONFIRMED)){
                     OrderResponse confirmedOrder = new OrderResponse(order.getId(),
-                            order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
+                            order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts(), order.getStatus());
                     confirmedOrders.add(confirmedOrder);
                 }
             }
@@ -139,7 +139,7 @@ public class OrderServiceImpl implements OrderService{
         List<OrderResponse> ordersResponse = new ArrayList<>();
         for (Order order: orders){
             OrderResponse confirmedOrder = new OrderResponse(order.getId(),
-                        order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
+                        order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts(), order.getStatus());
             ordersResponse.add(confirmedOrder);
         }
         return ordersResponse;
@@ -154,7 +154,7 @@ public class OrderServiceImpl implements OrderService{
             for (Order order: orders){
                 if(order.getStatus().equals(OrderStatus.CONFIRMED)){
                     OrderResponse confirmedOrder = new OrderResponse(order.getId(),
-                            order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
+                            order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts(), order.getStatus());
                     confirmedOrders.add(confirmedOrder);
                 }
             }
@@ -166,7 +166,7 @@ public class OrderServiceImpl implements OrderService{
         List<OrderResponse> ordersResponse = new ArrayList<>();
         for (Order order: orders) {
             OrderResponse confirmedOrder = new OrderResponse(order.getId(),
-                    order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts());
+                    order.getOwner().getUsername(), order.getOwner().getEmail(), order.getProducts(), order.getStatus());
             ordersResponse.add(confirmedOrder);
         }
         return ordersResponse;

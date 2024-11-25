@@ -8,8 +8,8 @@
       <h6 style="margin-top: 10px;">{{ "No estas registrado?" }}</h6>
       <RouterLink to="/register">Registrarse</RouterLink>
       <div class="forgot-password">
-      <RouterLink to="/forgotPassword" class="btn-link">Forgot password?</RouterLink>
-    </div>
+        <RouterLink to="/forgotPassword" class="btn-link">Forgot password?</RouterLink>
+      </div>
     </div>
   
   </div>
@@ -18,6 +18,7 @@
 <script>
 import Register from './Register.vue';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode'
 
 export default {
   data() {
@@ -35,8 +36,9 @@ export default {
       .then( response => { 
         localStorage.setItem('authToken', response.data); 
         localStorage.setItem('username', this.user);
-        console.log(localStorage); 
-        this.$router.push({name:'Home'});
+        const decodedToken = jwtDecode(localStorage.getItem('authToken'));
+        localStorage.setItem('role', decodedToken.role)
+        this.$router.push({name:'HomeView'});
       })
       .catch( err => {
       alert("error al loguearse")
