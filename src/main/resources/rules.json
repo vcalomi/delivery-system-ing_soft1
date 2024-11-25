@@ -1,8 +1,10 @@
-{
-  "rule": {
-    "ruleType":"maxattributecount",
-    "attribute":"color",
-    "value": "red",
-    "maxValue": "2"
+[
+  {
+    "rule": {
+      "ruleType":"maxattributecount",
+      "attribute":"color",
+      "value": "red",
+      "maxValue": "2"
+    }
   }
-}
+]
