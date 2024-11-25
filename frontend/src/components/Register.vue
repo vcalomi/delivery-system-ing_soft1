@@ -146,11 +146,14 @@
     },
     async Register(){
       let status = this.checkRegister();
+      const today = new Date();
+      const birthDateObj = new Date(birthDate);
+      let age = today.getFullYear() - birthDateObj.getFullYear();
       if(status.length === 0){
         this.active = true
           await axios.post('http://localhost:8081/api/users/register', { 
           "name": this.name,"lastname": this.lastname,"email": this.email,
-          "age": 20,"address": this.street+" "+this.streetNumber+" "+this.postalCode+" "+this.floorApartment,
+          "age": age,"address": this.street+" "+this.streetNumber+" "+this.postalCode+" "+this.floorApartment,
           "username": this.user,"password": this.password, "gender": this.gender 
         })
           .then(() => {
