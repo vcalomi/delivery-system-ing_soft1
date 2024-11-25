@@ -147,7 +147,8 @@
     async Register(){
       let status = this.checkRegister();
       const today = new Date();
-      const birthDateObj = new Date(birthDate);
+      let splitted = this.birthDate.split('/')
+      const birthDateObj = new Date(splitted[2],splitted[1]);
       let age = today.getFullYear() - birthDateObj.getFullYear();
       if(status.length === 0){
         this.active = true
