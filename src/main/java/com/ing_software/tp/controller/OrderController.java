@@ -45,9 +45,8 @@ public class OrderController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<OrderResponse>> getOwnOrders(@RequestHeader("Authorization") String authorizationHeader,
-                                                          @RequestParam(required = false ) String sortBy) throws Exception {
-        List<OrderResponse> orders = orderService.getOrders(sortBy, authorizationHeader);
+    public ResponseEntity<List<OrderResponse>> getOwnOrders(@RequestHeader("Authorization") String authorizationHeader) throws Exception {
+        List<OrderResponse> orders = orderService.getOrders(authorizationHeader);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 

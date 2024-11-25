@@ -1,4 +1,4 @@
-package com.ing_software.tp.controllerTests;
+package com.ing_software.tp.serviceTests;
 
 import com.ing_software.tp.dto.OrderCreateResponse;
 import com.ing_software.tp.dto.OrderRequest;
