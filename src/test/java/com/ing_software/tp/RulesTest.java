@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RulesTest {
 
+    //MaxAttributeCountRule
     @Test
     void emptyOrderShouldSatisfyMaxAttributeCountRule() {
         List<OrderProduct> products = new ArrayList<>();
@@ -24,56 +25,6 @@ public class RulesTest {
 
         MaxAttributeCount rule = new MaxAttributeCount("color", "red", "1");
         assertThat(rule.isSatisfiedBy(order)).isTrue();
-    }
-
-    @Test
-    void emptyOrderShouldSatisfyAndRule() {
-        List<OrderProduct> products = new ArrayList<>();
-        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
-
-        AndRule rules = new AndRule(
-                new MaxAttributeCount("color", "red", "1"),
-                new MaxAttributeCount("color", "blue", "1")
-        );
-        assertThat(rules.isSatisfiedBy(order)).isTrue();
-    }
-
-    @Test
-    void emptyOrderShouldSatisfyOrRule() {
-        List<OrderProduct> products = new ArrayList<>();
-        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
-
-        OrRule rules = new OrRule(
-                new MaxAttributeCount("color", "red", "1"),
-                new MaxAttributeCount("color", "blue", "1")
-        );
-        assertThat(rules.isSatisfiedBy(order)).isTrue();
-    }
-
-    @Test
-    void emptyOrderShouldSatisfyNotRule() {
-        List<OrderProduct> products = new ArrayList<>();
-        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
-
-        MaxAttributeCount rule = new MaxAttributeCount("color", "blue", "1");
-        NotRule notRule = new NotRule(rule);
-
-        assertThat(notRule.isSatisfiedBy(order)).isFalse();
-    }
-
-    @Test
-    void cantHaveOrderWithMoreThanOneRedProduct(){
-        Map<String,String> attributes = new HashMap<>();
-        attributes.put("color","red");
-        OrderProduct orderProduct = new OrderProduct(1L, 1L,"product_name1",1,attributes);
-        OrderProduct product2 = new OrderProduct(2L, 2L,"product_name2",1,attributes);
-        List<OrderProduct> products = new ArrayList<>();
-        products.add(orderProduct);
-        products.add(product2);
-        Order order = new Order(1L,new User(),products,OrderStatus.CREATED, LocalDateTime.now());
-
-        MaxAttributeCount rule = new MaxAttributeCount("color","red","1");
-        assertThat(rule.isSatisfiedBy(order)).isFalse();
     }
 
     @Test
@@ -118,6 +69,108 @@ public class RulesTest {
     }
 
     @Test
+    void cantHaveOrderWithMoreThanOneRedProduct(){
+        Map<String,String> attributes = new HashMap<>();
+        attributes.put("color","red");
+        OrderProduct orderProduct = new OrderProduct(1L, 1L,"product_name1",1,attributes);
+        OrderProduct product2 = new OrderProduct(2L, 2L,"product_name2",1,attributes);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
+        products.add(product2);
+        Order order = new Order(1L,new User(),products,OrderStatus.CREATED, LocalDateTime.now());
+
+        MaxAttributeCount rule = new MaxAttributeCount("color","red","1");
+        assertThat(rule.isSatisfiedBy(order)).isFalse();
+    }
+
+    //MinAttributeCountRule
+    @Test
+    void emptyOrderShouldNotSatisfyMinAttributeCountRule() {
+        List<OrderProduct> products = new ArrayList<>();
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MinAttributeCount rule = new MinAttributeCount("color", "red", "1");
+        assertThat(rule.isSatisfiedBy(order)).isFalse();
+    }
+    @Test
+    void minAttributeCountExactMatch() {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("color", "red");
+        OrderProduct orderProduct = new OrderProduct(1L, 1L, "product_name1", 1, attributes);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MinAttributeCount rule = new MinAttributeCount("color", "red", "1");
+        assertThat(rule.isSatisfiedBy(order)).isTrue();
+    }
+
+    @Test
+    void minAttributeCountBelowLimit() {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("color", "blue");
+        OrderProduct orderProduct = new OrderProduct(1L, 1L, "product_name1", 1, attributes);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MinAttributeCount rule = new MinAttributeCount("color", "red", "1");
+        assertThat(rule.isSatisfiedBy(order)).isFalse();
+    }
+
+    @Test
+    void minAttributeCountWithNoMatchingAttribute() {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("color", "blue");
+        OrderProduct orderProduct = new OrderProduct(1L, 1L, "product_name1", 1, attributes);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MinAttributeCount rule = new MinAttributeCount("color", "red", "1");
+        assertThat(rule.isSatisfiedBy(order)).isFalse();
+    }
+
+    @Test
+    void mustHaveAtLeastOneRedProduct() {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("color", "red");
+        OrderProduct orderProduct = new OrderProduct(1L, 1L, "product_name1", 1, attributes);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MinAttributeCount rule = new MinAttributeCount("color", "red", "1");
+        assertThat(rule.isSatisfiedBy(order)).isTrue();
+    }
+
+    @Test
+    void noRedProductsMeansRuleNotSatisfied() {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("color", "blue");
+        OrderProduct orderProduct = new OrderProduct(1L, 1L, "product_name1", 1, attributes);
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MinAttributeCount rule = new MinAttributeCount("color", "red", "1");
+        assertThat(rule.isSatisfiedBy(order)).isFalse();
+    }
+
+    //AndRule
+    @Test
+    void emptyOrderShouldSatisfyAndRule() {
+        List<OrderProduct> products = new ArrayList<>();
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        AndRule rules = new AndRule(
+                new MaxAttributeCount("color", "red", "1"),
+                new MaxAttributeCount("color", "blue", "1")
+        );
+        assertThat(rules.isSatisfiedBy(order)).isTrue();
+    }
+
+    @Test
     void twoRulesWithAndLogic(){
         Map<String,String> attributes = new HashMap<>();
         Map<String,String> attributes2 = new HashMap<>();
@@ -133,6 +186,19 @@ public class RulesTest {
         Order order = new Order(1L,new User(),products,OrderStatus.CREATED, LocalDateTime.now());
         AndRule rules = new AndRule(new MaxAttributeCount("color","red","1"),new MaxAttributeCount("color","blue","1"));
         assertThat(rules.isSatisfiedBy(order)).isFalse();
+    }
+
+    //OrRule
+    @Test
+    void emptyOrderShouldSatisfyOrRule() {
+        List<OrderProduct> products = new ArrayList<>();
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        OrRule rules = new OrRule(
+                new MaxAttributeCount("color", "red", "1"),
+                new MaxAttributeCount("color", "blue", "1")
+        );
+        assertThat(rules.isSatisfiedBy(order)).isTrue();
     }
 
     @Test
@@ -153,6 +219,17 @@ public class RulesTest {
         assertThat(rules.isSatisfiedBy(order)).isTrue();
     }
 
+    //NotRule
+    @Test
+    void emptyOrderShouldSatisfyNotRule() {
+        List<OrderProduct> products = new ArrayList<>();
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MaxAttributeCount rule = new MaxAttributeCount("color", "blue", "1");
+        NotRule notRule = new NotRule(rule);
+
+        assertThat(notRule.isSatisfiedBy(order)).isFalse();
+    }
     @Test
     void notRuleTest() {
         Map<String, String> attributes = new HashMap<>();
@@ -216,6 +293,161 @@ public class RulesTest {
         assertThat(notRule.isSatisfiedBy(order)).isFalse();
     }
 
+    //MinAttributeSumRule
+    @Test
+    void emptyOrderShouldNotSatisfyMinAttributeSumRule() {
+        List<OrderProduct> products = new ArrayList<>();
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MinAttributeSum rule = new MinAttributeSum("color", "10");
+
+        assertThat(rule.isSatisfiedBy(order)).isFalse();
+    }
+
+    @Test
+    void orderShouldNotSatisfyMinAttributeSumRuleWhenSumIsLessThanMin() {
+        Map<String, String> attributes1 = new HashMap<>();
+        attributes1.put("price", "10");
+
+        Map<String, String> attributes2 = new HashMap<>();
+        attributes2.put("price", "20");
+
+        OrderProduct orderProduct = new OrderProduct(1L, 1L, "product_name1", 1, attributes1);
+        OrderProduct product2 = new OrderProduct(2L, 2L, "product_name2", 1, attributes2);
+
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
+        products.add(product2);
+
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MinAttributeSum rule = new MinAttributeSum("price", "40");
+
+        assertThat(rule.isSatisfiedBy(order)).isFalse();
+    }
+
+    @Test
+    void orderShouldSatisfyMinAttributeSumRuleWhenSumEqualsMin() {
+        Map<String, String> attributes1 = new HashMap<>();
+        attributes1.put("price", "5");
+
+        Map<String, String> attributes2 = new HashMap<>();
+        attributes2.put("price", "5");
+
+        OrderProduct product1 = new OrderProduct(1L, 1L, "product_1", 1, attributes1);
+        OrderProduct product2 = new OrderProduct(2L, 2L, "product_2", 1, attributes2);
+
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
+
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MinAttributeSum rule = new MinAttributeSum("price", "10");
+
+        assertThat(rule.isSatisfiedBy(order)).isTrue();
+    }
+
+    @Test
+    void orderShouldSatisfyMinAttributeSumRuleWhenSumExceedsMin() {
+        Map<String, String> attributes1 = new HashMap<>();
+        attributes1.put("price", "6");
+
+        Map<String, String> attributes2 = new HashMap<>();
+        attributes2.put("price", "6");
+
+        OrderProduct product1 = new OrderProduct(1L, 1L, "product_1", 1, attributes1);
+        OrderProduct product2 = new OrderProduct(2L, 2L, "product_2", 1, attributes2);
+
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
+
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MinAttributeSum rule = new MinAttributeSum("price", "10");
+
+        assertThat(rule.isSatisfiedBy(order)).isTrue();
+    }
+
+    //MaxAttributeSumRule
+    @Test
+    void emptyOrderShouldNotSatisfyMaxAttributeSumRule() {
+        List<OrderProduct> products = new ArrayList<>();
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MaxAttributeSum rule = new MaxAttributeSum("color", "10");
+
+        assertThat(rule.isSatisfiedBy(order)).isTrue();
+    }
+
+    @Test
+    void orderShouldSatisfyMaxAttributeSumRuleWhenSumIsLessThanMax() {
+        Map<String, String> attributes1 = new HashMap<>();
+        attributes1.put("price", "10");
+
+        Map<String, String> attributes2 = new HashMap<>();
+        attributes2.put("price", "20");
+
+        OrderProduct orderProduct = new OrderProduct(1L, 1L, "product_name1", 1, attributes1);
+        OrderProduct product2 = new OrderProduct(2L, 2L, "product_name2", 1, attributes2);
+
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(orderProduct);
+        products.add(product2);
+
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MaxAttributeSum rule = new MaxAttributeSum("price", "60");
+
+        assertThat(rule.isSatisfiedBy(order)).isTrue();
+    }
+
+    @Test
+    void orderShouldNotSatisfyMaxAttributeSumRuleWhenSumExceedsMax() {
+        Map<String, String> attributes1 = new HashMap<>();
+        attributes1.put("price", "6");
+
+        Map<String, String> attributes2 = new HashMap<>();
+        attributes2.put("price", "5");
+
+        OrderProduct product1 = new OrderProduct(1L, 1L, "product_1", 1, attributes1);
+        OrderProduct product2 = new OrderProduct(2L, 2L, "product_2", 1, attributes2);
+
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
+
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MaxAttributeSum rule = new MaxAttributeSum("price", "10");
+
+        assertThat(rule.isSatisfiedBy(order)).isFalse();
+    }
+
+    @Test
+    void orderShouldSatisfyMaxAttributeSumRuleWhenSumEqualsMax() {
+        Map<String, String> attributes1 = new HashMap<>();
+        attributes1.put("price", "5");
+
+        Map<String, String> attributes2 = new HashMap<>();
+        attributes2.put("price", "5");
+
+        OrderProduct product1 = new OrderProduct(1L, 1L, "product_1", 1, attributes1);
+        OrderProduct product2 = new OrderProduct(2L, 2L, "product_2", 1, attributes2);
+
+        List<OrderProduct> products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
+
+        Order order = new Order(1L, new User(), products, OrderStatus.CREATED, LocalDateTime.now());
+
+        MaxAttributeSum rule = new MaxAttributeSum("price", "10");
+
+        assertThat(rule.isSatisfiedBy(order)).isTrue();
+    }
+
+    //RestrictedCombinationRule
     @Test
     void restrictedCombinationRule(){
         Map<String,String> attributes = new HashMap<>();
