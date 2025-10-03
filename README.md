@@ -1,21 +1,22 @@
-# Run using docker compose
+##  Sistema de Pedidos — Plataforma de Gestión Extensible
 
-1. Create an .env this structure:
+**Spring Boot · JPA · Vue.js · JWT · Docker · Arquitectura en Capas · Patrón Fábrica**
 
-    ```dotenv
-    POSTGRES_USERNAME={username}
-    POSTGRES_PASSWORD={password}
-    POSTGRES_DOCKER_URL=jdbc:postgresql://database:{port}/{database}
-    POSTGRES_LOCAL_URL=jdbc:postgresql://localhost:{port}/{database}
-    POSTGRES_DB={database}
-    JWT_SECRET={jwt_secret}
-    EMAIL_PORT={port}
-    EMAIL_USERNAME={email}
-    EMAIL_PASSWORD={app_password}
-    ```
-    Note:
+Diseñé y desarrollé, en equipo, un sistema completo de gestión de pedidos que permite a los usuarios registrarse, realizar compras con atributos dinámicos, aplicar reglas de negocio configurables y administrar el ciclo de vida de los pedidos.
 
-    Default values -> username=postgres, port:5432
+### 🧠 Backend
+- Desarrollado con **Spring Boot**, implementando una **arquitectura en capas** (Controller–Service–Repository).
+- Modelo de datos flexible que soporta reglas de negocio extensibles mediante una jerarquía de clases `OrderRule` y fábricas de reglas (`And`, `Or`, `Not`).
+- **Persistencia con JPA** sobre base de datos relacional, asegurando integridad y consistencia de datos en entidades como `Order`, `Product`, `User` y `OrderProduct`.
+- **Autenticación segura** con Basic Auth y JWT.
+- **Notificaciones por correo electrónico**, validaciones dinámicas y panel de administración para gestionar stock y estados de pedidos.
 
-2. Then run `docker-compose up --build`
+### 🌐 Frontend
+- Construido con **Vue.js**, utilizando componentes reactivos y **Axios** para consumir APIs.
+- Interfaz funcional para usuarios y administradores.
+
+### 🧱 Arquitectura y Herramientas
+- La arquitectura permite **extender reglas de negocio sin modificar el código base**, favoreciendo mantenibilidad y escalabilidad.
+- **Docker** para aislar entornos de desarrollo.
+- **Postman** para pruebas automatizadas de los endpoints.
 
