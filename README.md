@@ -20,3 +20,32 @@ Diseñé y desarrollé, en equipo, un sistema completo de gestión de pedidos qu
 - **Docker** para aislar entornos de desarrollo.
 - **Postman** para pruebas automatizadas de los endpoints.
 
+## 🐳 Run using Docker Compose
+
+Para levantar el proyecto utilizando **Docker Compose**, seguí estos pasos:
+
+1. Crear un archivo `.env` en la raíz del proyecto con la siguiente estructura:
+
+    ```env
+    POSTGRES_USERNAME={username}
+    POSTGRES_PASSWORD={password}
+    POSTGRES_DOCKER_URL=jdbc:postgresql://database:{port}/{database}
+    POSTGRES_LOCAL_URL=jdbc:postgresql://localhost:{port}/{database}
+    POSTGRES_DB={database}
+    JWT_SECRET={jwt_secret}
+    EMAIL_PORT={port}
+    EMAIL_USERNAME={email}
+    EMAIL_PASSWORD={app_password}
+    ```
+
+    **Nota:**  
+    - Valores por defecto → `username=postgres`, `port=5432`.
+
+2. Ejecutar el siguiente comando:
+
+    ```bash
+    docker-compose up --build
+    ```
+
+Esto construirá las imágenes y levantará todos los servicios definidos en el `docker-compose.yml`.
+
