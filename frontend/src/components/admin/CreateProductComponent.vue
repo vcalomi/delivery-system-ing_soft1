@@ -9,6 +9,7 @@
 </template>
 <script>
 import axios from 'axios';
+import { API_BASE_URL } from '@/apiConfig';
 export default{
     name: 'CreateProductComponent',
     data(){
@@ -21,7 +22,7 @@ export default{
     }, 
     methods:{
         async createProduct(){
-            await axios.post('http://localhost:8081/api/products/create', {product_name: this.product_name, stock: this.stock }, {
+            await axios.post(`${API_BASE_URL}/api/products/create`, {product_name: this.product_name, stock: this.stock }, {
              headers: {Authorization: `Bearer ${localStorage.authToken}`} 
             })
             .then( res => {

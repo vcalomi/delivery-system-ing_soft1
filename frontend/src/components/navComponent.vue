@@ -33,6 +33,7 @@
 <script>
 
 import axios from 'axios';
+import { API_BASE_URL } from '@/apiConfig';
 
 export default{
     data(){
@@ -49,13 +50,13 @@ export default{
         console.warn("No hay token de autenticación.");
         this.showNavBar = false; 
         }
-        await axios.get('http://localhost:8081/api/users/profile', {
+        await axios.get(`${API_BASE_URL}/api/users/profile`, {
         headers: { Authorization: `Bearer ${localStorage.authToken}` }
         }).then(res => {
         this.profile = res.data;
         }).catch(err => alert(err));
 
-        await axios.get("http://localhost:8081/api/users/profilePicture", {
+        await axios.get(`${API_BASE_URL}/api/users/profilePicture`, {
         headers: { Authorization: `Bearer ${localStorage.authToken}` }
         }).then(res => {
           var base64Image = res.data; 

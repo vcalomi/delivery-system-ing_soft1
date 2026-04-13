@@ -14,6 +14,7 @@
   
   <script>
   import axios from 'axios';
+  import { API_BASE_URL } from '@/apiConfig';
   export default {
     computed: {
       selectedProducts() {
@@ -26,7 +27,7 @@
       },
       async acceptOrder(){
         console.log("selected" + this.selectedProducts)
-        await axios.post('http://localhost:8081/api/orders/create', {products: this.selectedProducts}, {
+        await axios.post(`${API_BASE_URL}/api/orders/create`, {products: this.selectedProducts}, {
           headers: {Authorization: `Bearer ${localStorage.authToken}`}
       }).then( () => { 
           alert("Orden creada con éxito!");

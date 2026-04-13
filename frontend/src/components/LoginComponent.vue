@@ -18,6 +18,7 @@
 <script>
 import Register from './Register.vue';
 import axios from 'axios';
+import { API_BASE_URL } from '@/apiConfig';
 import { jwtDecode } from 'jwt-decode'
 
 export default {
@@ -32,7 +33,7 @@ export default {
   name: 'loginComponent',
   methods: {
     async Login() {
-      await axios.post('http://localhost:8081/api/users/login', {"username": this.user, "password": this.password})
+      await axios.post(`${API_BASE_URL}/api/users/login`, {"username": this.user, "password": this.password})
       .then( response => { 
         localStorage.setItem('authToken', response.data); 
         localStorage.setItem('username', this.user);

@@ -24,6 +24,7 @@
 
 <script>
 import axios from 'axios';
+import { API_BASE_URL } from '@/apiConfig';
 
 export default {
   name: 'OrdersAdmin',
@@ -36,7 +37,7 @@ export default {
   },
   async mounted() {
 
-    await axios.get('http://localhost:8081/api/orders/all', {
+    await axios.get(`${API_BASE_URL}/api/orders/all`, {
       headers: { Authorization: `Bearer ${localStorage.authToken}` }
     }).then(res => {
       this.orders = res.data;
@@ -45,7 +46,7 @@ export default {
   methods: {
     async inProcessOrder(orderId) {
       try {
-        const response = await axios.patch(`http://localhost:8081/api/orders/changeStatus/${orderId}`,{"orderStatus": "IN_PROCESS"},  {
+        const response = await axios.patch(`${API_BASE_URL}/api/orders/changeStatus/${orderId}`,{"orderStatus": "IN_PROCESS"},  {
           headers: { Authorization: `Bearer ${localStorage.authToken}` }
         });
         this.orders = this.orders.filter(order => order.orderId !== orderId);
@@ -56,7 +57,7 @@ export default {
     },
     async sentOrder(orderId) {
       try {
-        const response = await axios.patch(`http://localhost:8081/api/orders/changeStatus/${orderId}`,{"orderStatus": "SENT"},  {
+        const response = await axios.patch(`${API_BASE_URL}/api/orders/changeStatus/${orderId}`,{"orderStatus": "SENT"},  {
           headers: { Authorization: `Bearer ${localStorage.authToken}` }
         });
         this.orders = this.orders.filter(order => order.orderId !== orderId);

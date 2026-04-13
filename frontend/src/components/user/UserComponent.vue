@@ -101,6 +101,7 @@
 
 <script>
 import axios from 'axios';
+import { API_BASE_URL } from '@/apiConfig';
 
 export default {
   name: 'UserComponent',
@@ -113,13 +114,13 @@ export default {
     };
   },
   async mounted() {
-    await axios.get('http://localhost:8081/api/products/', {
+    await axios.get(`${API_BASE_URL}/api/products/`, {
       headers: { Authorization: `Bearer ${localStorage.authToken}` }
     }).then(res => {
       this.products = res.data;
     }).catch(err => console.error(err));
 
-    await axios.get('http://localhost:8081/api/orders/', {
+    await axios.get(`${API_BASE_URL}/api/orders/`, {
       headers: { Authorization: `Bearer ${localStorage.authToken}` }
     }).then(res => {
       // this.orders = res.data;
@@ -144,7 +145,7 @@ export default {
       
       await axios
         .delete(
-          `http://localhost:8081/api/orders/cancel/${orderId}`,
+          `${API_BASE_URL}/api/orders/cancel/${orderId}`,
           { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
         )
         .then(() => {
@@ -161,7 +162,7 @@ export default {
     },
     async confirmOrder(orderId) {
       
-      await axios.patch(`http://localhost:8081/api/orders/confirmOrder/${orderId}`,{},{ headers: { Authorization: `Bearer ${localStorage.authToken}` } })
+      await axios.patch(`${API_BASE_URL}/api/orders/confirmOrder/${orderId}`,{},{ headers: { Authorization: `Bearer ${localStorage.authToken}` } })
         .then(() => {
           alert("Orden confirmada correctamente.");
           this.orders = this.orders.filter(order => order.orderId !== orderId);

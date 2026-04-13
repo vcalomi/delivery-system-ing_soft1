@@ -33,6 +33,7 @@
   
 <script>
 import axios from "axios";
+import { API_BASE_URL } from "@/apiConfig";
 
 export default {
   data() {
@@ -76,7 +77,7 @@ export default {
 
         try {
           await axios.post(
-            "http://localhost:8081/api/users/profilePicture",
+            `${API_BASE_URL}/api/users/profilePicture`,
             { profilePicture: base64Image },
             { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
           );

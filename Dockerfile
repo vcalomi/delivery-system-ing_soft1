@@ -4,5 +4,5 @@ COPY pom.xml .
 RUN mvn dependency:go-offline
 COPY . .
 RUN mvn clean package
-EXPOSE 8080
+EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "target/tp-0.0.1-SNAPSHOT.jar"]

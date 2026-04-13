@@ -67,6 +67,7 @@
   
   <script>
   import axios from 'axios'
+  import { API_BASE_URL } from '@/apiConfig'
   export default {
     data() {
       return {
@@ -152,7 +153,7 @@
       let age = today.getFullYear() - birthDateObj.getFullYear();
       if(status.length === 0){
         this.active = true
-          await axios.post('http://localhost:8081/api/users/register', { 
+          await axios.post(`${API_BASE_URL}/api/users/register`, { 
           "name": this.name,"lastname": this.lastname,"email": this.email,
           "age": age,"address": this.street+" "+this.streetNumber+" "+this.postalCode+" "+this.floorApartment,
           "username": this.user,"password": this.password, "gender": this.gender 

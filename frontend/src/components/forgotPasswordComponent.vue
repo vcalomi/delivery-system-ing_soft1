@@ -18,6 +18,7 @@
 
 <script>
 import axios from 'axios';
+import { API_BASE_URL } from '@/apiConfig';
 export default {
     name: 'forgotPasswordComponent',
     data() {
@@ -28,7 +29,7 @@ export default {
     },
     methods: {
         recoverPassword(){ 
-            axios.patch('http://localhost:8081/api/users/forgetPassword', { username: this.user })
+            axios.patch(`${API_BASE_URL}/api/users/forgetPassword`, { username: this.user })
                 .then(response => { 
                     console.log("Recovery email sent to", this.forgotUsername)
                     this.user = ""

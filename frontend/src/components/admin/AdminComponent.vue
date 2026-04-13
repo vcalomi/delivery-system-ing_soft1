@@ -73,6 +73,7 @@
 
 <script>
 import axios from "axios";
+import { API_BASE_URL } from "@/apiConfig";
 
 export default {
   name: "adminComponent",
@@ -83,7 +84,7 @@ export default {
   },
   async mounted() {
     try {
-      const { data: products } = await axios.get("http://localhost:8081/api/products/", {
+      const { data: products } = await axios.get(`${API_BASE_URL}/api/products/`, {
         headers: { Authorization: `Bearer ${localStorage.authToken}` },
       });
       this.products = products.map((product) => ({
@@ -114,7 +115,7 @@ export default {
       }
       try {
         await axios.patch(
-      `http://localhost:8081/api/products/incrementStock/${product.id}`,
+      `${API_BASE_URL}/api/products/incrementStock/${product.id}`,
       { quantity: product.stock },
       { headers: { Authorization: `Bearer ${localStorage.authToken}` } }
     );
@@ -129,7 +130,7 @@ export default {
 
       try {
         await axios.patch(
-          `http://localhost:8081/api/products/edit`,
+          `${API_BASE_URL}/api/products/edit`,
           { id: product.id, attributes: updatedAttributes },
           { headers: { Authorization: `Bearer ${localStorage.authToken}` }
         });

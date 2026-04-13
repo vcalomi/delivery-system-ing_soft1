@@ -41,6 +41,7 @@
   
   <script>
   import axios from 'axios';
+  import { API_BASE_URL } from '@/apiConfig';
   
   export default {
     data() {
@@ -59,7 +60,7 @@
         return;
       }
       console.log(localStorage.username);
-        await axios.patch('http://localhost:8081/api/users/changePassword', {"username": localStorage.username, "oldPassword": this.oldPassword, 
+        await axios.patch(`${API_BASE_URL}/api/users/changePassword`, {"username": localStorage.username, "oldPassword": this.oldPassword, 
                             "newPassword": this.newPassword, "repeatedNewPassword": this.newPassword2})
         .then( () => { 
           this.message = "Contraseña actualizada correctamente.";
