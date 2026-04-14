@@ -52,6 +52,9 @@ public class PostgresUrlEnvironmentPostProcessor implements EnvironmentPostProce
     }
 
     static String toJdbcUrl(String url) {
+        if (url == null || url.isBlank()) {
+            return url == null ? "" : url;
+        }
         if (url.startsWith("jdbc:")) {
             return url;
         }
